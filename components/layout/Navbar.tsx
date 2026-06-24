@@ -49,6 +49,12 @@ export const Navbar: React.FC = () => {
           <ChevronDown className="w-3.5 h-3.5 opacity-50" />
         </Link>
         <Link
+          href="/code-visualizer"
+          className="px-3 py-2 rounded-lg text-sm font-medium text-text-secondary hover:text-text-primary transition-colors duration-200 cursor-pointer"
+        >
+          AI Code Visualizer
+        </Link>
+        <Link
           href="#"
           className="px-3 py-2 rounded-lg text-sm font-medium text-text-secondary hover:text-text-primary transition-colors duration-200 cursor-pointer"
         >
