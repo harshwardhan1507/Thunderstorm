@@ -1,23 +1,23 @@
 @import "tailwindcss";
 
-:root {
-  --background: #0a0a0a;
-  --foreground: #f0f0f0;
+@theme {
+  --color-background: #0a0a0a;
+  --color-foreground: #f0f0f0;
   
-  --bg-base: #0a0a0a;
-  --bg-surface: #141414;
-  --bg-elevated: #1c1c1c;
-  --bg-highlight: #232323;
+  --color-base: #0a0a0a;
+  --color-surface: #141414;
+  --color-elevated: #1c1c1c;
+  --color-highlight: #232323;
   
-  --border-subtle: #2a2a2a;
-  --border-default: #333333;
+  --color-border-subtle: #2a2a2a;
+  --color-border-default: #333333;
   
-  --text-primary: #f0f0f0;
-  --text-secondary: #888888;
-  --text-muted: #555555;
+  --color-text-primary: #f0f0f0;
+  --color-text-secondary: #888888;
+  --color-text-muted: #555555;
   
-  --accent-purple: #7c3aed;
-  --accent-violet: #8b5cf6;
+  --color-accent-purple: #7c3aed;
+  --color-accent-violet: #8b5cf6;
   
   --color-compare: #3b82f6;
   --color-swap: #facc15;
@@ -25,41 +25,14 @@
   --color-success: #22c55e;
   --color-error: #ef4444;
   --color-code: #60a5fa;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  
-  --color-base: var(--bg-base);
-  --color-surface: var(--bg-surface);
-  --color-elevated: var(--bg-elevated);
-  --color-highlight: var(--bg-highlight);
-  
-  --color-border-subtle: var(--border-subtle);
-  --color-border-default: var(--border-default);
-  
-  --color-text-primary: var(--text-primary);
-  --color-text-secondary: var(--text-secondary);
-  --color-text-muted: var(--text-muted);
-  
-  --color-accent-purple: var(--accent-purple);
-  --color-accent-violet: var(--accent-violet);
-  
-  --color-compare: var(--color-compare);
-  --color-swap: var(--color-swap);
-  --color-traverse: var(--color-traverse);
-  --color-success: var(--color-success);
-  --color-error: var(--color-error);
-  --color-code: var(--color-code);
   
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--color-background);
+  color: var(--color-foreground);
   font-family: var(--font-sans), sans-serif;
 }
 
@@ -69,4 +42,21 @@ body {
   padding-left: 10px;
 }
 
+/* Custom scrollbar styling for premium dark theme */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
 
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2a2a2a;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #333333;
+}

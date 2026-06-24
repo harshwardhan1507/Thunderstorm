@@ -16,12 +16,26 @@ const snippetMap: Record<SortingAlgorithmType, Record<CodeLanguageType, string>>
   heap: heapSnippets,
 };
 
-export const CodePanel: React.FC = () => {
-  const { selectedAlgorithm, language, currentStepIndex, steps } = useVisualizerStore();
+interface CodePanelProps {
+  code?: string;
+  language?: CodeLanguageType;
+  activeLine?: number;
+  setLanguage?: (lang: CodeLanguageType) => void;
+}
 
-  const code = snippetMap[selectedAlgorithm]?.[language] || '';
-  const currentStep = steps[currentStepIndex];
-  const activeLine = currentStep ? currentStep.line : -1;
+export const CodePanel: React.FC<CodePanelProps> = ({
+  code: propsCode,
+  language: propsLanguage,
+  activeLine: propsActiveLine,
+  setLanguage: propsSetLanguage,
+}) => {
+  const sortingStore = useVisualizerStore();
+
+  const language = propsLanguage ?? sortingStore.language;
+  const setLanguage = propsSetLanguage ?? sortingStore.setLanguage;
+  const currentStep = sortingStore.steps[sortingStore.currentStepIndex];
+  const activeLine = propsActiveLine ?? (currentStep ? currentStep.line : -1);
+  const code = propsCode ?? (snippetMap[sortingStore.selectedAlgorithm]?.[language] || '');
 
   // Language display names
   const langLabelMap: Record<CodeLanguageType, string> = {
@@ -30,8 +44,6 @@ export const CodePanel: React.FC = () => {
     python: 'Python',
     cpp: 'C++',
   };
-
-  const setLanguage = useVisualizerStore((state) => state.setLanguage);
 
   return (
     <div className="flex flex-col h-full bg-[#0f0f0f] w-full min-w-0">
@@ -75,6 +87,8 @@ export const CodePanel: React.FC = () => {
                 display: 'block',
                 width: '100%',
                 transition: 'background-color 0.15s ease, border-left-color 0.15s ease',
+                paddingLeft: '1.25rem',
+                paddingRight: '1.25rem',
               },
             };
           }}

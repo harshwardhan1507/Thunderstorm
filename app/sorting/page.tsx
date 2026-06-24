@@ -59,7 +59,7 @@ export default function SortingPage() {
           <button
             onClick={() => generateNewArray()}
             disabled={isPlaying}
-            className="px-4 py-2 text-xs font-bold uppercase bg-surface border border-border-default hover:border-text-secondary rounded-lg text-text-primary hover:bg-elevated transition-all duration-200 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+            className="px-4 py-2 text-xs font-bold uppercase bg-surface border border-[#333333] hover:border-text-secondary rounded-lg text-text-primary hover:bg-elevated transition-all duration-200 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
           >
             Generate New Data
           </button>
@@ -67,7 +67,7 @@ export default function SortingPage() {
       </div>
 
       {/* Algorithm Selector Tabs */}
-      <div className="flex gap-1 bg-[#141414]/40 border border-border-subtle rounded-lg p-0.5 self-start mb-6">
+      <div className="flex gap-1 bg-[#141414]/40 border border-[#2a2a2a] rounded-lg p-0.5 self-start mb-6">
         {algos.map((algo) => (
           <button
             key={algo.key}
@@ -85,9 +85,9 @@ export default function SortingPage() {
       </div>
 
       {/* Main Split-View Pane */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 rounded-xl overflow-hidden border border-border-subtle mb-6 shadow-2xl">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 rounded-xl overflow-hidden border border-[#2a2a2a] mb-6 shadow-2xl">
         {/* Left column: Visualizer */}
-        <div className="bg-[#141414] border-b lg:border-b-0 lg:border-r border-border-subtle p-0 h-[420px] w-full min-w-0">
+        <div className="bg-[#141414] border-b lg:border-b-0 lg:border-r border-[#2a2a2a] p-0 h-[420px] w-full min-w-0">
           <SortingCanvas />
         </div>
 
@@ -98,7 +98,7 @@ export default function SortingPage() {
       </div>
 
       {/* Controls Bar (Horizontal flex block) */}
-      <div className="flex flex-col md:flex-row items-center gap-6 p-4 rounded-xl bg-surface border border-border-subtle mb-6 shadow-lg">
+      <div className="flex flex-col md:flex-row items-center gap-6 p-4 rounded-xl bg-surface border border-[#2a2a2a] mb-6 shadow-lg">
         <PlayPauseButton />
         
         <div className="flex-1 w-full min-w-[200px]">

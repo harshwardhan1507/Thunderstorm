@@ -1,5 +1,6 @@
 import { create } from 'zustand';
-import { SortStep, SortingAlgorithmType } from '../types/algorithm.types';
+import { SortStep } from '../types/algorithm.types';
+import { SortingAlgorithmType } from './visualizerStore';
 import { bubbleSort } from '../lib/algorithms/sorting/bubbleSort';
 import { quickSort } from '../lib/algorithms/sorting/quickSort';
 import { mergeSort } from '../lib/algorithms/sorting/mergeSort';
