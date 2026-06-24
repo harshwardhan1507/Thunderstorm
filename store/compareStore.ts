@@ -38,6 +38,7 @@ interface CompareState {
   stepForwardBoth: () => void;
   stepBackwardBoth: () => void;
   resetBothPlayback: () => void;
+  clearWinner: () => void;
   getMetrics: () => {
     left: { comparisons: number; swaps: number; steps: number };
     right: { comparisons: number; swaps: number; steps: number };
@@ -172,25 +173,70 @@ export const useCompareStore = create<CompareState>((set, get) => ({
   },
 
   stepForwardBoth: () => {
-    const { left, right } = get();
-    const leftNext = left.currentStepIndex < left.steps.length - 1 ? left.currentStepIndex + 1 : left.currentStepIndex;
-    const rightNext = right.currentStepIndex < right.steps.length - 1 ? right.currentStepIndex + 1 : right.currentStepIndex;
+    const { left, right, mode } = get();
+    
+    if (mode === 'compare') {
+      const leftNext = left.currentStepIndex < left.steps.length - 1 ? left.currentStepIndex + 1 : left.currentStepIndex;
+      const rightNext = right.currentStepIndex < right.steps.length - 1 ? right.currentStepIndex + 1 : right.currentStepIndex;
 
-    set((state) => ({
-      left: {
-        ...state.left,
-        currentStepIndex: leftNext,
-        array: leftNext === -1 ? state.left.initialArray : [...state.left.steps[leftNext].array],
-      },
-      right: {
-        ...state.right,
-        currentStepIndex: rightNext,
-        array: rightNext === -1 ? state.right.initialArray : [...state.right.steps[rightNext].array],
+      set((state) => ({
+        left: {
+          ...state.left,
+          currentStepIndex: leftNext,
+          array: leftNext === -1 ? state.left.initialArray : [...state.left.steps[leftNext].array],
+        },
+        right: {
+          ...state.right,
+          currentStepIndex: rightNext,
+          array: rightNext === -1 ? state.right.initialArray : [...state.right.steps[rightNext].array],
+        }
+      }));
+
+      if (leftNext === left.steps.length - 1 && rightNext === right.steps.length - 1) {
+        set({ isPlaying: false });
       }
-    }));
-
-    if (leftNext === left.steps.length - 1 && rightNext === right.steps.length - 1) {
-      set({ isPlaying: false });
+    } else {
+      // Battle Mode
+      set((state) => {
+        const nextLeftIndex = state.left.currentStepIndex < state.left.steps.length - 1 ? state.left.currentStepIndex + 1 : state.left.currentStepIndex;
+        const nextRightIndex = state.right.currentStepIndex < state.right.steps.length - 1 ? state.right.currentStepIndex + 1 : state.right.currentStepIndex;
+        
+        const leftFinishedNow = nextLeftIndex === state.left.steps.length - 1;
+        const rightFinishedNow = nextRightIndex === state.right.steps.length - 1;
+        
+        const leftIsFinished = state.left.isFinished || leftFinishedNow || state.left.steps.length === 0;
+        const rightIsFinished = state.right.isFinished || rightFinishedNow || state.right.steps.length === 0;
+        
+        let winner: 'left' | 'right' | 'tie' | null = state.winner;
+        if (leftIsFinished && rightIsFinished && !state.winner) {
+          const leftSteps = state.left.steps.length;
+          const rightSteps = state.right.steps.length;
+          if (leftSteps < rightSteps) {
+            winner = 'left';
+          } else if (rightSteps < leftSteps) {
+            winner = 'right';
+          } else {
+            winner = 'tie';
+          }
+        }
+        
+        return {
+          winner,
+          isPlaying: !(leftIsFinished && rightIsFinished),
+          left: {
+            ...state.left,
+            currentStepIndex: nextLeftIndex,
+            array: nextLeftIndex === -1 ? state.left.initialArray : [...state.left.steps[nextLeftIndex].array],
+            isFinished: leftIsFinished,
+          },
+          right: {
+            ...state.right,
+            currentStepIndex: nextRightIndex,
+            array: nextRightIndex === -1 ? state.right.initialArray : [...state.right.steps[nextRightIndex].array],
+            isFinished: rightIsFinished,
+          }
+        };
+      });
     }
   },
 
@@ -230,6 +276,10 @@ export const useCompareStore = create<CompareState>((set, get) => ({
         isFinished: false,
       }
     }));
+  },
+
+  clearWinner: () => {
+    set({ winner: null });
   },
 
   getMetrics: () => {

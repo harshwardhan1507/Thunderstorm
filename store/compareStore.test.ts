@@ -45,4 +45,27 @@ describe('Zustand Compare Store', () => {
     expect(updated.left.steps.length).toBeGreaterThan(0);
     expect(updated.right.steps.length).toBeGreaterThan(0);
   });
+
+  it('correctly handles Battle Mode execution and winner selection', () => {
+    const store = useCompareStore.getState();
+    store.setMode('battle');
+    store.setArraySize(10); // generates and computes steps
+    
+    let state = useCompareStore.getState();
+    expect(state.winner).toBeNull();
+    expect(state.left.isFinished).toBe(false);
+    expect(state.right.isFinished).toBe(false);
+
+    // Step until finished
+    let loops = 0;
+    while (loops < 500 && (state.left.currentStepIndex < state.left.steps.length - 1 || state.right.currentStepIndex < state.right.steps.length - 1)) {
+      store.stepForwardBoth();
+      state = useCompareStore.getState();
+      loops++;
+    }
+
+    expect(state.left.isFinished).toBe(true);
+    expect(state.right.isFinished).toBe(true);
+    expect(state.winner).not.toBeNull();
+  });
 });

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
-import { Play, Pause, SkipForward, SkipBack, RotateCcw, ChevronUp, ChevronDown } from 'lucide-react';
+import { Play, Pause, SkipForward, SkipBack, RotateCcw, ChevronUp, ChevronDown, Trophy, X } from 'lucide-react';
 import { useCompareStore, CompareInstanceState } from '../../store/compareStore';
 import { CompareCanvas } from '../../components/visualizers/CompareCanvas';
 import { SORTING_ALGORITHMS_METADATA } from '../../lib/algorithms/metadata';
@@ -29,6 +29,7 @@ export default function ComparePage() {
     speed,
     arraySize,
     mode,
+    winner,
     setMode,
     setSelectedAlgorithm,
     setArraySize,
@@ -38,8 +39,8 @@ export default function ComparePage() {
     stepForwardBoth,
     stepBackwardBoth,
     resetBothPlayback,
+    clearWinner,
     getMetrics,
-    setCurrentStepIndex,
   } = useCompareStore();
 
   const [isCodeExpanded, setIsCodeExpanded] = useState(false);
@@ -53,11 +54,11 @@ export default function ComparePage() {
     generateNewArrays();
   }, [generateNewArrays]);
 
-  // Synchronized Playback Loop
+  // Synchronized Playback Loop (handles stepping forward based on speed)
   useEffect(() => {
     if (isPlaying) {
       const run = () => {
-        const { left, right, stepForwardBoth, setIsPlaying } = useCompareStore.getState();
+        const { left, right, stepForwardBoth, setIsPlaying, mode } = useCompareStore.getState();
         const leftHasNext = left.currentStepIndex < left.steps.length - 1;
         const rightHasNext = right.currentStepIndex < right.steps.length - 1;
 
@@ -113,8 +114,27 @@ export default function ComparePage() {
     setIsPlaying(!isPlaying);
   };
 
+  const handleReplay = () => {
+    resetBothPlayback();
+    setIsPlaying(true);
+  };
+
+  // Calculate efficiency metrics for Battle Modal
+  const leftName = SORTING_ALGORITHMS_METADATA[left.selectedAlgorithm]?.name || 'Left Sort';
+  const rightName = SORTING_ALGORITHMS_METADATA[right.selectedAlgorithm]?.name || 'Right Sort';
+  
+  const winnerName = winner === 'left' ? leftName : winner === 'right' ? rightName : 'Tie';
+  const winnerColor = winner === 'left' ? 'text-accent-purple' : winner === 'right' ? 'text-accent-violet' : 'text-white';
+  
+  const leftTotalSteps = left.steps.length;
+  const rightTotalSteps = right.steps.length;
+  
+  const speedup = leftTotalSteps > 0 && rightTotalSteps > 0
+    ? Math.max(leftTotalSteps, rightTotalSteps) / Math.min(leftTotalSteps, rightTotalSteps)
+    : 1;
+
   return (
-    <div className="flex-1 w-full max-w-7xl mx-auto px-6 py-6 flex flex-col font-sans select-none pb-24">
+    <div className="flex-1 w-full max-w-7xl mx-auto px-6 py-6 flex flex-col font-sans select-none pb-24 relative">
       {/* Breadcrumb Bar */}
       <div className="text-xs text-text-muted font-mono mb-4 flex items-center gap-1.5">
         <Link href="/" className="hover:text-text-secondary transition-colors">
@@ -174,7 +194,14 @@ export default function ComparePage() {
       {/* Main Dual Visualizer Panel */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         {/* Left Algorithm Panel */}
-        <div className="flex flex-col bg-surface border border-[#2a2a2a] rounded-xl overflow-hidden shadow-2xl">
+        <div className="flex flex-col bg-surface border border-[#2a2a2a] rounded-xl overflow-hidden shadow-2xl relative">
+          {left.isFinished && mode === 'battle' && (
+            <div className="absolute top-12 left-0 right-0 bottom-14 bg-black/60 backdrop-blur-xs flex items-center justify-center z-10">
+              <span className="bg-[#22c55e]/90 text-white font-bold text-xs px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1">
+                Finished! 🏁
+              </span>
+            </div>
+          )}
           <div className="flex justify-between items-center px-4 py-3 bg-[#0a0a0a]/50 border-b border-[#2a2a2a]">
             <span className="text-xs font-bold uppercase tracking-wider text-accent-purple font-mono">
               Left Algorithm
@@ -183,7 +210,7 @@ export default function ComparePage() {
               value={left.selectedAlgorithm}
               onChange={(e) => setSelectedAlgorithm('left', e.target.value as SortingAlgorithmType)}
               disabled={isPlaying}
-              className="bg-base border border-[#333333] hover:border-text-secondary text-white text-xs font-semibold px-2 py-1 rounded cursor-pointer outline-none focus:border-accent-purple"
+              className="bg-base border border-[#333333] hover:border-text-secondary text-white text-xs font-semibold px-2 py-1 rounded cursor-pointer outline-none focus:border-accent-purple animate-all duration-200"
             >
               {algos.map((algo) => (
                 <option key={algo.key} value={algo.key}>
@@ -214,7 +241,14 @@ export default function ComparePage() {
         </div>
 
         {/* Right Algorithm Panel */}
-        <div className="flex flex-col bg-surface border border-[#2a2a2a] rounded-xl overflow-hidden shadow-2xl">
+        <div className="flex flex-col bg-surface border border-[#2a2a2a] rounded-xl overflow-hidden shadow-2xl relative">
+          {right.isFinished && mode === 'battle' && (
+            <div className="absolute top-12 left-0 right-0 bottom-14 bg-black/60 backdrop-blur-xs flex items-center justify-center z-10">
+              <span className="bg-[#22c55e]/90 text-white font-bold text-xs px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1">
+                Finished! 🏁
+              </span>
+            </div>
+          )}
           <div className="flex justify-between items-center px-4 py-3 bg-[#0a0a0a]/50 border-b border-[#2a2a2a]">
             <span className="text-xs font-bold uppercase tracking-wider text-accent-violet font-mono">
               Right Algorithm
@@ -223,7 +257,7 @@ export default function ComparePage() {
               value={right.selectedAlgorithm}
               onChange={(e) => setSelectedAlgorithm('right', e.target.value as SortingAlgorithmType)}
               disabled={isPlaying}
-              className="bg-base border border-[#333333] hover:border-text-secondary text-white text-xs font-semibold px-2 py-1 rounded cursor-pointer outline-none focus:border-accent-violet"
+              className="bg-base border border-[#333333] hover:border-text-secondary text-white text-xs font-semibold px-2 py-1 rounded cursor-pointer outline-none focus:border-accent-violet animate-all duration-200"
             >
               {algos.map((algo) => (
                 <option key={algo.key} value={algo.key}>
@@ -328,7 +362,6 @@ export default function ComparePage() {
 
       {/* Expandable Code Panel Drawer */}
       <div className={`fixed bottom-0 left-0 right-0 z-40 bg-[#0c0c0c] border-t border-[#2a2a2a] transition-all duration-300 ${isCodeExpanded ? 'h-[360px]' : 'h-11'} flex flex-col`}>
-        {/* Toggle Bar */}
         <div
           onClick={() => setIsCodeExpanded(!isCodeExpanded)}
           className="h-11 px-6 flex justify-between items-center border-b border-[#2a2a2a] cursor-pointer hover:bg-elevated transition duration-200 select-none"
@@ -348,9 +381,7 @@ export default function ComparePage() {
 
         {isCodeExpanded && (
           <div className="flex-1 flex flex-col overflow-hidden">
-            {/* Header controls inside Expanded Drawer */}
             <div className="flex justify-between items-center px-6 py-2 bg-[#080808] border-b border-[#202020]">
-              {/* Tab Selector (Left vs Right code) */}
               <div className="flex gap-1.5 p-0.5 bg-[#141414]/80 border border-[#2a2a2a] rounded-lg">
                 <button
                   onClick={() => setActiveCodeTab('left')}
@@ -374,7 +405,6 @@ export default function ComparePage() {
                 </button>
               </div>
 
-              {/* Language Selector */}
               <div className="flex gap-1">
                 {(['javascript', 'java', 'python', 'cpp'] as CodeLanguageType[]).map((lang) => (
                   <button
@@ -392,7 +422,6 @@ export default function ComparePage() {
               </div>
             </div>
 
-            {/* Code syntax container */}
             <div className="flex-1 overflow-auto text-sm font-mono bg-[#050505]">
               <SyntaxHighlighter
                 language={codeLanguage === 'cpp' ? 'cpp' : codeLanguage}
@@ -424,6 +453,90 @@ export default function ComparePage() {
           </div>
         )}
       </div>
+
+      {/* Battle Mode Results Glassmorphic Modal */}
+      {winner && mode === 'battle' && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-xs p-4 animate-all duration-200">
+          <div className="relative max-w-md w-full bg-[#0f0f0f]/90 backdrop-blur-md border border-[#2a2a2a] p-6 rounded-2xl shadow-2xl flex flex-col items-center text-center">
+            {/* Close Button */}
+            <button
+              onClick={clearWinner}
+              className="absolute top-4 right-4 text-text-secondary hover:text-white cursor-pointer transition duration-150"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            {/* Winner Trophy Header */}
+            <div className="w-16 h-16 rounded-full bg-accent-purple/10 border border-accent-purple/30 flex items-center justify-center mb-4">
+              <Trophy className="w-8 h-8 text-accent-violet animate-bounce" />
+            </div>
+
+            <h2 className="text-xl font-extrabold text-white tracking-tight mb-1">
+              Race Completed!
+            </h2>
+            <p className="text-text-secondary text-sm mb-6">
+              {winner === 'tie' ? (
+                "It's a dead heat! Both finished in the exact same step count."
+              ) : (
+                <>
+                  <span className={`font-bold ${winnerColor}`}>{winnerName}</span> wins the race!
+                </>
+              )}
+            </p>
+
+            {/* Detailed Side-by-Side metrics table */}
+            <div className="w-full bg-[#141414] border border-[#2a2a2a] rounded-xl overflow-hidden mb-6 text-xs font-mono">
+              <div className="grid grid-cols-3 gap-2 px-4 py-2 border-b border-[#2a2a2a] bg-[#0c0c0c] text-text-muted uppercase text-[9px] font-bold">
+                <div>Metric</div>
+                <div>{leftName}</div>
+                <div>{rightName}</div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-2 px-4 py-3 border-b border-[#2a2a2a]/50 text-white items-center">
+                <div className="text-text-secondary text-left font-sans font-medium text-[11px]">Total Steps</div>
+                <div className={winner === 'left' ? 'text-[#22c55e] font-bold' : ''}>{leftTotalSteps}</div>
+                <div className={winner === 'right' ? 'text-[#22c55e] font-bold' : ''}>{rightTotalSteps}</div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-2 px-4 py-3 border-b border-[#2a2a2a]/50 text-white items-center">
+                <div className="text-text-secondary text-left font-sans font-medium text-[11px]">Comparisons</div>
+                <div className={winner === 'left' && metrics.left.comparisons < metrics.right.comparisons ? 'text-[#22c55e] font-bold' : ''}>{metrics.left.comparisons}</div>
+                <div className={winner === 'right' && metrics.right.comparisons < metrics.left.comparisons ? 'text-[#22c55e] font-bold' : ''}>{metrics.right.comparisons}</div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-2 px-4 py-3 text-white items-center">
+                <div className="text-text-secondary text-left font-sans font-medium text-[11px]">Swaps</div>
+                <div className={winner === 'left' && metrics.left.swaps < metrics.right.swaps ? 'text-[#22c55e] font-bold' : ''}>{metrics.left.swaps}</div>
+                <div className={winner === 'right' && metrics.right.swaps < metrics.left.swaps ? 'text-[#22c55e] font-bold' : ''}>{metrics.right.swaps}</div>
+              </div>
+            </div>
+
+            {/* Efficiency breakdown message */}
+            {winner !== 'tie' && speedup > 1.05 && (
+              <p className="text-xs text-text-secondary leading-relaxed bg-elevated/40 border border-border-subtle/30 px-3 py-2.5 rounded-lg mb-6 w-full font-sans">
+                💡 <span className="font-semibold text-white">{winnerName}</span> completed the sort{' '}
+                <span className="text-accent-violet font-bold">{(speedup).toFixed(1)}x faster</span> (in visual operations) than {winner === 'left' ? rightName : leftName}.
+              </p>
+            )}
+
+            {/* Play Again Buttons */}
+            <div className="flex gap-3 w-full">
+              <button
+                onClick={clearWinner}
+                className="flex-1 py-2.5 rounded-lg border border-[#333333] hover:border-text-secondary text-text-primary hover:text-white text-xs font-semibold transition cursor-pointer"
+              >
+                Inspect Results
+              </button>
+              <button
+                onClick={handleReplay}
+                className="flex-1 py-2.5 rounded-lg bg-gradient-to-r from-accent-purple to-indigo-700 hover:from-accent-violet hover:to-accent-purple text-white text-xs font-semibold transition shadow-lg cursor-pointer"
+              >
+                Race Again ⚡
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
