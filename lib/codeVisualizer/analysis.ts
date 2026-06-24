@@ -337,7 +337,7 @@ export function analyzeCode(code: string): CodeIR {
   if (maxNestedLoops === 2) {
     timeComplexity = "O(n²)";
   } else if (maxNestedLoops === 1) {
-    if (codeLower.includes("binarysearch") || codeLower.includes("mid =") || codeLower.includes("/ 2")) {
+    if (codeLower.includes("binarysearch") || codeLower.includes("mid") || codeLower.includes("/ 2") || codeLower.includes("/2") || codeLower.includes(">>1")) {
       timeComplexity = "O(log n)";
       spaceComplexity = "O(1)";
     } else {
