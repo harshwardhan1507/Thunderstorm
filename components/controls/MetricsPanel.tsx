@@ -4,6 +4,8 @@ import React, { useEffect, useState } from 'react';
 import { useVisualizerStore } from '../../store/visualizerStore';
 import { SORTING_ALGORITHMS_METADATA } from '../../lib/algorithms/metadata';
 
+import { RefreshCw, ArrowLeftRight, Clock, Activity } from 'lucide-react';
+
 interface ChromePerformance extends Performance {
   memory?: {
     usedJSHeapSize: number;
@@ -30,7 +32,6 @@ export const MetricsPanel: React.FC = () => {
     };
 
     updateMemory();
-    // Update every 2 seconds if isPlaying or selected algo changes
     const interval = setInterval(updateMemory, 2000);
     return () => clearInterval(interval);
   }, [selectedAlgorithm]);
@@ -38,62 +39,79 @@ export const MetricsPanel: React.FC = () => {
   if (!metadata) return null;
 
   return (
-    <div className="flex flex-col gap-4 bg-card border border-border-strong rounded-xl p-5 shadow-2xl h-full justify-between">
-      {/* Title and Static Complexity */}
-      <div>
-        <h3 className="text-lg font-bold text-slate-100 flex items-center gap-2 mb-3">
-          <span className="w-2.5 h-2.5 rounded-full bg-compare"></span>
-          {metadata.name}
-        </h3>
-        
-        <div className="flex flex-col gap-2 bg-background border border-border-strong rounded-lg p-3 text-xs font-mono text-slate-300">
-          <div className="flex justify-between">
-            <span className="text-slate-400">Best Time:</span>
-            <span className="font-bold text-success">{metadata.timeComplexity.best}</span>
+    <div className="flex flex-col gap-4 w-full">
+      {/* 4-Card Metrics Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full">
+        {/* Card 1: Comparisons */}
+        <div className="p-4 rounded-xl bg-surface border border-border-subtle shadow-md select-none flex flex-col justify-between">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-text-secondary text-[11px] font-bold uppercase tracking-wider">
+              Comparisons
+            </span>
+            <RefreshCw className="w-3.5 h-3.5 text-text-secondary" />
           </div>
-          <div className="flex justify-between">
-            <span className="text-slate-400">Average Time:</span>
-            <span className="font-bold text-traverse">{metadata.timeComplexity.average}</span>
+          <div className="text-2xl font-black text-white font-mono leading-none mt-1">
+            {comparisons}
           </div>
-          <div className="flex justify-between">
-            <span className="text-slate-400">Worst Time:</span>
-            <span className="font-bold text-error">{metadata.timeComplexity.worst}</span>
+        </div>
+
+        {/* Card 2: Swaps */}
+        <div className="p-4 rounded-xl bg-surface border border-border-subtle shadow-md select-none flex flex-col justify-between">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-text-secondary text-[11px] font-bold uppercase tracking-wider">
+              Swaps
+            </span>
+            <ArrowLeftRight className="w-3.5 h-3.5 text-text-secondary" />
           </div>
-          <div className="h-px bg-border-strong my-1"></div>
-          <div className="flex justify-between">
-            <span className="text-slate-400">Space Complexity:</span>
-            <span className="font-bold text-code">{metadata.spaceComplexity}</span>
+          <div className="text-2xl font-black text-white font-mono leading-none mt-1">
+            {swaps}
+          </div>
+        </div>
+
+        {/* Card 3: Execution Time */}
+        <div className="p-4 rounded-xl bg-surface border border-border-subtle shadow-md select-none flex flex-col justify-between">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-text-secondary text-[11px] font-bold uppercase tracking-wider">
+              Time
+            </span>
+            <Clock className="w-3.5 h-3.5 text-text-secondary" />
+          </div>
+          <div className="text-2xl font-black text-white font-mono leading-none mt-1">
+            {executionTime.toFixed(1)}ms
+          </div>
+        </div>
+
+        {/* Card 4: Heap Memory */}
+        <div className="p-4 rounded-xl bg-surface border border-border-subtle shadow-md select-none flex flex-col justify-between">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-text-secondary text-[11px] font-bold uppercase tracking-wider">
+              Heap
+            </span>
+            <Activity className="w-3.5 h-3.5 text-text-secondary" />
+          </div>
+          <div>
+            <div className="text-2xl font-black text-white font-mono leading-none mt-1">
+              {heapMemory}
+            </div>
+            {heapMemory !== 'N/A' && (
+              <div className="text-[9px] text-text-muted mt-1 leading-none font-mono">
+                Chrome only, approx
+              </div>
+            )}
           </div>
         </div>
       </div>
 
-      {/* Dynamic Metrics */}
-      <div className="grid grid-cols-2 gap-2 mt-2">
-        <div className="flex flex-col bg-background/50 border border-border-strong rounded-lg p-3 text-center">
-          <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Comparisons</span>
-          <span className="text-xl font-black text-compare mt-1 font-mono">{comparisons}</span>
-        </div>
-        <div className="flex flex-col bg-background/50 border border-border-strong rounded-lg p-3 text-center">
-          <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Swaps</span>
-          <span className="text-xl font-black text-swap mt-1 font-mono">{swaps}</span>
-        </div>
-      </div>
-
-      {/* Live System Performance */}
-      <div className="flex flex-col gap-2 bg-background/40 border border-border-strong rounded-lg p-3 text-[11px] font-mono text-slate-400 mt-2">
-        <div className="flex justify-between items-center">
-          <span className="flex items-center gap-1.5">
-            ⏱ Execution (Precomputed):
-          </span>
-          <span className="font-bold text-slate-200">{executionTime.toFixed(2)} ms</span>
-        </div>
-        <div className="flex justify-between items-center">
-          <span className="flex items-center gap-1.5" title="Whole JS Heap size, Chrome only">
-            📊 JS Heap (Chrome, approx):
-          </span>
-          <span className="font-bold text-slate-200">{heapMemory}</span>
-        </div>
+      {/* Complexity Badges Row */}
+      <div className="flex gap-2.5 mt-2 flex-wrap">
+        <span className="px-3 py-1.5 rounded-lg bg-elevated border border-border-default text-xs font-semibold text-text-secondary font-mono shadow-sm">
+          Time: <span className="text-success">{metadata.timeComplexity.best} best</span> · <span className="text-error">{metadata.timeComplexity.worst} worst</span>
+        </span>
+        <span className="px-3 py-1.5 rounded-lg bg-elevated border border-border-default text-xs font-semibold text-text-secondary font-mono shadow-sm">
+          Space: <span className="text-code">{metadata.spaceComplexity}</span>
+        </span>
       </div>
     </div>
   );
 };
+

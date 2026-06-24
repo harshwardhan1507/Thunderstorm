@@ -1,8 +1,23 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0f172a;
-  --foreground: #f8fafc;
+  --background: #0a0a0a;
+  --foreground: #f0f0f0;
+  
+  --bg-base: #0a0a0a;
+  --bg-surface: #141414;
+  --bg-elevated: #1c1c1c;
+  --bg-highlight: #232323;
+  
+  --border-subtle: #2a2a2a;
+  --border-default: #333333;
+  
+  --text-primary: #f0f0f0;
+  --text-secondary: #888888;
+  --text-muted: #555555;
+  
+  --accent-purple: #7c3aed;
+  --accent-violet: #8b5cf6;
   
   --color-compare: #3b82f6;
   --color-swap: #facc15;
@@ -10,21 +25,34 @@
   --color-success: #22c55e;
   --color-error: #ef4444;
   --color-code: #60a5fa;
-  --color-card: #1e293b;
-  --color-border-strong: #334155;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  
+  --color-base: var(--bg-base);
+  --color-surface: var(--bg-surface);
+  --color-elevated: var(--bg-elevated);
+  --color-highlight: var(--bg-highlight);
+  
+  --color-border-subtle: var(--border-subtle);
+  --color-border-default: var(--border-default);
+  
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  
+  --color-accent-purple: var(--accent-purple);
+  --color-accent-violet: var(--accent-violet);
+  
   --color-compare: var(--color-compare);
   --color-swap: var(--color-swap);
   --color-traverse: var(--color-traverse);
   --color-success: var(--color-success);
   --color-error: var(--color-error);
   --color-code: var(--color-code);
-  --color-card: var(--color-card);
-  --color-border-strong: var(--color-border-strong);
+  
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -32,6 +60,13 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-mono), monospace;
+  font-family: var(--font-sans), sans-serif;
 }
+
+.active-line {
+  background: rgba(96, 165, 250, 0.10);
+  border-left: 2px solid #60A5FA;
+  padding-left: 10px;
+}
+
 

@@ -41,7 +41,7 @@ export const SortingCanvas: React.FC = () => {
     ctx.scale(dpr, dpr);
 
     // Clear Canvas
-    ctx.fillStyle = '#0f172a'; // --color-background
+    ctx.fillStyle = '#141414'; // --bg-surface
     ctx.fillRect(0, 0, dimensions.width, dimensions.height);
 
     if (array.length === 0) return;
@@ -110,7 +110,7 @@ export const SortingCanvas: React.FC = () => {
   }, [array, steps, currentStepIndex, dimensions]);
 
   return (
-    <div ref={containerRef} className="w-full h-full min-h-[350px] relative bg-slate-900 rounded-xl overflow-hidden border border-border-strong shadow-2xl">
+    <div ref={containerRef} className="w-full h-full relative bg-transparent overflow-hidden">
       <canvas
         ref={canvasRef}
         style={{

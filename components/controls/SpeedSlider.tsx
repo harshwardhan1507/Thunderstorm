@@ -25,10 +25,10 @@ export const SpeedSlider: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col gap-1 bg-card border border-border-strong rounded-xl px-4 py-2 shadow-lg min-w-[160px] justify-center">
-      <div className="flex justify-between items-center text-xs text-slate-400 font-semibold">
+    <div className="flex flex-col gap-1 min-w-[120px] justify-center select-none font-sans">
+      <div className="flex justify-between items-center text-xs text-text-secondary font-bold">
         <span>Speed</span>
-        <span className="text-code font-bold">{SPEED_STEPS[activeIndex].label}</span>
+        <span className="text-accent-purple">{SPEED_STEPS[activeIndex].label}</span>
       </div>
       <input
         type="range"
@@ -36,7 +36,7 @@ export const SpeedSlider: React.FC = () => {
         max={SPEED_STEPS.length - 1}
         value={activeIndex}
         onChange={handleChange}
-        className="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-compare focus:outline-none"
+        className="w-full h-1 bg-border-default rounded-lg appearance-none cursor-pointer accent-accent-purple focus:outline-none"
       />
     </div>
   );

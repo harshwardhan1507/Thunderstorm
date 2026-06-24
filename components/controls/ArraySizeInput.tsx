@@ -12,10 +12,10 @@ export const ArraySizeInput: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col gap-1 bg-card border border-border-strong rounded-xl px-4 py-2 shadow-lg min-w-[160px] justify-center">
-      <div className="flex justify-between items-center text-xs text-slate-400 font-semibold">
+    <div className="flex flex-col gap-1 min-w-[120px] justify-center select-none font-sans">
+      <div className="flex justify-between items-center text-xs text-text-secondary font-bold">
         <span>Size</span>
-        <span className="text-code font-bold">{arraySize}</span>
+        <span className="text-accent-purple">{arraySize}</span>
       </div>
       <input
         type="range"
@@ -24,7 +24,7 @@ export const ArraySizeInput: React.FC = () => {
         value={arraySize}
         onChange={handleChange}
         disabled={isPlaying}
-        className="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-compare disabled:opacity-40 disabled:cursor-not-allowed focus:outline-none"
+        className="w-full h-1 bg-border-default rounded-lg appearance-none cursor-pointer accent-accent-purple disabled:opacity-40 disabled:cursor-not-allowed focus:outline-none"
       />
     </div>
   );

@@ -34,19 +34,19 @@ export const CodePanel: React.FC = () => {
   const setLanguage = useVisualizerStore((state) => state.setLanguage);
 
   return (
-    <div className="flex flex-col h-full bg-card rounded-xl border border-border-strong overflow-hidden shadow-2xl">
+    <div className="flex flex-col h-full bg-[#0f0f0f] w-full min-w-0">
       {/* Header controls */}
-      <div className="flex justify-between items-center px-4 py-3 bg-background border-b border-border-strong">
-        <span className="text-sm font-semibold tracking-wider text-code uppercase">Code Panel</span>
-        <div className="flex gap-1 bg-card border border-border-strong rounded-lg p-0.5">
+      <div className="flex justify-between items-center px-4 py-3 bg-[#0a0a0a]/50 border-b border-border-subtle">
+        <span className="text-xs font-bold uppercase tracking-wider text-text-secondary font-mono">Code Panel</span>
+        <div className="flex gap-1.5 p-0.5">
           {(['javascript', 'java', 'python', 'cpp'] as CodeLanguageType[]).map((lang) => (
             <button
               key={lang}
               onClick={() => setLanguage(lang)}
-              className={`px-3 py-1 text-xs font-semibold rounded-md transition-all duration-250 cursor-pointer ${
+              className={`px-3 py-1 rounded text-xs font-semibold tracking-wide transition-all duration-200 cursor-pointer ${
                 language === lang
-                  ? 'bg-compare text-white shadow-md'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-accent-purple text-white shadow-sm'
+                  : 'text-text-secondary hover:text-white hover:bg-elevated'
               }`}
             >
               {langLabelMap[lang]}
@@ -56,27 +56,24 @@ export const CodePanel: React.FC = () => {
       </div>
 
       {/* Code syntax container */}
-      <div className="flex-1 overflow-auto text-sm p-1 font-mono">
+      <div className="flex-1 overflow-auto text-sm font-mono">
         <SyntaxHighlighter
           language={language === 'cpp' ? 'cpp' : language}
           style={atomDark}
           customStyle={{
             margin: 0,
             background: 'transparent',
-            padding: '1rem 0.5rem',
+            padding: '1rem 0',
             minHeight: '100%',
           }}
           wrapLines={true}
           lineProps={(lineNum) => {
             const isHighlighted = lineNum === activeLine;
             return {
+              className: isHighlighted ? 'active-line' : '',
               style: {
                 display: 'block',
                 width: '100%',
-                background: isHighlighted ? 'rgba(59, 130, 246, 0.15)' : 'transparent',
-                borderLeft: isHighlighted ? '3px solid var(--color-code)' : '3px solid transparent',
-                paddingLeft: '0.5rem',
-                paddingRight: '0.5rem',
                 transition: 'background-color 0.15s ease, border-left-color 0.15s ease',
               },
             };
