@@ -4,7 +4,7 @@ import React, { useEffect, useState, useRef, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Play, Pause, SkipForward, SkipBack, RotateCcw, ChevronUp, ChevronDown, Trophy, X } from 'lucide-react';
-import { useCompareStore, CompareInstanceState } from '../../store/compareStore';
+import { useCompareStore } from '../../store/compareStore';
 import { CompareCanvas } from '../../components/visualizers/CompareCanvas';
 import { SORTING_ALGORITHMS_METADATA } from '../../lib/algorithms/metadata';
 import { SortingAlgorithmType, CodeLanguageType } from '../../store/visualizerStore';
