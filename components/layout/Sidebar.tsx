@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import {
   LayoutDashboard,
   BarChart2,
@@ -24,6 +24,8 @@ interface SidebarItem {
 
 export const Sidebar: React.FC = () => {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const modeParam = searchParams ? searchParams.get('mode') : null;
 
   const menuItems: SidebarItem[] = [
     { label: 'Dashboard', href: '/', icon: LayoutDashboard },
@@ -36,8 +38,8 @@ export const Sidebar: React.FC = () => {
   ];
 
   const compareItems: SidebarItem[] = [
-    { label: 'Compare Mode', href: '/compare', icon: Columns, disabled: true },
-    { label: 'Battle Mode', href: '/compare?mode=battle', icon: Swords, disabled: true },
+    { label: 'Compare Mode', href: '/compare', icon: Columns },
+    { label: 'Battle Mode', href: '/compare?mode=battle', icon: Swords },
   ];
 
   const renderItem = (item: SidebarItem) => {
@@ -59,7 +61,13 @@ export const Sidebar: React.FC = () => {
       );
     }
 
-    const isActive = pathname === item.href;
+    const isCompare = item.href === '/compare';
+    const isBattle = item.href.includes('mode=battle');
+    const isActive = isCompare
+      ? pathname === '/compare' && !modeParam
+      : isBattle
+        ? pathname === '/compare' && modeParam === 'battle'
+        : pathname === item.href;
 
     return (
       <Link
@@ -78,7 +86,7 @@ export const Sidebar: React.FC = () => {
   };
 
   return (
-    <aside className="fixed left-0 top-16 z-40 w-60 h-[calc(100vh-64px)] bg-surface border-r border-border-subtle flex flex-col justify-between p-4 overflow-y-auto">
+    <aside className="hidden md:flex fixed left-4 top-24 z-40 w-60 h-[calc(100vh-112px)] bg-surface/90 backdrop-blur-sm border border-border-subtle rounded-2xl flex-col justify-between p-4 overflow-y-auto shadow-lg shadow-black/20">
       {/* Navigation Groups */}
       <div className="flex flex-col gap-6">
         {/* Core Algorithms */}
