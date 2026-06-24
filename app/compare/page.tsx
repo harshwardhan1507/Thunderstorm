@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, Suspense } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { Play, Pause, SkipForward, SkipBack, RotateCcw, ChevronUp, ChevronDown, Trophy, X } from 'lucide-react';
 import { useCompareStore, CompareInstanceState } from '../../store/compareStore';
 import { CompareCanvas } from '../../components/visualizers/CompareCanvas';
@@ -22,6 +23,18 @@ const snippetMap: Record<SortingAlgorithmType, Record<CodeLanguageType, string>>
 };
 
 export default function ComparePage() {
+  return (
+    <Suspense fallback={
+      <div className="flex-1 w-full max-w-7xl mx-auto px-6 py-6 flex flex-col font-mono text-xs text-text-muted justify-center items-center h-[400px]">
+        Loading Visualizer...
+      </div>
+    }>
+      <CompareDashboard />
+    </Suspense>
+  );
+}
+
+function CompareDashboard() {
   const {
     left,
     right,
@@ -43,22 +56,32 @@ export default function ComparePage() {
     getMetrics,
   } = useCompareStore();
 
+  const searchParams = useSearchParams();
+  const modeParam = searchParams ? searchParams.get('mode') : null;
+
   const [isCodeExpanded, setIsCodeExpanded] = useState(false);
   const [activeCodeTab, setActiveCodeTab] = useState<'left' | 'right'>('left');
   const [codeLanguage, setCodeLanguage] = useState<CodeLanguageType>('javascript');
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Sync mode from URL parameters
+  useEffect(() => {
+    if (modeParam === 'battle' || modeParam === 'compare') {
+      setMode(modeParam);
+    }
+  }, [modeParam, setMode]);
+
   // Initialize arrays on mount
   useEffect(() => {
     generateNewArrays();
   }, [generateNewArrays]);
 
-  // Synchronized Playback Loop (handles stepping forward based on speed)
+  // Synchronized Playback Loop
   useEffect(() => {
     if (isPlaying) {
       const run = () => {
-        const { left, right, stepForwardBoth, setIsPlaying, mode } = useCompareStore.getState();
+        const { left, right, stepForwardBoth, setIsPlaying } = useCompareStore.getState();
         const leftHasNext = left.currentStepIndex < left.steps.length - 1;
         const rightHasNext = right.currentStepIndex < right.steps.length - 1;
 
