@@ -8,6 +8,8 @@ import { CodePanel } from '../../components/code/CodePanel';
 import { bfsSnippets } from '../../lib/snippets/graphs/bfs';
 import { dfsSnippets } from '../../lib/snippets/graphs/dfs';
 import { Play, Pause, SkipBack, SkipForward, RotateCcw, Clock, Activity, Share2, Compass } from 'lucide-react';
+import { AlgorithmExplanation } from '../../components/educational/AlgorithmExplanation';
+import { ComplexityChart } from '../../components/educational/ComplexityChart';
 
 const snippetMap = {
   bfs: bfsSnippets,
@@ -314,6 +316,16 @@ export default function GraphsPage() {
           <span className="px-3 py-1.5 rounded-lg bg-elevated border border-border-default text-xs font-semibold text-text-secondary shadow-sm">
             Space Complexity: <span className="text-code">O(V)</span>
           </span>
+        </div>
+      </div>
+
+      {/* Educational Panels */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+        <div className="md:col-span-2">
+          <AlgorithmExplanation algorithmId={selectedAlgorithm} />
+        </div>
+        <div>
+          <ComplexityChart activeComplexity="O(n)" />
         </div>
       </div>
     </div>

@@ -11,6 +11,8 @@ import { PlayPauseButton } from '../../components/controls/PlayPauseButton';
 import { MetricsPanel } from '../../components/controls/MetricsPanel';
 import { TimelineScrubber } from '../../components/controls/TimelineScrubber';
 import { SORTING_ALGORITHMS_METADATA } from '../../lib/algorithms/metadata';
+import { AlgorithmExplanation } from '../../components/educational/AlgorithmExplanation';
+import { ComplexityChart } from '../../components/educational/ComplexityChart';
 
 export default function SortingPage() {
   const {
@@ -114,6 +116,24 @@ export default function SortingPage() {
       {/* Metrics Section (sits below Controls Bar) */}
       <div>
         <MetricsPanel />
+      </div>
+
+      {/* Educational Panels */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+        <div className="md:col-span-2">
+          <AlgorithmExplanation algorithmId={selectedAlgorithm} />
+        </div>
+        <div>
+          <ComplexityChart
+            activeComplexity={
+              selectedAlgorithm === 'bubble'
+                ? 'O(n^2)'
+                : selectedAlgorithm === 'quick' || selectedAlgorithm === 'merge' || selectedAlgorithm === 'heap'
+                ? 'O(n log n)'
+                : 'O(n)'
+            }
+          />
+        </div>
       </div>
     </div>
   );

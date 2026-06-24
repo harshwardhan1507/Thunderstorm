@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useGreedyStore } from '../../store/greedyStore';
-import { pulseNode } from '../../lib/animations/nodeAnimation';
+import { pulseNode, NodeState } from '../../lib/animations/nodeAnimation';
 import { gsap } from 'gsap';
 
 export const GreedyCanvas: React.FC = () => {
@@ -98,11 +98,11 @@ export const GreedyCanvas: React.FC = () => {
     });
   }, [currentStep, selectedAlgorithm]);
 
-  // Pulse nodes in Huffman tree on merge
+  // Pulse nodes in Huffman tree on merge with state-based animation
   useEffect(() => {
     if (selectedAlgorithm === 'huffman' && currentStep?.huffmanTree?.activeIds) {
       currentStep.huffmanTree.activeIds.forEach((id) => {
-        pulseNode(`huffman-node-${id}`);
+        pulseNode(`huffman-node-${id}`, 'active');
       });
     }
   }, [currentStepIndex, selectedAlgorithm, currentStep]);
@@ -123,7 +123,7 @@ export const GreedyCanvas: React.FC = () => {
     };
 
     return (
-      <div ref={containerRef} className="w-full h-full relative p-6 bg-[#141414] overflow-auto min-w-0">
+      <div ref={containerRef} className="w-full h-full relative p-6 bg-surface overflow-auto min-w-0">
         <div className="flex flex-col gap-3.5 mx-auto max-w-lg select-none font-mono">
           <span className="text-[10px] text-text-muted font-bold tracking-wider uppercase mb-1">Activity Timeline (Sorted by End Time)</span>
           
@@ -132,13 +132,13 @@ export const GreedyCanvas: React.FC = () => {
             const isDiscarded = actState.discarded.includes(act.id);
             const isActive = actState.active === act.id;
 
-            let barBg = 'bg-[#1e1e24] border-[#333333] text-text-secondary';
+            let barBg = 'bg-surface-card border-border-subtle text-text-secondary';
             if (isActive) {
-              barBg = 'bg-accent-purple/20 border-accent-purple text-white shadow-[0_0_8px_rgba(124,58,237,0.4)]';
+              barBg = 'bg-accent-primary/20 border-accent-primary text-white shadow-[0_0_8px_rgba(59,130,246,0.4)]';
             } else if (isSelected) {
-              barBg = 'bg-success/20 border-success text-success';
+              barBg = 'bg-accent-success/20 border-accent-success text-accent-success';
             } else if (isDiscarded) {
-              barBg = 'bg-error/15 border-error/40 text-error/60';
+              barBg = 'bg-accent-error/15 border-accent-error/40 text-accent-error/60';
             }
 
             const xStart = getX(act.start);
@@ -148,7 +148,7 @@ export const GreedyCanvas: React.FC = () => {
             return (
               <div key={act.id} className="flex items-center gap-3 w-full">
                 <span className="text-[10px] text-text-secondary font-bold w-12 truncate">{act.id}</span>
-                <div className="flex-1 h-8 bg-[#0f0f0f] border border-[#1e1e1e] rounded-lg relative overflow-hidden">
+                <div className="flex-1 h-8 bg-surface-elevated border border-border-subtle rounded-lg relative overflow-hidden">
                   {/* Timeline segment */}
                   <div
                     className={`absolute h-6 top-1 rounded-md border text-[9px] font-bold flex items-center justify-center transition-all duration-200 ${barBg}`}
@@ -171,7 +171,7 @@ export const GreedyCanvas: React.FC = () => {
     const activeIdsSet = new Set(currentStep?.huffmanTree?.activeIds || []);
 
     return (
-      <div ref={containerRef} className="w-full h-full flex flex-col relative bg-[#141414]">
+      <div ref={containerRef} className="w-full h-full flex flex-col relative bg-surface">
         {/* Tree Canvas */}
         <div className="flex-1 w-full relative overflow-hidden">
           <svg
@@ -198,7 +198,7 @@ export const GreedyCanvas: React.FC = () => {
                     y1={node.y}
                     x2={child.x}
                     y2={child.y}
-                    stroke="#2c2c2c"
+                    stroke="rgba(255,255,255,0.08)"
                     strokeWidth={1.5}
                   />
                 );
@@ -212,7 +212,7 @@ export const GreedyCanvas: React.FC = () => {
                     y1={node.y}
                     x2={child.x}
                     y2={child.y}
-                    stroke="#2c2c2c"
+                    stroke="rgba(255,255,255,0.08)"
                     strokeWidth={1.5}
                   />
                 );
@@ -223,13 +223,13 @@ export const GreedyCanvas: React.FC = () => {
             {/* Nodes */}
             {Object.values(localNodes).map((node) => {
               const isActive = activeIdsSet.has(node.id);
-              let fillColor = '#1e1e24';
-              let strokeColor = '#333333';
+              let fillColor = '#171717'; // Neutral Storm Surface
+              let strokeColor = 'rgba(255,255,255,0.08)'; // Subtle border
               let filter = 'none';
 
               if (isActive) {
-                fillColor = '#7c3aed';
-                strokeColor = '#a78bfa';
+                fillColor = '#3B82F6'; // Electric Blue active
+                strokeColor = '#60A5FA';
                 filter = 'url(#glow)';
               }
 
@@ -264,7 +264,7 @@ export const GreedyCanvas: React.FC = () => {
                     y={node.y + 7}
                     dy=".1em"
                     textAnchor="middle"
-                    fill="#c084fc"
+                    fill="#7c3aed"
                     className="font-mono text-[8px] pointer-events-none"
                   >
                     {node.freq}
@@ -276,7 +276,7 @@ export const GreedyCanvas: React.FC = () => {
         </div>
 
         {/* Priority Queue Sorted HUD */}
-        <div className="h-[60px] w-full border-t border-[#2a2a2a] bg-[#0f0f0f]/60 backdrop-blur-md p-2 flex items-center gap-2 overflow-x-auto">
+        <div className="h-[60px] w-full border-t border-border-subtle bg-surface-card/90 backdrop-blur-md p-2 flex items-center gap-2 overflow-x-auto">
           <span className="text-[9px] uppercase font-black text-text-muted font-mono whitespace-nowrap">Priority Queue:</span>
           {queue.map((item, index) => {
             const isActive = activeIdsSet.has(item.id);
@@ -285,12 +285,12 @@ export const GreedyCanvas: React.FC = () => {
                 key={`${item.id}-${index}`}
                 className={`px-2.5 py-1 rounded border text-xs font-mono flex items-center gap-1.5 transition-all duration-200 ${
                   isActive
-                    ? 'bg-accent-purple/20 border-accent-purple text-white shadow-[0_0_8px_rgba(124,58,237,0.3)]'
-                    : 'bg-[#18181b] border-[#333333] text-text-secondary'
+                    ? 'bg-accent-primary/20 border-accent-primary text-white shadow-[0_0_8px_rgba(59,130,246,0.3)]'
+                    : 'bg-surface-elevated border-border-subtle text-text-secondary'
                 }`}
               >
                 <span className="font-bold text-white">{item.label}</span>
-                <span className="text-[10px] text-accent-violet">({item.freq})</span>
+                <span className="text-[10px] text-accent-secondary">({item.freq})</span>
               </div>
             );
           })}

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useGraphStore } from '../../store/graphStore';
-import { pulseNode, animateEdgeRipple } from '../../lib/animations/nodeAnimation';
+import { pulseNode, animateEdgeRipple, NodeState } from '../../lib/animations/nodeAnimation';
 import { Trash2, Plus, RefreshCw, Star, Share2 } from 'lucide-react';
 
 export const GraphCanvas: React.FC = () => {
@@ -48,15 +48,14 @@ export const GraphCanvas: React.FC = () => {
   useEffect(() => {
     if (currentStepIndex >= 0 && steps[currentStepIndex]) {
       const step = steps[currentStepIndex];
-      // Pulse current node
+      // Pulse current node with state-based animation
       if (step.currentNodeId) {
-        pulseNode(`graph-node-${step.currentNodeId}`);
+        pulseNode(`graph-node-${step.currentNodeId}`, 'active');
       }
       // Ripple active edges
       if (step.edgeTrail.length > 0) {
         const latestEdge = step.edgeTrail[step.edgeTrail.length - 1];
         const [u, v] = latestEdge;
-        // Edge id could be u-v or v-u
         animateEdgeRipple(`graph-edge-${u}-${v}`);
         animateEdgeRipple(`graph-edge-${v}-${u}`);
       }
@@ -141,43 +140,43 @@ export const GraphCanvas: React.FC = () => {
   const selectedNodeObj = nodes.find((n) => n.id === selectedNodeId);
 
   return (
-    <div className="w-full h-full flex flex-col relative bg-[#141414]">
+    <div className="w-full h-full flex flex-col relative bg-surface">
       {/* HUD Bar */}
-      <div className="flex items-center justify-between p-3 border-b border-[#2a2a2a] bg-[#0f0f0f]/60 backdrop-blur-md z-10">
+      <div className="flex items-center justify-between p-3 border-b border-border-subtle bg-surface-card/90 backdrop-blur-md z-10">
         <div className="flex items-center gap-2">
           <span className="text-[10px] uppercase font-bold text-text-muted">Preset Graphs:</span>
           <button
             onClick={() => loadPreset('default')}
             disabled={isPlaying}
-            className="px-2 py-1 rounded bg-[#1e1e1e] hover:bg-[#2e2e2e] border border-[#2a2a2a] text-[10px] text-white transition cursor-pointer disabled:opacity-40"
+            className="px-2 py-1 rounded bg-surface-elevated hover:bg-elevated border border-border-subtle text-[10px] text-white transition-all duration-200 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
           >
             Default
           </button>
           <button
             onClick={() => loadPreset('tree')}
             disabled={isPlaying}
-            className="px-2 py-1 rounded bg-[#1e1e1e] hover:bg-[#2e2e2e] border border-[#2a2a2a] text-[10px] text-white transition cursor-pointer disabled:opacity-40"
+            className="px-2 py-1 rounded bg-surface-elevated hover:bg-elevated border border-border-subtle text-[10px] text-white transition-all duration-200 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
           >
             Tree
           </button>
           <button
             onClick={() => loadPreset('cycle')}
             disabled={isPlaying}
-            className="px-2 py-1 rounded bg-[#1e1e1e] hover:bg-[#2e2e2e] border border-[#2a2a2a] text-[10px] text-white transition cursor-pointer disabled:opacity-40"
+            className="px-2 py-1 rounded bg-surface-elevated hover:bg-elevated border border-border-subtle text-[10px] text-white transition-all duration-200 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
           >
             Cycle
           </button>
           <button
             onClick={() => loadPreset('star')}
             disabled={isPlaying}
-            className="px-2 py-1 rounded bg-[#1e1e1e] hover:bg-[#2e2e2e] border border-[#2a2a2a] text-[10px] text-white transition cursor-pointer disabled:opacity-40"
+            className="px-2 py-1 rounded bg-surface-elevated hover:bg-elevated border border-border-subtle text-[10px] text-white transition-all duration-200 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
           >
             Star
           </button>
           <button
             onClick={() => loadPreset('grid')}
             disabled={isPlaying}
-            className="px-2 py-1 rounded bg-[#1e1e1e] hover:bg-[#2e2e2e] border border-[#2a2a2a] text-[10px] text-white transition cursor-pointer disabled:opacity-40"
+            className="px-2 py-1 rounded bg-surface-elevated hover:bg-elevated border border-border-subtle text-[10px] text-white transition-all duration-200 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
           >
             Grid
           </button>
@@ -189,7 +188,7 @@ export const GraphCanvas: React.FC = () => {
             value={startNodeId}
             onChange={(e) => setStartNodeId(e.target.value)}
             disabled={isPlaying}
-            className="bg-[#1a1a1a] border border-[#2a2a2a] text-[10px] rounded text-white p-0.5"
+            className="bg-surface-elevated border border-border-subtle text-[10px] rounded text-white p-0.5 focus:border-border-hover outline-none transition-colors"
           >
             {nodes.map((n) => (
               <option key={n.id} value={n.id}>
@@ -242,8 +241,8 @@ export const GraphCanvas: React.FC = () => {
                 y1={fromNode.y}
                 x2={toNode.x}
                 y2={toNode.y}
-                stroke={isVisited ? '#c084fc' : '#2c2c2c'}
-                strokeWidth={isVisited ? 4 : 2}
+                stroke={isVisited ? '#7c3aed' : 'rgba(255,255,255,0.08)'}
+                strokeWidth={isVisited ? 3 : 1.5}
                 strokeDasharray={isVisited ? 'none' : 'none'}
                 className="transition-all duration-200"
               />
@@ -271,23 +270,23 @@ export const GraphCanvas: React.FC = () => {
             const isSelected = node.id === selectedNodeId;
             const isStart = node.id === startNodeId;
 
-            let fillColor = '#1e1e24';
-            let strokeColor = '#333333';
+            let fillColor = '#171717'; // Neutral Storm Surface
+            let strokeColor = 'rgba(255,255,255,0.08)'; // Subtle border
             let filter = 'none';
 
             if (isCurrent) {
-              fillColor = '#8b5cf6'; // current is violet
-              strokeColor = '#a78bfa';
+              fillColor = '#3B82F6'; // Electric Blue Glow
+              strokeColor = '#60A5FA';
               filter = 'url(#glow)';
             } else if (isVisited) {
-              fillColor = '#7c3aed'; // visited is violet-blue
-              strokeColor = '#c084fc';
+              fillColor = '#7c3aed'; // Storm Violet Ripple
+              strokeColor = '#a78bfa';
             }
 
             if (isSelected) {
-              strokeColor = '#facc15'; // selected node gets yellow border
+              strokeColor = '#F59E0B'; // Amber for selection
             } else if (isStart) {
-              strokeColor = '#3b82f6'; // start node gets blue border
+              strokeColor = '#3B82F6'; // Blue for start node
             }
 
             return (
@@ -338,7 +337,7 @@ export const GraphCanvas: React.FC = () => {
 
       {/* Editing Instructions Overlay */}
       {!isPlaying && (
-        <div className="absolute bottom-3 left-3 bg-[#0f0f0f]/80 backdrop-blur-md border border-[#2a2a2a] rounded-lg p-2.5 text-[10px] text-text-secondary select-none pointer-events-none font-mono max-w-[280px]">
+        <div className="absolute bottom-3 left-3 bg-surface-card/90 backdrop-blur-md border border-border-subtle rounded-lg p-2.5 text-[10px] text-text-secondary select-none pointer-events-none font-mono max-w-[280px] shadow-lg">
           <p className="text-white font-bold mb-1">Interactive Controls:</p>
           <ul className="list-disc pl-3.5 space-y-0.5">
             <li>Click empty space to add a new Node.</li>

@@ -21,6 +21,8 @@ interface CodePanelProps {
   language?: CodeLanguageType;
   activeLine?: number;
   setLanguage?: (lang: CodeLanguageType) => void;
+  algorithm?: string;
+  visualizerType?: 'sorting' | 'graph' | 'pathfinding' | 'tree' | 'dp';
 }
 
 export const CodePanel: React.FC<CodePanelProps> = ({
@@ -46,9 +48,9 @@ export const CodePanel: React.FC<CodePanelProps> = ({
   };
 
   return (
-    <div className="flex flex-col h-full bg-[#0f0f0f] w-full min-w-0">
+    <div className="flex flex-col h-full bg-surface w-full min-w-0">
       {/* Header controls */}
-      <div className="flex justify-between items-center px-4 py-3 bg-[#0a0a0a]/50 border-b border-border-subtle">
+      <div className="flex justify-between items-center px-4 py-3 bg-surface-card/90 backdrop-blur-md border-b border-border-subtle">
         <span className="text-xs font-bold uppercase tracking-wider text-text-secondary font-mono">Code Panel</span>
         <div className="flex gap-1.5 p-0.5">
           {(['javascript', 'java', 'python', 'cpp'] as CodeLanguageType[]).map((lang) => (
@@ -57,8 +59,8 @@ export const CodePanel: React.FC<CodePanelProps> = ({
               onClick={() => setLanguage(lang)}
               className={`px-3 py-1 rounded text-xs font-semibold tracking-wide transition-all duration-200 cursor-pointer ${
                 language === lang
-                  ? 'bg-accent-purple text-white shadow-sm'
-                  : 'text-text-secondary hover:text-white hover:bg-elevated'
+                  ? 'bg-accent-primary text-white shadow-sm'
+                  : 'text-text-secondary hover:text-white hover:bg-surface-elevated'
               }`}
             >
               {langLabelMap[lang]}
@@ -89,6 +91,8 @@ export const CodePanel: React.FC<CodePanelProps> = ({
                 transition: 'background-color 0.15s ease, border-left-color 0.15s ease',
                 paddingLeft: '1.25rem',
                 paddingRight: '1.25rem',
+                backgroundColor: isHighlighted ? 'rgba(59, 130, 246, 0.15)' : 'transparent',
+                borderLeft: isHighlighted ? '3px solid #3B82F6' : '3px solid transparent',
               },
             };
           }}

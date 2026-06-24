@@ -9,6 +9,8 @@ import { bstSnippets } from '../../lib/snippets/trees/bst';
 import { avlSnippets } from '../../lib/snippets/trees/avl';
 import { heapSnippets } from '../../lib/snippets/trees/heap';
 import { Play, Pause, SkipBack, SkipForward, RotateCcw, Clock, Activity, GitBranch, ArrowUp } from 'lucide-react';
+import { AlgorithmExplanation } from '../../components/educational/AlgorithmExplanation';
+import { ComplexityChart } from '../../components/educational/ComplexityChart';
 
 const snippetMap = {
   bst: bstSnippets,
@@ -25,6 +27,7 @@ interface ChromePerformance extends Performance {
 export default function TreesPage() {
   const {
     treeType,
+    heapArray,
     steps,
     currentStepIndex,
     isPlaying,
@@ -449,6 +452,16 @@ export default function TreesPage() {
           <span className="px-3 py-1.5 rounded-lg bg-elevated border border-border-default text-xs font-semibold text-text-secondary shadow-sm">
             Min Heap Operations: <span className="text-success">O(log N) insert/delete</span> · <span className="text-success">O(1) peek</span>
           </span>
+        </div>
+      </div>
+
+      {/* Educational Panels */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+        <div className="md:col-span-2">
+          <AlgorithmExplanation algorithmId={treeType} />
+        </div>
+        <div>
+          <ComplexityChart activeComplexity="O(log n)" />
         </div>
       </div>
     </div>

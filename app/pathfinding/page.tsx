@@ -8,6 +8,8 @@ import { CodePanel } from '../../components/code/CodePanel';
 import { dijkstraSnippets } from '../../lib/snippets/pathfinding/dijkstra';
 import { astarSnippets } from '../../lib/snippets/pathfinding/astar';
 import { Play, Pause, SkipBack, SkipForward, RotateCcw, Clock, Activity, Flag, Route } from 'lucide-react';
+import { AlgorithmExplanation } from '../../components/educational/AlgorithmExplanation';
+import { ComplexityChart } from '../../components/educational/ComplexityChart';
 
 const snippetMap = {
   dijkstra: dijkstraSnippets,
@@ -354,6 +356,16 @@ export default function PathfindingPage() {
           </ul>
         </div>
       )}
+
+      {/* Educational Panels */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+        <div className="md:col-span-2">
+          <AlgorithmExplanation algorithmId={selectedAlgorithm} />
+        </div>
+        <div>
+          <ComplexityChart activeComplexity="O(n log n)" />
+        </div>
+      </div>
     </div>
   );
 }

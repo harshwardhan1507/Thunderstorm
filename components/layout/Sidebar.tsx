@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
+import { motion } from 'framer-motion';
 import {
   LayoutDashboard,
   BarChart2,
@@ -30,11 +31,11 @@ export const Sidebar: React.FC = () => {
   const menuItems: SidebarItem[] = [
     { label: 'Dashboard', href: '/', icon: LayoutDashboard },
     { label: 'Sorting', href: '/sorting', icon: BarChart2 },
-    { label: 'Graphs', href: '/graphs', icon: Share2, disabled: true },
-    { label: 'Pathfinding', href: '/pathfinding', icon: Navigation, disabled: true },
-    { label: 'Trees', href: '/trees', icon: GitBranch, disabled: true },
-    { label: 'Dynamic Programming', href: '/dp', icon: Table2, disabled: true },
-    { label: 'Greedy', href: '/greedy', icon: Zap, disabled: true },
+    { label: 'Graphs', href: '/graphs', icon: Share2 },
+    { label: 'Pathfinding', href: '/pathfinding', icon: Navigation },
+    { label: 'Trees', href: '/trees', icon: GitBranch },
+    { label: 'Dynamic Programming', href: '/dp', icon: Table2 },
+    { label: 'Greedy', href: '/greedy', icon: Zap },
   ];
 
   const compareItems: SidebarItem[] = [
@@ -73,14 +74,23 @@ export const Sidebar: React.FC = () => {
       <Link
         key={item.label}
         href={item.href}
-        className={`flex items-center gap-3 py-2.5 rounded-lg transition-all duration-200 cursor-pointer text-sm font-medium ${
+        className={`relative flex items-center gap-3 py-2.5 rounded-lg transition-all duration-200 cursor-pointer text-sm font-medium ${
           isActive
-            ? 'bg-highlight text-text-primary border-l-2 border-accent-purple pl-[10px] pr-3'
-            : 'text-text-secondary hover:bg-elevated hover:text-text-primary px-3'
+            ? 'text-text-primary pl-[10px] pr-3'
+            : 'text-text-secondary hover:bg-elevated/40 hover:text-text-primary px-3'
         }`}
       >
-        <item.icon className="w-4 h-4 flex-shrink-0" />
-        <span>{item.label}</span>
+        {isActive && (
+          <motion.div
+            layoutId="active-sidebar-indicator"
+            className="absolute inset-0 bg-highlight rounded-lg border-l-2 border-accent-purple"
+            transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+          />
+        )}
+        <span className="relative z-10 flex items-center gap-3">
+          <item.icon className="w-4 h-4 flex-shrink-0" />
+          <span>{item.label}</span>
+        </span>
       </Link>
     );
   };

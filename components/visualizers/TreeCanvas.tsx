@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { useTreeStore } from '../../store/treeStore';
-import { pulseNode } from '../../lib/animations/nodeAnimation';
+import { pulseNode, animateNodeDrop, animateRotationFlash, NodeState } from '../../lib/animations/nodeAnimation';
 import { layoutTree, layoutHeap } from '../../lib/algorithms/trees/treeAlgorithms';
 import { gsap } from 'gsap';
 
@@ -47,26 +47,29 @@ export const TreeCanvas: React.FC = () => {
   }, []);
 
   // Compute active target tree structure
-  let targetStructure: Record<string, any> = {};
-  let rootId: string | null = null;
-
   const currentStep = steps[currentStepIndex] || null;
 
-  if (currentStep) {
-    targetStructure = currentStep.treeStructure;
-    rootId = currentStep.rootId;
-  } else {
-    if (treeType === 'bst') {
-      targetStructure = layoutTree(bstRoot, dimensions.width);
-      rootId = bstRoot ? bstRoot.id : null;
-    } else if (treeType === 'avl') {
-      targetStructure = layoutTree(avlRoot, dimensions.width);
-      rootId = avlRoot ? avlRoot.id : null;
-    } else if (treeType === 'heap') {
-      targetStructure = layoutHeap(heapArray);
-      rootId = heapArray[0]?.id || null;
+  const { targetStructure, rootId } = useMemo(() => {
+    let struct: Record<string, any> = {};
+    let rId: string | null = null;
+
+    if (currentStep) {
+      struct = currentStep.treeStructure;
+      rId = currentStep.rootId;
+    } else {
+      if (treeType === 'bst') {
+        struct = layoutTree(bstRoot, dimensions.width);
+        rId = bstRoot ? bstRoot.id : null;
+      } else if (treeType === 'avl') {
+        struct = layoutTree(avlRoot, dimensions.width);
+        rId = avlRoot ? avlRoot.id : null;
+      } else if (treeType === 'heap') {
+        struct = layoutHeap(heapArray);
+        rId = heapArray[0]?.id || null;
+      }
     }
-  }
+    return { targetStructure: struct, rootId: rId };
+  }, [currentStep, treeType, bstRoot, avlRoot, heapArray, dimensions.width]);
 
   // Animate local nodes to target coordinates using GSAP
   useEffect(() => {
@@ -134,10 +137,16 @@ export const TreeCanvas: React.FC = () => {
     });
   }, [targetStructure]);
 
-  // Pulse node on step update
+  // Pulse node on step update with state-based animation
   useEffect(() => {
     if (currentStepIndex >= 0 && currentStep && currentStep.activeNodeId) {
-      pulseNode(`tree-node-${currentStep.activeNodeId}`);
+      pulseNode(`tree-node-${currentStep.activeNodeId}`, 'active');
+    }
+    // Trigger rotation flash if needed
+    if (currentStep && currentStep.rotationFlashIds) {
+      currentStep.rotationFlashIds.forEach(id => {
+        animateRotationFlash(`tree-node-${id}`);
+      });
     }
   }, [currentStepIndex, currentStep]);
 
@@ -146,7 +155,7 @@ export const TreeCanvas: React.FC = () => {
   const rotationFlashIds = new Set(currentStep?.rotationFlashIds || []);
 
   return (
-    <div ref={containerRef} className="w-full h-full relative bg-[#141414] overflow-hidden">
+    <div ref={containerRef} className="w-full h-full relative bg-surface overflow-hidden">
       <svg
         width={dimensions.width}
         height={dimensions.height}
@@ -175,8 +184,8 @@ export const TreeCanvas: React.FC = () => {
                 y1={node.y}
                 x2={child.x}
                 y2={child.y}
-                stroke="#2c2c2c"
-                strokeWidth={2}
+                stroke="rgba(255,255,255,0.08)"
+                strokeWidth={1.5}
               />
             );
           }
@@ -189,8 +198,8 @@ export const TreeCanvas: React.FC = () => {
                 y1={node.y}
                 x2={child.x}
                 y2={child.y}
-                stroke="#2c2c2c"
-                strokeWidth={2}
+                stroke="rgba(255,255,255,0.08)"
+                strokeWidth={1.5}
               />
             );
           }
@@ -204,22 +213,22 @@ export const TreeCanvas: React.FC = () => {
           const isFlash = rotationFlashIds.has(node.id);
           const isRoot = node.id === rootId;
 
-          let fillColor = '#1e1e24';
-          let strokeColor = '#333333';
+          let fillColor = '#171717'; // Neutral Storm Surface
+          let strokeColor = 'rgba(255,255,255,0.08)'; // Subtle border
           let filter = 'none';
 
           if (isFlash) {
-            fillColor = '#22c55e'; // rotation flash gets green
-            strokeColor = '#4ade80';
+            fillColor = '#22C55E'; // Green confirmation glow
+            strokeColor = '#4ADE80';
           } else if (isCurrent) {
-            fillColor = '#7c3aed'; // current active is violet
-            strokeColor = '#a78bfa';
+            fillColor = '#3B82F6'; // Electric Blue active
+            strokeColor = '#60A5FA';
             filter = 'url(#glow)';
           } else if (isComparing) {
-            fillColor = '#8b5cf6'; // comparing is lighter violet
-            strokeColor = '#a78bfa';
+            fillColor = '#06B6D4'; // Cyan highlight for search path
+            strokeColor = '#22D3EE';
           } else if (isRoot) {
-            strokeColor = '#3b82f6'; // root gets blue border glow
+            strokeColor = '#3B82F6'; // Blue Storm Core Glow
             filter = 'url(#root-glow)';
           }
 

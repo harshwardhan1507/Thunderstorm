@@ -8,6 +8,9 @@ import { CodePanel } from '../../components/code/CodePanel';
 import { activitySnippets } from '../../lib/snippets/greedy/activity';
 import { huffmanSnippets } from '../../lib/snippets/greedy/huffman';
 import { Play, Pause, SkipBack, SkipForward, RotateCcw, Clock, Activity, CheckSquare, TreePine } from 'lucide-react';
+import { AlgorithmExplanation } from '../../components/educational/AlgorithmExplanation';
+import { ComplexityChart } from '../../components/educational/ComplexityChart';
+import { AnimatedCounter } from '../../components/controls/AnimatedCounter';
 
 const snippetMap = {
   activity: activitySnippets,
@@ -264,7 +267,9 @@ export default function GreedyPage() {
               </span>
               <CheckSquare className="w-3.5 h-3.5 text-text-secondary" />
             </div>
-            <div className="text-2xl font-black text-white font-mono leading-none mt-1">{selectedCount}</div>
+            <div className="text-2xl font-black text-white font-mono leading-none mt-1">
+              <AnimatedCounter value={selectedCount} />
+            </div>
           </div>
 
           {/* Greedy Metric 2: Discarded or Tree Height */}
@@ -276,7 +281,14 @@ export default function GreedyPage() {
               <TreePine className="w-3.5 h-3.5 text-text-secondary" />
             </div>
             <div className="text-2xl font-black text-white font-mono leading-none mt-1">
-              {selectedAlgorithm === 'activity' ? discardedCount : `${treeDepth} levels`}
+              {selectedAlgorithm === 'activity' ? (
+                <AnimatedCounter value={discardedCount} />
+              ) : (
+                <span>
+                  <AnimatedCounter value={treeDepth} />
+                  <span className="text-sm font-semibold ml-1">levels</span>
+                </span>
+              )}
             </div>
           </div>
 
@@ -287,7 +299,8 @@ export default function GreedyPage() {
               <Clock className="w-3.5 h-3.5 text-text-secondary" />
             </div>
             <div className="text-2xl font-black text-white font-mono leading-none mt-1">
-              {executionTime.toFixed(2)}ms
+              <AnimatedCounter value={executionTime} />
+              <span className="text-sm font-semibold">ms</span>
             </div>
           </div>
 
@@ -298,7 +311,9 @@ export default function GreedyPage() {
               <Activity className="w-3.5 h-3.5 text-text-secondary" />
             </div>
             <div>
-              <div className="text-2xl font-black text-white font-mono leading-none mt-1">{heapMemory}</div>
+              <div className="text-2xl font-black text-white font-mono leading-none mt-1">
+                <AnimatedCounter value={heapMemory} />
+              </div>
               {heapMemory !== 'N/A' && (
                 <div className="text-[9px] text-text-muted mt-1 leading-none font-mono">Chrome only, approx</div>
               )}
@@ -314,6 +329,16 @@ export default function GreedyPage() {
           <span className="px-3 py-1.5 rounded-lg bg-elevated border border-border-default text-xs font-semibold text-text-secondary shadow-sm">
             Huffman Tree Complexity: <span className="text-success">O(N log N) time</span> · <span className="text-success">O(N) space</span>
           </span>
+        </div>
+      </div>
+
+      {/* Educational Panels */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+        <div className="md:col-span-2">
+          <AlgorithmExplanation algorithmId={selectedAlgorithm} />
+        </div>
+        <div>
+          <ComplexityChart activeComplexity="O(n log n)" />
         </div>
       </div>
     </div>

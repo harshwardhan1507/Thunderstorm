@@ -104,21 +104,21 @@ export const DPTable: React.FC = () => {
   const dependentSet = new Set(currentStep?.dependentCells.map(([r, c]) => `${r},${c}`) || []);
   const tableData = currentStep ? currentStep.table : [];
 
-  // Helper to determine cell coloring
+  // Helper to determine cell coloring with new design system
   const getCellClassName = (r: number, c: number) => {
     const isAct = activeCell && activeCell[0] === r && activeCell[1] === c;
     const isDep = dependentSet.has(`${r},${c}`);
     
     if (isAct) {
-      return 'bg-accent-purple/30 border-accent-purple text-white shadow-[0_0_8px_rgba(124,58,237,0.4)] font-extrabold';
+      return 'bg-accent-primary/30 border-accent-primary text-white shadow-[0_0_12px_rgba(59,130,246,0.5)] font-extrabold';
     }
     if (isDep) {
-      return 'bg-blue-950/40 border-blue-500 text-blue-400 font-semibold';
+      return 'bg-accent-secondary/20 border-accent-secondary text-accent-secondary font-semibold';
     }
     if (tableData[r]?.[c] !== null) {
-      return 'bg-surface border-border-subtle text-text-primary';
+      return 'bg-surface-card border-border-subtle text-text-primary';
     }
-    return 'bg-[#0f0f0f]/40 border-border-subtle/30 text-text-muted';
+    return 'bg-surface border-border-subtle/30 text-text-muted';
   };
 
   // Render LCS grid
@@ -127,7 +127,7 @@ export const DPTable: React.FC = () => {
     const colsList = ['', ...strB.split('')];
 
     return (
-      <div ref={containerRef} className="w-full h-full relative overflow-auto p-6 bg-[#141414] min-w-0">
+      <div ref={containerRef} className="w-full h-full relative overflow-auto p-6 bg-surface min-w-0">
         {/* SVG Arrow Overlay */}
         <svg
           className="absolute inset-0 pointer-events-none z-10"
@@ -144,7 +144,7 @@ export const DPTable: React.FC = () => {
               markerHeight="6"
               orient="auto-start-reverse"
             >
-              <path d="M 0 0 L 10 5 L 0 10 z" fill="#a78bfa" />
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#7c3aed" />
             </marker>
           </defs>
           {arrows.map((arrow) => (
@@ -155,7 +155,7 @@ export const DPTable: React.FC = () => {
                 y1={arrow.fromY}
                 x2={arrow.toX}
                 y2={arrow.toY}
-                stroke="#c084fc"
+                stroke="#a78bfa"
                 strokeWidth={5}
                 strokeLinecap="round"
                 opacity={0.3}
@@ -165,7 +165,7 @@ export const DPTable: React.FC = () => {
                 y1={arrow.fromY}
                 x2={arrow.toX}
                 y2={arrow.toY}
-                stroke="#a78bfa"
+                stroke="#7c3aed"
                 strokeWidth={2}
                 strokeLinecap="round"
                 markerEnd="url(#arrow)"
@@ -178,9 +178,9 @@ export const DPTable: React.FC = () => {
         <table ref={tableRef} className="border-collapse mx-auto select-none font-mono">
           <thead>
             <tr>
-              <th className="p-2 border border-[#2a2a2a] text-xs text-text-muted"></th>
+              <th className="p-2 border border-border-subtle text-xs text-text-muted"></th>
               {colsList.map((char, colIdx) => (
-                <th key={`col-${colIdx}`} className="p-2.5 border border-[#2a2a2a] text-center text-xs font-bold text-text-secondary min-w-[45px]">
+                <th key={`col-${colIdx}`} className="p-2.5 border border-border-subtle text-center text-xs font-bold text-text-secondary min-w-[45px]">
                   {char || '-'}
                   <div className="text-[8px] text-text-muted mt-0.5">{colIdx}</div>
                 </th>
@@ -190,7 +190,7 @@ export const DPTable: React.FC = () => {
           <tbody>
             {rowsList.map((char, rowIdx) => (
               <tr key={`row-${rowIdx}`}>
-                <td className="p-2.5 border border-[#2a2a2a] text-right text-xs font-bold text-text-secondary min-w-[35px]">
+                <td className="p-2.5 border border-border-subtle text-right text-xs font-bold text-text-secondary min-w-[35px]">
                   {char || '-'}
                   <span className="text-[8px] text-text-muted block mt-0.5">{rowIdx}</span>
                 </td>
@@ -216,7 +216,7 @@ export const DPTable: React.FC = () => {
 
         {/* Transition Formula Overlay */}
         {currentStep && (
-          <div className="mt-6 text-center text-xs text-text-secondary bg-[#0f0f0f]/80 border border-[#2a2a2a] rounded-lg p-2.5 max-w-lg mx-auto font-mono">
+          <div className="mt-6 text-center text-xs text-text-secondary bg-surface-card/90 backdrop-blur-md border border-border-subtle rounded-lg p-2.5 max-w-lg mx-auto font-mono shadow-lg">
             <span className="text-white font-bold block mb-1">State Transition:</span>
             {currentStep.formula}
           </div>
@@ -230,7 +230,7 @@ export const DPTable: React.FC = () => {
     const colsList = Array(knapsackCapacity + 1).fill(0); // weights 0 to capacity
 
     return (
-      <div ref={containerRef} className="w-full h-full relative overflow-auto p-6 bg-[#141414] min-w-0">
+      <div ref={containerRef} className="w-full h-full relative overflow-auto p-6 bg-surface min-w-0">
         <svg
           className="absolute inset-0 pointer-events-none z-10"
           width="100%"
@@ -246,7 +246,7 @@ export const DPTable: React.FC = () => {
               markerHeight="6"
               orient="auto-start-reverse"
             >
-              <path d="M 0 0 L 10 5 L 0 10 z" fill="#a78bfa" />
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#7c3aed" />
             </marker>
           </defs>
           {arrows.map((arrow) => (
@@ -256,7 +256,7 @@ export const DPTable: React.FC = () => {
                 y1={arrow.fromY}
                 x2={arrow.toX}
                 y2={arrow.toY}
-                stroke="#c084fc"
+                stroke="#a78bfa"
                 strokeWidth={5}
                 strokeLinecap="round"
                 opacity={0.3}
@@ -266,7 +266,7 @@ export const DPTable: React.FC = () => {
                 y1={arrow.fromY}
                 x2={arrow.toX}
                 y2={arrow.toY}
-                stroke="#a78bfa"
+                stroke="#7c3aed"
                 strokeWidth={2}
                 strokeLinecap="round"
                 markerEnd="url(#arrow)"
@@ -278,9 +278,9 @@ export const DPTable: React.FC = () => {
         <table ref={tableRef} className="border-collapse mx-auto select-none font-mono">
           <thead>
             <tr>
-              <th className="p-2 border border-[#2a2a2a] text-xs text-text-muted">Item</th>
+              <th className="p-2 border border-border-subtle text-xs text-text-muted">Item</th>
               {colsList.map((_, colIdx) => (
-                <th key={`w-${colIdx}`} className="p-2.5 border border-[#2a2a2a] text-center text-xs font-bold text-text-secondary min-w-[45px]">
+                <th key={`w-${colIdx}`} className="p-2.5 border border-border-subtle text-center text-xs font-bold text-text-secondary min-w-[45px]">
                   w={colIdx}
                 </th>
               ))}
@@ -289,7 +289,7 @@ export const DPTable: React.FC = () => {
           <tbody>
             {/* Row 0: Empty item base case */}
             <tr key="row-0">
-              <td className="p-2.5 border border-[#2a2a2a] text-xs font-bold text-text-secondary">
+              <td className="p-2.5 border border-border-subtle text-xs font-bold text-text-secondary">
                 -
                 <span className="text-[8px] text-text-muted block mt-0.5">i=0</span>
               </td>
@@ -314,7 +314,7 @@ export const DPTable: React.FC = () => {
               const actualRow = rowIdx + 1;
               return (
                 <tr key={`row-${actualRow}`}>
-                  <td className="p-2.5 border border-[#2a2a2a] text-xs font-bold text-text-secondary whitespace-nowrap min-w-[90px]">
+                  <td className="p-2.5 border border-border-subtle text-xs font-bold text-text-secondary whitespace-nowrap min-w-[90px]">
                     v:{item.value}, w:{item.weight}
                     <span className="text-[8px] text-text-muted block mt-0.5">i={actualRow}</span>
                   </td>
@@ -340,7 +340,7 @@ export const DPTable: React.FC = () => {
         </table>
 
         {currentStep && (
-          <div className="mt-6 text-center text-xs text-text-secondary bg-[#0f0f0f]/80 border border-[#2a2a2a] rounded-lg p-2.5 max-w-lg mx-auto font-mono">
+          <div className="mt-6 text-center text-xs text-text-secondary bg-surface-card/90 backdrop-blur-md border border-border-subtle rounded-lg p-2.5 max-w-lg mx-auto font-mono shadow-lg">
             <span className="text-white font-bold block mb-1">State Transition:</span>
             {currentStep.formula}
           </div>
@@ -354,7 +354,7 @@ export const DPTable: React.FC = () => {
     const colsList = Array(fibN + 1).fill(0);
 
     return (
-      <div ref={containerRef} className="w-full h-full relative overflow-auto p-6 bg-[#141414] min-w-0">
+      <div ref={containerRef} className="w-full h-full relative overflow-auto p-6 bg-surface min-w-0">
         <svg
           className="absolute inset-0 pointer-events-none z-10"
           width="100%"
@@ -370,7 +370,7 @@ export const DPTable: React.FC = () => {
               markerHeight="6"
               orient="auto-start-reverse"
             >
-              <path d="M 0 0 L 10 5 L 0 10 z" fill="#a78bfa" />
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#7c3aed" />
             </marker>
           </defs>
           {arrows.map((arrow) => (
@@ -378,14 +378,14 @@ export const DPTable: React.FC = () => {
               <path
                 d={`M ${arrow.fromX} ${arrow.fromY} Q ${(arrow.fromX + arrow.toX) / 2} ${arrow.fromY - 30} ${arrow.toX} ${arrow.toY}`}
                 fill="none"
-                stroke="#c084fc"
+                stroke="#a78bfa"
                 strokeWidth={4}
                 opacity={0.3}
               />
               <path
                 d={`M ${arrow.fromX} ${arrow.fromY} Q ${(arrow.fromX + arrow.toX) / 2} ${arrow.fromY - 30} ${arrow.toX} ${arrow.toY}`}
                 fill="none"
-                stroke="#a78bfa"
+                stroke="#7c3aed"
                 strokeWidth={1.5}
                 markerEnd="url(#arrow)"
               />
@@ -397,7 +397,7 @@ export const DPTable: React.FC = () => {
           <thead>
             <tr>
               {colsList.map((_, colIdx) => (
-                <th key={`fib-${colIdx}`} className="p-2.5 border border-[#2a2a2a] text-center text-xs font-bold text-text-secondary min-w-[50px]">
+                <th key={`fib-${colIdx}`} className="p-2.5 border border-border-subtle text-center text-xs font-bold text-text-secondary min-w-[50px]">
                   F[{colIdx}]
                 </th>
               ))}
@@ -425,7 +425,7 @@ export const DPTable: React.FC = () => {
         </table>
 
         {currentStep && (
-          <div className="mt-6 text-center text-xs text-text-secondary bg-[#0f0f0f]/80 border border-[#2a2a2a] rounded-lg p-2.5 max-w-lg mx-auto font-mono">
+          <div className="mt-6 text-center text-xs text-text-secondary bg-surface-card/90 backdrop-blur-md border border-border-subtle rounded-lg p-2.5 max-w-lg mx-auto font-mono shadow-lg">
             <span className="text-white font-bold block mb-1">State Transition:</span>
             {currentStep.formula}
           </div>

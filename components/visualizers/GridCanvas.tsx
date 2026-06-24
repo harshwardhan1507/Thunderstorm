@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { usePathfindingStore } from '../../store/pathfindingStore';
+import { animateWavePropagation, animatePathReconstruction, animateGoalReached } from '../../lib/animations/nodeAnimation';
 
 export const GridCanvas: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -122,7 +123,7 @@ export const GridCanvas: React.FC = () => {
     const cellHeight = dimensions.height / rows;
 
     // Clear Canvas
-    ctx.fillStyle = '#0f0f0f'; // Dark base
+    ctx.fillStyle = '#0A0A0A'; // Dark base
     ctx.fillRect(0, 0, dimensions.width, dimensions.height);
 
     // Setup visualization step info
@@ -140,44 +141,44 @@ export const GridCanvas: React.FC = () => {
         const x = c * cellWidth;
         const y = r * cellHeight;
 
-        let fillStyle = '#141414'; // default cell bg
+        let fillStyle = '#111111'; // default cell bg
         let isPathCell = pathSet.has(key);
 
         if (walls.has(key)) {
-          fillStyle = '#334155'; // Wall slate grey
+          fillStyle = '#1B1B1B'; // Wall elevated dark block
         } else if (key === startNode || key === endNode) {
-          fillStyle = '#141414'; // Draw nodes later
+          fillStyle = '#111111'; // Draw nodes later
         } else if (key === currentChecking) {
-          fillStyle = '#facc15'; // Current search frontier: yellow
+          fillStyle = '#3B82F6'; // Electric Blue frontier
         } else if (visitedSet.has(key)) {
-          // Purple/violet gradient based on when it was visited
+          // Violet gradient based on when it was visited
           const visitIndex = visitedList.indexOf(key);
           const ratio = visitedList.length > 1 ? visitIndex / visitedList.length : 0.5;
-          // Gradient between violet (260 HSL) and storm pink/violet (300 HSL)
-          fillStyle = `hsla(${250 + ratio * 60}, 75%, 45%, 0.85)`;
+          // Gradient between violet and storm pink
+          fillStyle = `hsla(${260 + ratio * 40}, 70%, 40%, 0.9)`;
         }
 
         ctx.fillStyle = fillStyle;
         ctx.fillRect(x + 0.5, y + 0.5, cellWidth - 1, cellHeight - 1);
 
         // Subtly draw grid lines
-        ctx.strokeStyle = '#1e1e1e';
+        ctx.strokeStyle = 'rgba(255,255,255,0.05)';
         ctx.lineWidth = 0.5;
         ctx.strokeRect(x, y, cellWidth, cellHeight);
       }
     }
 
-    // Draw Path Trail (Glowing green line connecting centers)
+    // Draw Path Trail (Emerald energy trail)
     if (pathList.length > 1) {
       ctx.save();
-      ctx.strokeStyle = '#22c55e'; // neon green trail
+      ctx.strokeStyle = '#22C55E'; // Emerald trail
       ctx.lineWidth = Math.min(cellWidth, cellHeight) * 0.35;
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
       
       // Glow effect
-      ctx.shadowColor = '#4ade80';
-      ctx.shadowBlur = 10;
+      ctx.shadowColor = '#4ADE80';
+      ctx.shadowBlur = 12;
 
       ctx.beginPath();
       pathList.forEach((key, index) => {
@@ -205,8 +206,8 @@ export const GridCanvas: React.FC = () => {
       ctx.beginPath();
       ctx.arc(x, y, radius, 0, 2 * Math.PI);
       if (isStart) {
-        ctx.fillStyle = '#22c55e'; // Green start
-        ctx.shadowColor = '#22c55e';
+        ctx.fillStyle = '#3B82F6'; // Blue Core Glow
+        ctx.shadowColor = '#3B82F6';
         ctx.shadowBlur = 15;
         ctx.fill();
 
@@ -219,8 +220,8 @@ export const GridCanvas: React.FC = () => {
         ctx.closePath();
         ctx.fill();
       } else {
-        ctx.fillStyle = '#ef4444'; // Red target
-        ctx.shadowColor = '#ef4444';
+        ctx.fillStyle = '#EF4444'; // Pulsing Red Beacon
+        ctx.shadowColor = '#EF4444';
         ctx.shadowBlur = 15;
         ctx.fill();
 
