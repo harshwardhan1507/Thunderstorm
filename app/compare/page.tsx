@@ -1,12 +1,25 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
-import { Play, Pause, SkipForward, SkipBack, RotateCcw, Trophy } from 'lucide-react';
+import { Play, Pause, SkipForward, SkipBack, RotateCcw, ChevronUp, ChevronDown } from 'lucide-react';
 import { useCompareStore, CompareInstanceState } from '../../store/compareStore';
 import { CompareCanvas } from '../../components/visualizers/CompareCanvas';
 import { SORTING_ALGORITHMS_METADATA } from '../../lib/algorithms/metadata';
-import { SortingAlgorithmType } from '../../types/algorithm.types';
+import { SortingAlgorithmType, CodeLanguageType } from '../../store/visualizerStore';
+import { bubbleSnippets } from '../../lib/snippets/sorting/bubble';
+import { quickSnippets } from '../../lib/snippets/sorting/quick';
+import { mergeSnippets } from '../../lib/snippets/sorting/merge';
+import { heapSnippets } from '../../lib/snippets/sorting/heap';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { atomDark } from 'react-syntax-highlighter/dist/cjs/styles/prism';
+
+const snippetMap: Record<SortingAlgorithmType, Record<CodeLanguageType, string>> = {
+  bubble: bubbleSnippets,
+  quick: quickSnippets,
+  merge: mergeSnippets,
+  heap: heapSnippets,
+};
 
 export default function ComparePage() {
   const {
@@ -16,7 +29,6 @@ export default function ComparePage() {
     speed,
     arraySize,
     mode,
-    winner,
     setMode,
     setSelectedAlgorithm,
     setArraySize,
@@ -27,12 +39,45 @@ export default function ComparePage() {
     stepBackwardBoth,
     resetBothPlayback,
     getMetrics,
+    setCurrentStepIndex,
   } = useCompareStore();
+
+  const [isCodeExpanded, setIsCodeExpanded] = useState(false);
+  const [activeCodeTab, setActiveCodeTab] = useState<'left' | 'right'>('left');
+  const [codeLanguage, setCodeLanguage] = useState<CodeLanguageType>('javascript');
+
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Initialize arrays on mount
   useEffect(() => {
     generateNewArrays();
   }, [generateNewArrays]);
+
+  // Synchronized Playback Loop
+  useEffect(() => {
+    if (isPlaying) {
+      const run = () => {
+        const { left, right, stepForwardBoth, setIsPlaying } = useCompareStore.getState();
+        const leftHasNext = left.currentStepIndex < left.steps.length - 1;
+        const rightHasNext = right.currentStepIndex < right.steps.length - 1;
+
+        if (leftHasNext || rightHasNext) {
+          stepForwardBoth();
+          timerRef.current = setTimeout(run, speed);
+        } else {
+          setIsPlaying(false);
+        }
+      };
+
+      timerRef.current = setTimeout(run, speed);
+    } else {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    }
+
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, [isPlaying, speed, setIsPlaying]);
 
   const algos: { key: SortingAlgorithmType; label: string }[] = [
     { key: 'bubble', label: 'Bubble Sort' },
@@ -41,10 +86,35 @@ export default function ComparePage() {
     { key: 'heap', label: 'Heap Sort' },
   ];
 
+  const langLabelMap: Record<CodeLanguageType, string> = {
+    javascript: 'JavaScript',
+    java: 'Java',
+    python: 'Python',
+    cpp: 'C++',
+  };
+
   const metrics = getMetrics();
 
+  // Code Display variables
+  const currentDisplaySide = activeCodeTab === 'left' ? left : right;
+  const currentCode = snippetMap[currentDisplaySide.selectedAlgorithm]?.[codeLanguage] || '';
+  const currentStep = currentDisplaySide.steps[currentDisplaySide.currentStepIndex];
+  const activeLine = currentStep ? currentStep.line : -1;
+
+  const togglePlay = () => {
+    const { left, right } = useCompareStore.getState();
+    const leftHasNext = left.currentStepIndex < left.steps.length - 1;
+    const rightHasNext = right.currentStepIndex < right.steps.length - 1;
+
+    // Reset if both finished
+    if (!leftHasNext && !rightHasNext) {
+      resetBothPlayback();
+    }
+    setIsPlaying(!isPlaying);
+  };
+
   return (
-    <div className="flex-1 w-full max-w-7xl mx-auto px-6 py-6 flex flex-col font-sans select-none">
+    <div className="flex-1 w-full max-w-7xl mx-auto px-6 py-6 flex flex-col font-sans select-none pb-24">
       {/* Breadcrumb Bar */}
       <div className="text-xs text-text-muted font-mono mb-4 flex items-center gap-1.5">
         <Link href="/" className="hover:text-text-secondary transition-colors">
@@ -105,7 +175,6 @@ export default function ComparePage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         {/* Left Algorithm Panel */}
         <div className="flex flex-col bg-surface border border-[#2a2a2a] rounded-xl overflow-hidden shadow-2xl">
-          {/* Header Selector */}
           <div className="flex justify-between items-center px-4 py-3 bg-[#0a0a0a]/50 border-b border-[#2a2a2a]">
             <span className="text-xs font-bold uppercase tracking-wider text-accent-purple font-mono">
               Left Algorithm
@@ -124,13 +193,11 @@ export default function ComparePage() {
             </select>
           </div>
 
-          {/* Canvas Wrapper */}
           <div className="bg-[#141414] h-[300px] w-full border-b border-[#2a2a2a] p-0">
             <CompareCanvas side="left" />
           </div>
 
-          {/* Metrics Footer */}
-          <div className="p-4 grid grid-cols-3 gap-2 bg-[#0c0c0c] text-center">
+          <div className="p-4 grid grid-cols-3 gap-2 bg-[#0c0c0c] text-center border-b border-[#2a2a2a]/50">
             <div>
               <div className="text-[10px] text-text-muted font-mono uppercase">Comparisons</div>
               <div className="text-lg font-bold text-white mt-1">{metrics.left.comparisons}</div>
@@ -148,7 +215,6 @@ export default function ComparePage() {
 
         {/* Right Algorithm Panel */}
         <div className="flex flex-col bg-surface border border-[#2a2a2a] rounded-xl overflow-hidden shadow-2xl">
-          {/* Header Selector */}
           <div className="flex justify-between items-center px-4 py-3 bg-[#0a0a0a]/50 border-b border-[#2a2a2a]">
             <span className="text-xs font-bold uppercase tracking-wider text-accent-violet font-mono">
               Right Algorithm
@@ -167,13 +233,11 @@ export default function ComparePage() {
             </select>
           </div>
 
-          {/* Canvas Wrapper */}
           <div className="bg-[#141414] h-[300px] w-full border-b border-[#2a2a2a] p-0">
             <CompareCanvas side="right" />
           </div>
 
-          {/* Metrics Footer */}
-          <div className="p-4 grid grid-cols-3 gap-2 bg-[#0c0c0c] text-center">
+          <div className="p-4 grid grid-cols-3 gap-2 bg-[#0c0c0c] text-center border-b border-[#2a2a2a]/50">
             <div>
               <div className="text-[10px] text-text-muted font-mono uppercase">Comparisons</div>
               <div className="text-lg font-bold text-white mt-1">{metrics.right.comparisons}</div>
@@ -192,7 +256,6 @@ export default function ComparePage() {
 
       {/* Control Bar (Unified Playback controls) */}
       <div className="flex flex-col md:flex-row items-center gap-6 p-4 rounded-xl bg-surface border border-[#2a2a2a] mb-6 shadow-lg">
-        {/* Playback Actions */}
         <div className="flex items-center gap-2">
           <button
             onClick={stepBackwardBoth}
@@ -204,7 +267,7 @@ export default function ComparePage() {
           </button>
           
           <button
-            onClick={() => setIsPlaying(!isPlaying)}
+            onClick={togglePlay}
             title={isPlaying ? 'Pause' : 'Play'}
             className="w-12 h-12 rounded-lg bg-gradient-to-r from-accent-purple to-indigo-700 hover:from-accent-violet hover:to-accent-purple text-white flex items-center justify-center transition shadow-md cursor-pointer"
           >
@@ -229,7 +292,6 @@ export default function ComparePage() {
           </button>
         </div>
 
-        {/* Speed Slider */}
         <div className="flex-1 w-full md:w-auto flex flex-col gap-1.5 min-w-[150px]">
           <div className="flex justify-between items-center text-xs font-mono text-text-secondary">
             <span>Playback Speed</span>
@@ -240,13 +302,12 @@ export default function ComparePage() {
             min="10"
             max="1000"
             step="10"
-            value={1010 - speed} // Reverse slider so right is faster
+            value={1010 - speed}
             onChange={(e) => setSpeed(1010 - parseInt(e.target.value))}
             className="w-full h-1 bg-elevated rounded-lg appearance-none cursor-pointer accent-accent-purple"
           />
         </div>
 
-        {/* Array Size Slider */}
         <div className="flex-1 w-full md:w-auto flex flex-col gap-1.5 min-w-[150px]">
           <div className="flex justify-between items-center text-xs font-mono text-text-secondary">
             <span>Array Size</span>
@@ -263,6 +324,105 @@ export default function ComparePage() {
             className="w-full h-1 bg-elevated rounded-lg appearance-none cursor-pointer accent-accent-purple disabled:opacity-40 disabled:cursor-not-allowed"
           />
         </div>
+      </div>
+
+      {/* Expandable Code Panel Drawer */}
+      <div className={`fixed bottom-0 left-0 right-0 z-40 bg-[#0c0c0c] border-t border-[#2a2a2a] transition-all duration-300 ${isCodeExpanded ? 'h-[360px]' : 'h-11'} flex flex-col`}>
+        {/* Toggle Bar */}
+        <div
+          onClick={() => setIsCodeExpanded(!isCodeExpanded)}
+          className="h-11 px-6 flex justify-between items-center border-b border-[#2a2a2a] cursor-pointer hover:bg-elevated transition duration-200 select-none"
+        >
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-bold uppercase tracking-wider text-text-secondary font-mono">
+              Code Drawer
+            </span>
+            <span className="text-[10px] text-text-muted font-mono">
+              ({langLabelMap[codeLanguage]} — {activeCodeTab === 'left' ? 'Left' : 'Right'} Algorithm)
+            </span>
+          </div>
+          <div className="text-text-secondary">
+            {isCodeExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
+          </div>
+        </div>
+
+        {isCodeExpanded && (
+          <div className="flex-1 flex flex-col overflow-hidden">
+            {/* Header controls inside Expanded Drawer */}
+            <div className="flex justify-between items-center px-6 py-2 bg-[#080808] border-b border-[#202020]">
+              {/* Tab Selector (Left vs Right code) */}
+              <div className="flex gap-1.5 p-0.5 bg-[#141414]/80 border border-[#2a2a2a] rounded-lg">
+                <button
+                  onClick={() => setActiveCodeTab('left')}
+                  className={`px-3 py-1 rounded text-xs font-semibold transition-all duration-200 cursor-pointer ${
+                    activeCodeTab === 'left'
+                      ? 'bg-accent-purple text-white shadow-sm'
+                      : 'text-text-secondary hover:text-white'
+                  }`}
+                >
+                  Left Code ({SORTING_ALGORITHMS_METADATA[left.selectedAlgorithm]?.name})
+                </button>
+                <button
+                  onClick={() => setActiveCodeTab('right')}
+                  className={`px-3 py-1 rounded text-xs font-semibold transition-all duration-200 cursor-pointer ${
+                    activeCodeTab === 'right'
+                      ? 'bg-accent-purple text-white shadow-sm'
+                      : 'text-text-secondary hover:text-white'
+                  }`}
+                >
+                  Right Code ({SORTING_ALGORITHMS_METADATA[right.selectedAlgorithm]?.name})
+                </button>
+              </div>
+
+              {/* Language Selector */}
+              <div className="flex gap-1">
+                {(['javascript', 'java', 'python', 'cpp'] as CodeLanguageType[]).map((lang) => (
+                  <button
+                    key={lang}
+                    onClick={() => setCodeLanguage(lang)}
+                    className={`px-3 py-1 rounded text-xs font-semibold transition-all duration-200 cursor-pointer ${
+                      codeLanguage === lang
+                        ? 'bg-elevated text-white border border-[#444444]'
+                        : 'text-text-secondary hover:text-white hover:bg-elevated'
+                    }`}
+                  >
+                    {langLabelMap[lang]}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Code syntax container */}
+            <div className="flex-1 overflow-auto text-sm font-mono bg-[#050505]">
+              <SyntaxHighlighter
+                language={codeLanguage === 'cpp' ? 'cpp' : codeLanguage}
+                style={atomDark}
+                customStyle={{
+                  margin: 0,
+                  background: 'transparent',
+                  padding: '1rem 0',
+                  minHeight: '100%',
+                }}
+                wrapLines={true}
+                lineProps={(lineNum) => {
+                  const isHighlighted = lineNum === activeLine;
+                  return {
+                    className: isHighlighted ? 'active-line' : '',
+                    style: {
+                      display: 'block',
+                      width: '100%',
+                      transition: 'background-color 0.15s ease, border-left-color 0.15s ease',
+                      paddingLeft: '1.5rem',
+                      paddingRight: '1.5rem',
+                    },
+                  };
+                }}
+              >
+                {currentCode}
+              </SyntaxHighlighter>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
