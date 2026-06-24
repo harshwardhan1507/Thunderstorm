@@ -212,7 +212,7 @@ export const GraphCanvas: React.FC = () => {
           width={dimensions.width}
           height={dimensions.height}
           onClick={handleCanvasClick}
-          className="w-full h-full block cursor-crosshair select-none"
+          className="w-full h-full block cursor-crosshair select-none touch-none"
         >
           <defs>
             <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">

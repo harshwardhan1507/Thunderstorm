@@ -253,6 +253,7 @@ export const GridCanvas: React.FC = () => {
           height: '100%',
           display: 'block',
           cursor: isPlaying ? 'not-allowed' : 'crosshair',
+          touchAction: 'none',
         }}
       />
     </div>

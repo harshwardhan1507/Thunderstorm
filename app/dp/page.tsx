@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useDPStore, DPAlgorithmType } from '../../store/dpStore';
 import { DPTable } from '../../components/visualizers/DPTable';
@@ -8,9 +8,12 @@ import { CodePanel } from '../../components/code/CodePanel';
 import { lcsSnippets } from '../../lib/snippets/dp/lcs';
 import { knapsackSnippets } from '../../lib/snippets/dp/knapsack';
 import { fibonacciSnippets } from '../../lib/snippets/dp/fibonacci';
-import { Play, Pause, SkipBack, SkipForward, RotateCcw, Clock, Activity, Grid3X3, Layers } from 'lucide-react';
+import { Play, Pause, SkipBack, SkipForward, RotateCcw, Clock, Activity, Grid3X3, Layers, Share2 } from 'lucide-react';
 import { AlgorithmExplanation } from '../../components/educational/AlgorithmExplanation';
 import { ComplexityChart } from '../../components/educational/ComplexityChart';
+import { useDeepLinking } from '../../lib/hooks/useDeepLinking';
+import { ShareModal } from '../../components/controls/ShareModal';
+import { ThunderBurst } from '../../components/visualizers/ThunderBurst';
 
 const snippetMap = {
   lcs: lcsSnippets,
@@ -25,6 +28,14 @@ interface ChromePerformance extends Performance {
 }
 
 export default function DPPage() {
+  return (
+    <Suspense fallback={<div className="flex-1 flex items-center justify-center text-text-muted font-mono text-xs">Loading DP Visualizer...</div>}>
+      <DPPageInner />
+    </Suspense>
+  );
+}
+
+function DPPageInner() {
   const {
     selectedAlgorithm,
     strA,
@@ -60,12 +71,34 @@ export default function DPPage() {
   const [inputCapacity, setInputCapacity] = useState<string>(String(knapsackCapacity));
 
   const [heapMemory, setHeapMemory] = useState<string>('N/A');
+  const [isShareOpen, setIsShareOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<'visualizer' | 'metrics' | 'code' | 'explanation'>('visualizer');
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Initialize DP state on mount
+  // Wire Deep Linking
+  const { updateUrl } = useDeepLinking(
+    () => ({
+      algo: selectedAlgorithm,
+      speed: speed,
+    }),
+    (params) => {
+      if (params.algo) setSelectedAlgorithm(params.algo as DPAlgorithmType);
+      if (params.speed) setSpeed(Number(params.speed));
+    }
+  );
+
+  // Initialize DP state on mount if not deep linked
   useEffect(() => {
-    runAlgorithm();
+    const hasParams = typeof window !== 'undefined' && new URLSearchParams(window.location.search).size > 0;
+    if (!hasParams) {
+      runAlgorithm();
+    }
   }, [runAlgorithm]);
+
+  // Sync state back to URL when these variables change
+  useEffect(() => {
+    updateUrl();
+  }, [selectedAlgorithm, speed]);
 
   // Read memory heap usage (approximate check)
   useEffect(() => {
@@ -151,8 +184,10 @@ export default function DPPage() {
     fibonacci: 'Fibonacci Tabulation',
   };
 
+  const isFinished = steps.length > 0 && currentStepIndex === steps.length - 1 && !isPlaying;
+
   return (
-    <div className="flex-1 w-full max-w-6xl mx-auto px-6 py-6 flex flex-col font-sans select-none">
+    <div className="flex-1 w-full max-w-6xl mx-auto px-6 py-6 flex flex-col font-sans select-none relative">
       {/* Breadcrumbs */}
       <div className="text-xs text-text-muted font-mono mb-4 flex items-center gap-1.5">
         <Link href="/" className="hover:text-text-secondary transition-colors">
@@ -171,6 +206,16 @@ export default function DPPage() {
           <p className="text-text-secondary text-sm mt-1">
             Watch bottom-up tabulation tables fill cell-by-cell with interactive transitions
           </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setIsShareOpen(true)}
+            className="p-2 bg-surface hover:bg-elevated border border-[#333333] hover:border-text-secondary rounded-lg text-text-primary hover:text-white transition duration-200 cursor-pointer flex items-center gap-1.5 text-xs font-semibold"
+            title="Share Configuration"
+          >
+            <Share2 className="w-3.5 h-3.5" />
+            <span>Share</span>
+          </button>
         </div>
       </div>
 
@@ -193,7 +238,7 @@ export default function DPPage() {
       </div>
 
       {/* Dynamic Inputs Panel */}
-      <div className="flex flex-col md:flex-row items-center justify-between gap-4 p-4 rounded-xl bg-surface border border-[#2a2a2a] mb-6 shadow-md">
+      <div className={`flex flex-col md:flex-row items-center justify-between gap-4 p-4 rounded-xl bg-surface border border-[#2a2a2a] mb-6 shadow-md ${activeTab === 'visualizer' ? 'flex' : 'hidden lg:flex'}`}>
         {selectedAlgorithm === 'lcs' && (
           <form onSubmit={handleLCSUpdate} className="flex flex-wrap items-center gap-3 w-full">
             <span className="text-[10px] uppercase font-bold text-text-muted">Strings:</span>
@@ -270,15 +315,37 @@ export default function DPPage() {
         )}
       </div>
 
+      {/* Mobile Tab Navigation */}
+      <div className="flex lg:hidden gap-1 bg-[#141414]/60 border border-[#2a2a2a] rounded-lg p-0.5 mb-6 w-full overflow-x-auto">
+        {(['visualizer', 'metrics', 'code', 'explanation'] as const).map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={`flex-1 py-2 text-center rounded-md text-xs font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer ${
+              activeTab === tab
+                ? 'bg-accent-purple text-white shadow-sm'
+                : 'text-text-secondary hover:text-white'
+            }`}
+          >
+            {tab}
+          </button>
+        ))}
+      </div>
+
       {/* Main Split View */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 rounded-xl overflow-hidden border border-[#2a2a2a] mb-6 shadow-2xl">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 lg:rounded-xl lg:overflow-hidden lg:border lg:border-[#2a2a2a] mb-6 shadow-2xl relative">
         {/* Visualizer Canvas */}
-        <div className="bg-[#141414] border-b lg:border-b-0 lg:border-r border-[#2a2a2a] p-0 h-[420px] w-full min-w-0 flex items-center justify-center">
+        <div className={`bg-[#141414] border-[#2a2a2a] p-0 h-[420px] w-full min-w-0 flex items-center justify-center border rounded-xl lg:border-none lg:rounded-none lg:border-r ${activeTab === 'visualizer' ? 'block' : 'hidden lg:block'} relative`}>
           <DPTable />
+          <ThunderBurst
+            show={isFinished}
+            title={`${algoLabelMap[selectedAlgorithm]} Complete`}
+            metricsText={`Cells Calculated: ${cellCalculatedCount}\nOptimal Result: ${activeVal !== null && activeVal !== undefined ? activeVal : '-'}\nTime: ${executionTime.toFixed(2)}ms`}
+          />
         </div>
 
         {/* Code Panel */}
-        <div className="bg-[#0f0f0f] h-[420px] w-full min-w-0 flex flex-col">
+        <div className={`bg-[#0f0f0f] h-[420px] w-full min-w-0 flex flex-col border border-[#2a2a2a] rounded-xl lg:border-none lg:rounded-none ${activeTab === 'code' ? 'block' : 'hidden lg:block'}`}>
           <CodePanel
             code={activeSnippet}
             language={language}
@@ -289,7 +356,7 @@ export default function DPPage() {
       </div>
 
       {/* Controls Bar */}
-      <div className="flex flex-col md:flex-row items-center gap-6 p-4 rounded-xl bg-surface border border-[#2a2a2a] mb-6 shadow-lg">
+      <div className={`flex flex-col md:flex-row items-center gap-6 p-4 rounded-xl bg-surface border border-[#2a2a2a] mb-6 shadow-lg ${activeTab === 'visualizer' || activeTab === 'metrics' ? 'flex' : 'hidden lg:flex'}`}>
         {/* Play Pause Controls */}
         <div className="flex items-center gap-2 select-none">
           <button
@@ -374,7 +441,7 @@ export default function DPPage() {
       </div>
 
       {/* Metrics Section */}
-      <div className="flex flex-col gap-4 w-full">
+      <div className={`flex flex-col gap-4 w-full ${activeTab === 'metrics' ? 'block' : 'hidden lg:block'}`}>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full">
           {/* Cells Calculated */}
           <div className="p-4 rounded-xl bg-surface border border-border-subtle shadow-md flex flex-col justify-between">
@@ -437,7 +504,7 @@ export default function DPPage() {
       </div>
 
       {/* Educational Panels */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+      <div className={`grid grid-cols-1 md:grid-cols-3 gap-6 mt-6 ${activeTab === 'explanation' ? 'grid' : 'hidden lg:grid'}`}>
         <div className="md:col-span-2">
           <AlgorithmExplanation algorithmId={selectedAlgorithm} />
         </div>
@@ -449,6 +516,17 @@ export default function DPPage() {
           />
         </div>
       </div>
+
+      {/* Share Modal overlay */}
+      <ShareModal
+        isOpen={isShareOpen}
+        onClose={() => setIsShareOpen(false)}
+        title={algoLabelMap[selectedAlgorithm]}
+        metrics={{
+          steps: totalSteps,
+          executionTime,
+        }}
+      />
     </div>
   );
 }

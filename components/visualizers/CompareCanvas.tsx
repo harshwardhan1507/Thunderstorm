@@ -2,21 +2,28 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { useCompareStore } from '../../store/compareStore';
+import { gsap } from 'gsap';
+
+interface BarObject {
+  id: string;
+  value: number;
+  currentIndex: number;
+}
 
 interface CompareCanvasProps {
   side: 'left' | 'right';
 }
 
 export const CompareCanvas: React.FC<CompareCanvasProps> = ({ side }) => {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const [dimensions, setDimensions] = useState({ width: 300, height: 250 });
-
   const array = useCompareStore((state) => state[side].array);
   const steps = useCompareStore((state) => state[side].steps);
   const currentStepIndex = useCompareStore((state) => state[side].currentStepIndex);
 
-  // Set up responsive resize observer
+  const [dimensions, setDimensions] = useState({ width: 300, height: 250 });
+  const [localBars, setLocalBars] = useState<BarObject[]>([]);
+
+  // Responsive resizing
   useEffect(() => {
     if (!containerRef.current) return;
     const observer = new ResizeObserver((entries) => {
@@ -32,83 +39,168 @@ export const CompareCanvas: React.FC<CompareCanvasProps> = ({ side }) => {
     return () => observer.disconnect();
   }, []);
 
-  // Canvas drawing loop
+  const n = array.length;
+  const padding = n > 50 ? 1 : n > 30 ? 2 : 4; // adaptive spacing
+  const totalPadding = padding * (n - 1);
+  const barWidth = n > 0 ? (dimensions.width - 48 - totalPadding) / n : 0;
+  const maxVal = array.length > 0 ? Math.max(...array) : 1;
+
+  // Sync / transition local bars state
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    if (array.length === 0) {
+      setLocalBars([]);
+      return;
+    }
 
-    const dpr = window.devicePixelRatio || 1;
-    canvas.width = dimensions.width * dpr;
-    canvas.height = dimensions.height * dpr;
-    ctx.scale(dpr, dpr);
+    if (localBars.length !== array.length) {
+      const initial = array.map((val, idx) => ({
+        id: `bar-${side}-${idx}-${val}-${Math.random().toString(36).substr(2, 4)}`,
+        value: val,
+        currentIndex: idx,
+      }));
+      setLocalBars(initial);
+      return;
+    }
 
-    // Clear Canvas with surface background color
-    ctx.fillStyle = '#141414';
-    ctx.fillRect(0, 0, dimensions.width, dimensions.height);
+    const currentArray = steps[currentStepIndex]?.array || array;
+    const matched = new Set<string>();
+    const nextBars = localBars.map((bar) => ({ ...bar }));
 
-    if (array.length === 0) return;
-
-    const n = array.length;
-    const padding = 2;
-    const totalPadding = padding * (n - 1);
-    const barWidth = (dimensions.width - totalPadding) / n;
-
-    const currentStep = steps[currentStepIndex];
-    const comparing = currentStep ? currentStep.comparing : [];
-    const swapped = currentStep ? currentStep.swapped : false;
-    const maxVal = Math.max(...array);
-
-    for (let i = 0; i < n; i++) {
-      const val = array[i];
-      // Scale height to take up 82% of canvas height
-      const barHeight = (val / maxVal) * (dimensions.height * 0.82);
-      const x = i * (barWidth + padding);
-      const y = dimensions.height - barHeight;
-
-      let fillStyle = 'rgba(96, 165, 250, 0.85)'; // Default blue
-      let shadowColor = 'rgba(96, 165, 250, 0.2)';
-
-      if (comparing.includes(i)) {
-        if (swapped) {
-          fillStyle = '#facc15'; // Swap yellow
-          shadowColor = 'rgba(250, 204, 21, 0.6)';
-        } else {
-          fillStyle = '#3b82f6'; // Comparison blue
-          shadowColor = 'rgba(59, 130, 246, 0.6)';
-        }
-      }
-
-      // Draw shadow glow behind active bars
-      if (comparing.includes(i)) {
-        ctx.save();
-        ctx.shadowColor = shadowColor;
-        ctx.shadowBlur = 12;
-      }
-
-      ctx.fillStyle = fillStyle;
-      ctx.beginPath();
-      ctx.roundRect(x, y, barWidth, barHeight, [3, 3, 0, 0]);
-      ctx.fill();
-
-      if (comparing.includes(i)) {
-        ctx.restore();
-      }
-
-      // Text indicators for smaller array sizes
-      if (n <= 20) {
-        ctx.fillStyle = '#e2e8f0';
-        ctx.font = 'bold 8px monospace';
-        ctx.textAlign = 'center';
-        ctx.fillText(val.toString(), x + barWidth / 2, y - 6);
+    for (let newIdx = 0; newIdx < currentArray.length; newIdx++) {
+      const val = currentArray[newIdx];
+      const bestMatch = nextBars.find(
+        (b) => b.value === val && !matched.has(b.id)
+      );
+      if (bestMatch) {
+        bestMatch.currentIndex = newIdx;
+        matched.add(bestMatch.id);
       }
     }
-  }, [array, steps, currentStepIndex, dimensions]);
+
+    // Animate bar elements
+    nextBars.forEach((bar) => {
+      const barEl = document.getElementById(`compare-bar-${side}-${bar.id}`);
+      if (barEl) {
+        const targetX = 24 + bar.currentIndex * (barWidth + padding);
+        const currentStep = steps[currentStepIndex];
+        const comparing = currentStep ? currentStep.comparing : [];
+        const swapped = currentStep ? currentStep.swapped : false;
+        const isComparing = comparing.includes(bar.currentIndex);
+
+        if (isComparing) {
+          if (swapped) {
+            gsap.to(barEl, {
+              x: targetX,
+              scale: 1.05,
+              duration: 0.25,
+              ease: 'power2.out',
+            });
+          } else {
+            gsap.timeline()
+              .to(barEl, {
+                x: targetX,
+                scale: 1.08,
+                duration: 0.1,
+                filter: 'drop-shadow(0 0 8px rgba(124, 58, 237, 0.7))',
+                ease: 'power2.out',
+              })
+              .to(barEl, {
+                scale: 1,
+                duration: 0.1,
+                filter: 'none',
+                ease: 'power2.in',
+              });
+          }
+        } else {
+          gsap.to(barEl, {
+            x: targetX,
+            scale: 1,
+            filter: 'none',
+            duration: 0.2,
+            ease: 'power2.out',
+          });
+        }
+      }
+    });
+
+    setLocalBars(nextBars);
+  }, [array, currentStepIndex, dimensions.width]);
+
+  // Victory Green sweep ripple on finish
+  useEffect(() => {
+    if (steps.length > 0 && currentStepIndex === steps.length - 1 && localBars.length > 0) {
+      const sortedBarIds = [...localBars]
+        .sort((a, b) => a.currentIndex - b.currentIndex)
+        .map((b) => `compare-bar-${side}-${b.id}`);
+
+      const elements = sortedBarIds.map((id) => document.getElementById(id)).filter(Boolean);
+
+      if (elements.length > 0) {
+        const tl = gsap.timeline();
+        tl.to(elements, {
+          backgroundColor: '#10B981', // Emerald green trail
+          borderColor: '#34D399',
+          scale: 1.05,
+          filter: 'drop-shadow(0 0 10px rgba(16, 185, 129, 0.6))',
+          stagger: 0.015,
+          duration: 0.15,
+          ease: 'power1.out',
+        }).to(elements, {
+          scale: 1,
+          filter: 'none',
+          stagger: 0.015,
+          duration: 0.15,
+          ease: 'power1.in',
+        }, '-=0.2');
+      }
+    }
+  }, [currentStepIndex, steps.length, localBars.length]);
 
   return (
-    <div ref={containerRef} className="w-full h-full relative overflow-hidden bg-transparent">
-      <canvas ref={canvasRef} style={{ width: '100%', height: '100%', display: 'block' }} />
+    <div ref={containerRef} className="w-full h-full relative bg-[#141414] overflow-hidden p-0">
+      {localBars.map((bar) => {
+        const barHeight = (bar.value / maxVal) * (dimensions.height * 0.72);
+        const initialX = 24 + bar.currentIndex * (barWidth + padding);
+
+        const currentStep = steps[currentStepIndex];
+        const comparing = currentStep ? currentStep.comparing : [];
+        const swapped = currentStep ? currentStep.swapped : false;
+        const isComparing = comparing.includes(bar.currentIndex);
+
+        let barBg = side === 'left' ? 'bg-accent-purple/80' : 'bg-accent-violet/80';
+        let borderCol = 'border-[#2a2a2a]';
+
+        if (isComparing) {
+          if (swapped) {
+            barBg = 'bg-yellow-400';
+            borderCol = 'border-yellow-300';
+          } else {
+            barBg = 'bg-blue-500';
+            borderCol = 'border-blue-400';
+          }
+        }
+
+        return (
+          <div
+            key={bar.id}
+            id={`compare-bar-${side}-${bar.id}`}
+            className={`absolute bottom-4 rounded-t-md border flex flex-col items-center justify-end transition-colors duration-150 shadow-sm ${barBg} ${borderCol}`}
+            style={{
+              width: `${barWidth}px`,
+              height: `${barHeight}px`,
+              left: 0,
+              transform: `translateX(${initialX}px)`,
+              transformOrigin: 'bottom center',
+            }}
+          >
+            {n <= 20 && (
+              <span className="text-[8px] font-bold text-white font-mono mb-1 pointer-events-none select-none">
+                {bar.value}
+              </span>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 };

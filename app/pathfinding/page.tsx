@@ -1,15 +1,18 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, Suspense } from 'react';
 import Link from 'next/link';
 import { usePathfindingStore, PathfindingAlgorithmType } from '../../store/pathfindingStore';
 import { GridCanvas } from '../../components/visualizers/GridCanvas';
 import { CodePanel } from '../../components/code/CodePanel';
 import { dijkstraSnippets } from '../../lib/snippets/pathfinding/dijkstra';
 import { astarSnippets } from '../../lib/snippets/pathfinding/astar';
-import { Play, Pause, SkipBack, SkipForward, RotateCcw, Clock, Activity, Flag, Route } from 'lucide-react';
+import { Play, Pause, SkipBack, SkipForward, RotateCcw, Clock, Activity, Flag, Route, Share2 } from 'lucide-react';
 import { AlgorithmExplanation } from '../../components/educational/AlgorithmExplanation';
 import { ComplexityChart } from '../../components/educational/ComplexityChart';
+import { useDeepLinking } from '../../lib/hooks/useDeepLinking';
+import { ShareModal } from '../../components/controls/ShareModal';
+import { ThunderBurst } from '../../components/visualizers/ThunderBurst';
 
 const snippetMap = {
   dijkstra: dijkstraSnippets,
@@ -23,6 +26,14 @@ interface ChromePerformance extends Performance {
 }
 
 export default function PathfindingPage() {
+  return (
+    <Suspense fallback={<div className="flex-1 flex items-center justify-center text-text-muted font-mono text-xs">Loading Pathfinding Visualizer...</div>}>
+      <PathfindingPageInner />
+    </Suspense>
+  );
+}
+
+function PathfindingPageInner() {
   const {
     rows,
     cols,
@@ -47,12 +58,34 @@ export default function PathfindingPage() {
   } = usePathfindingStore();
 
   const [heapMemory, setHeapMemory] = useState<string>('N/A');
+  const [isShareOpen, setIsShareOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<'visualizer' | 'metrics' | 'code' | 'explanation'>('visualizer');
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Initialize maze on mount
+  // Wire Deep Linking
+  const { updateUrl } = useDeepLinking(
+    () => ({
+      algo: selectedAlgorithm,
+      speed: speed,
+    }),
+    (params) => {
+      if (params.algo) setSelectedAlgorithm(params.algo as PathfindingAlgorithmType);
+      if (params.speed) setSpeed(Number(params.speed));
+    }
+  );
+
+  // Initialize maze on mount if not deep linked
   useEffect(() => {
-    loadMaze('clear');
+    const hasParams = typeof window !== 'undefined' && new URLSearchParams(window.location.search).size > 0;
+    if (!hasParams) {
+      loadMaze('clear');
+    }
   }, [loadMaze]);
+
+  // Sync state back to URL when these variables change
+  useEffect(() => {
+    updateUrl();
+  }, [selectedAlgorithm, speed]);
 
   // Read memory heap usage (approximate check)
   useEffect(() => {
@@ -95,6 +128,7 @@ export default function PathfindingPage() {
     setIsPlaying(!isPlaying);
   };
 
+  const algoLabel = selectedAlgorithm === 'dijkstra' ? "Dijkstra's Algorithm" : 'A* Search (Heuristic)';
   const activeSnippet = snippetMap[selectedAlgorithm]?.[language] || '';
   const activeLine = steps[currentStepIndex]?.line || -1;
   const { nodesVisited, pathLength } = getMetrics();
@@ -109,8 +143,10 @@ export default function PathfindingPage() {
     setCurrentStepIndex(val - 1);
   };
 
+  const isFinished = steps.length > 0 && currentStepIndex === steps.length - 1 && !isPlaying;
+
   return (
-    <div className="flex-1 w-full max-w-6xl mx-auto px-6 py-6 flex flex-col font-sans select-none">
+    <div className="flex-1 w-full max-w-6xl mx-auto px-6 py-6 flex flex-col font-sans select-none relative">
       {/* Breadcrumbs */}
       <div className="text-xs text-text-muted font-mono mb-4 flex items-center gap-1.5">
         <Link href="/" className="hover:text-text-secondary transition-colors">
@@ -131,6 +167,14 @@ export default function PathfindingPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <button
+            onClick={() => setIsShareOpen(true)}
+            className="p-2 bg-surface hover:bg-elevated border border-[#333333] hover:border-text-secondary rounded-lg text-text-primary hover:text-white transition duration-200 cursor-pointer flex items-center gap-1.5 text-xs font-semibold"
+            title="Share Configuration"
+          >
+            <Share2 className="w-3.5 h-3.5" />
+            <span>Share</span>
+          </button>
           <button
             onClick={() => loadMaze('random')}
             disabled={isPlaying}
@@ -181,15 +225,37 @@ export default function PathfindingPage() {
         </button>
       </div>
 
+      {/* Mobile Tab Navigation */}
+      <div className="flex lg:hidden gap-1 bg-[#141414]/60 border border-[#2a2a2a] rounded-lg p-0.5 mb-6 w-full overflow-x-auto">
+        {(['visualizer', 'metrics', 'code', 'explanation'] as const).map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={`flex-1 py-2 text-center rounded-md text-xs font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer ${
+              activeTab === tab
+                ? 'bg-accent-purple text-white shadow-sm'
+                : 'text-text-secondary hover:text-white'
+            }`}
+          >
+            {tab}
+          </button>
+        ))}
+      </div>
+
       {/* Main Split View */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 rounded-xl overflow-hidden border border-[#2a2a2a] mb-6 shadow-2xl">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 lg:rounded-xl lg:overflow-hidden lg:border lg:border-[#2a2a2a] mb-6 shadow-2xl relative">
         {/* Visualizer Canvas */}
-        <div className="bg-[#141414] border-b lg:border-b-0 lg:border-r border-[#2a2a2a] p-0 h-[420px] w-full min-w-0">
+        <div className={`bg-[#141414] border-[#2a2a2a] p-0 h-[420px] w-full min-w-0 relative border rounded-xl lg:border-none lg:rounded-none lg:border-r ${activeTab === 'visualizer' ? 'block' : 'hidden lg:block'}`}>
           <GridCanvas />
+          <ThunderBurst
+            show={isFinished}
+            title={`${selectedAlgorithm === 'dijkstra' ? 'Dijkstra' : 'A*'} Completed`}
+            metricsText={`Nodes Visited: ${nodesVisited}\nPath Length: ${pathLength > 0 ? `${pathLength} cells` : 'No path'}\nTime: ${executionTime.toFixed(2)}ms`}
+          />
         </div>
 
         {/* Code Panel */}
-        <div className="bg-[#0f0f0f] h-[420px] w-full min-w-0 flex flex-col">
+        <div className={`bg-[#0f0f0f] h-[420px] w-full min-w-0 flex flex-col border border-[#2a2a2a] rounded-xl lg:border-none lg:rounded-none ${activeTab === 'code' ? 'block' : 'hidden lg:block'}`}>
           <CodePanel
             code={activeSnippet}
             language={language}
@@ -200,7 +266,7 @@ export default function PathfindingPage() {
       </div>
 
       {/* Controls Bar */}
-      <div className="flex flex-col md:flex-row items-center gap-6 p-4 rounded-xl bg-surface border border-[#2a2a2a] mb-6 shadow-lg">
+      <div className={`flex flex-col md:flex-row items-center gap-6 p-4 rounded-xl bg-surface border border-[#2a2a2a] mb-6 shadow-lg ${activeTab === 'visualizer' || activeTab === 'metrics' ? 'flex' : 'hidden lg:flex'}`}>
         {/* Play Pause Controls */}
         <div className="flex items-center gap-2 select-none">
           <button
@@ -285,7 +351,7 @@ export default function PathfindingPage() {
       </div>
 
       {/* Metrics Section */}
-      <div className="flex flex-col gap-4 w-full">
+      <div className={`flex flex-col gap-4 w-full ${activeTab === 'metrics' ? 'block' : 'hidden lg:block'}`}>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full">
           {/* Nodes Visited */}
           <div className="p-4 rounded-xl bg-surface border border-border-subtle shadow-md flex flex-col justify-between">
@@ -345,7 +411,7 @@ export default function PathfindingPage() {
       </div>
 
       {/* Instructions overlay */}
-      {!isPlaying && (
+      {!isPlaying && activeTab === 'visualizer' && (
         <div className="mt-6 bg-[#0f0f0f]/80 border border-[#2a2a2a] rounded-xl p-4 text-xs text-text-secondary font-mono">
           <span className="text-white font-bold block mb-1">Grid Canvas Instructions:</span>
           <ul className="list-disc pl-5 space-y-1">
@@ -358,7 +424,7 @@ export default function PathfindingPage() {
       )}
 
       {/* Educational Panels */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+      <div className={`grid grid-cols-1 md:grid-cols-3 gap-6 mt-6 ${activeTab === 'explanation' ? 'grid' : 'hidden lg:grid'}`}>
         <div className="md:col-span-2">
           <AlgorithmExplanation algorithmId={selectedAlgorithm} />
         </div>
@@ -366,6 +432,18 @@ export default function PathfindingPage() {
           <ComplexityChart activeComplexity="O(n log n)" />
         </div>
       </div>
+
+      {/* Share Modal overlay */}
+      <ShareModal
+        isOpen={isShareOpen}
+        onClose={() => setIsShareOpen(false)}
+        title={algoLabel}
+        metrics={{
+          nodesVisited,
+          pathLength,
+          executionTime,
+        }}
+      />
     </div>
   );
 }

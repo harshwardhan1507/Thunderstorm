@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useTreeStore, TreeType, TreeAlgorithmType } from '../../store/treeStore';
 import { TreeCanvas } from '../../components/visualizers/TreeCanvas';
@@ -8,9 +8,12 @@ import { CodePanel } from '../../components/code/CodePanel';
 import { bstSnippets } from '../../lib/snippets/trees/bst';
 import { avlSnippets } from '../../lib/snippets/trees/avl';
 import { heapSnippets } from '../../lib/snippets/trees/heap';
-import { Play, Pause, SkipBack, SkipForward, RotateCcw, Clock, Activity, GitBranch, ArrowUp } from 'lucide-react';
+import { Play, Pause, SkipBack, SkipForward, RotateCcw, Clock, Activity, GitBranch, ArrowUp, Share2 } from 'lucide-react';
 import { AlgorithmExplanation } from '../../components/educational/AlgorithmExplanation';
 import { ComplexityChart } from '../../components/educational/ComplexityChart';
+import { useDeepLinking } from '../../lib/hooks/useDeepLinking';
+import { ShareModal } from '../../components/controls/ShareModal';
+import { ThunderBurst } from '../../components/visualizers/ThunderBurst';
 
 const snippetMap = {
   bst: bstSnippets,
@@ -25,6 +28,14 @@ interface ChromePerformance extends Performance {
 }
 
 export default function TreesPage() {
+  return (
+    <Suspense fallback={<div className="flex-1 flex items-center justify-center text-text-muted font-mono text-xs">Loading Trees Visualizer...</div>}>
+      <TreesPageInner />
+    </Suspense>
+  );
+}
+
+function TreesPageInner() {
   const {
     treeType,
     heapArray,
@@ -56,12 +67,34 @@ export default function TreesPage() {
   const [singleValueInput, setSingleValueInput] = useState<string>('');
   const [bulkInput, setBulkInput] = useState<string>('50, 30, 70, 20, 40, 60, 80');
   const [heapMemory, setHeapMemory] = useState<string>('N/A');
+  const [isShareOpen, setIsShareOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<'visualizer' | 'metrics' | 'code' | 'explanation'>('visualizer');
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Initialize tree on mount
+  // Wire Deep Linking
+  const { updateUrl } = useDeepLinking(
+    () => ({
+      treeType: treeType,
+      speed: speed,
+    }),
+    (params) => {
+      if (params.treeType) setTreeType(params.treeType as TreeType);
+      if (params.speed) setSpeed(Number(params.speed));
+    }
+  );
+
+  // Initialize tree on mount if not deep linked
   useEffect(() => {
-    bulkInitialize([50, 30, 70, 20, 40, 60, 80]);
+    const hasParams = typeof window !== 'undefined' && new URLSearchParams(window.location.search).size > 0;
+    if (!hasParams) {
+      bulkInitialize([50, 30, 70, 20, 40, 60, 80]);
+    }
   }, [bulkInitialize]);
+
+  // Sync state back to URL when these variables change
+  useEffect(() => {
+    updateUrl();
+  }, [treeType, speed]);
 
   // Read memory heap usage (approximate check)
   useEffect(() => {
@@ -142,7 +175,7 @@ export default function TreesPage() {
 
   const activeSnippet = snippetMap[treeType]?.[language] || '';
   const activeLine = steps[currentStepIndex]?.line || -1;
-  const { nodeCount, treeHeight, activeValue } = getMetrics();
+  const { nodeCount, treeHeight } = getMetrics();
 
   // Scrubber percentage calculation
   const totalSteps = steps.length;
@@ -160,8 +193,10 @@ export default function TreesPage() {
     heap: 'Min Heap (Binary Heap)',
   };
 
+  const isFinished = steps.length > 0 && currentStepIndex === steps.length - 1 && !isPlaying;
+
   return (
-    <div className="flex-1 w-full max-w-6xl mx-auto px-6 py-6 flex flex-col font-sans select-none">
+    <div className="flex-1 w-full max-w-6xl mx-auto px-6 py-6 flex flex-col font-sans select-none relative">
       {/* Breadcrumbs */}
       <div className="text-xs text-text-muted font-mono mb-4 flex items-center gap-1.5">
         <Link href="/" className="hover:text-text-secondary transition-colors">
@@ -180,6 +215,16 @@ export default function TreesPage() {
           <p className="text-text-secondary text-sm mt-1">
             Visualize operations on BST, AVL trees, and Binary Min Heaps
           </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setIsShareOpen(true)}
+            className="p-2 bg-surface hover:bg-elevated border border-[#333333] hover:border-text-secondary rounded-lg text-text-primary hover:text-white transition duration-200 cursor-pointer flex items-center gap-1.5 text-xs font-semibold"
+            title="Share Configuration"
+          >
+            <Share2 className="w-3.5 h-3.5" />
+            <span>Share</span>
+          </button>
         </div>
       </div>
 
@@ -289,15 +334,37 @@ export default function TreesPage() {
         </form>
       </div>
 
+      {/* Mobile Tab Navigation */}
+      <div className="flex lg:hidden gap-1 bg-[#141414]/60 border border-[#2a2a2a] rounded-lg p-0.5 mb-6 w-full overflow-x-auto">
+        {(['visualizer', 'metrics', 'code', 'explanation'] as const).map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={`flex-1 py-2 text-center rounded-md text-xs font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer ${
+              activeTab === tab
+                ? 'bg-accent-purple text-white shadow-sm'
+                : 'text-text-secondary hover:text-white'
+            }`}
+          >
+            {tab}
+          </button>
+        ))}
+      </div>
+
       {/* Main Split View */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 rounded-xl overflow-hidden border border-[#2a2a2a] mb-6 shadow-2xl">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 lg:rounded-xl lg:overflow-hidden lg:border lg:border-[#2a2a2a] mb-6 shadow-2xl relative">
         {/* Visualizer Canvas */}
-        <div className="bg-[#141414] border-b lg:border-b-0 lg:border-r border-[#2a2a2a] p-0 h-[420px] w-full min-w-0">
+        <div className={`bg-[#141414] border-[#2a2a2a] p-0 h-[420px] w-full min-w-0 relative border rounded-xl lg:border-none lg:rounded-none lg:border-r ${activeTab === 'visualizer' ? 'block' : 'hidden lg:block'}`}>
           <TreeCanvas />
+          <ThunderBurst
+            show={isFinished}
+            title={`${treeTypeLabelMap[treeType]} Complete`}
+            metricsText={`Node Count: ${nodeCount}\nTree Height: ${treeHeight} levels\nTime: ${executionTime.toFixed(2)}ms`}
+          />
         </div>
 
         {/* Code Panel */}
-        <div className="bg-[#0f0f0f] h-[420px] w-full min-w-0 flex flex-col">
+        <div className={`bg-[#0f0f0f] h-[420px] w-full min-w-0 flex flex-col border border-[#2a2a2a] rounded-xl lg:border-none lg:rounded-none ${activeTab === 'code' ? 'block' : 'hidden lg:block'}`}>
           <CodePanel
             code={activeSnippet}
             language={language}
@@ -308,7 +375,7 @@ export default function TreesPage() {
       </div>
 
       {/* Controls Bar */}
-      <div className="flex flex-col md:flex-row items-center gap-6 p-4 rounded-xl bg-surface border border-[#2a2a2a] mb-6 shadow-lg">
+      <div className={`flex flex-col md:flex-row items-center gap-6 p-4 rounded-xl bg-surface border border-[#2a2a2a] mb-6 shadow-lg ${activeTab === 'visualizer' || activeTab === 'metrics' ? 'flex' : 'hidden lg:flex'}`}>
         {/* Play Pause Controls */}
         <div className="flex items-center gap-2 select-none">
           <button
@@ -393,7 +460,7 @@ export default function TreesPage() {
       </div>
 
       {/* Metrics Section */}
-      <div className="flex flex-col gap-4 w-full">
+      <div className={`flex flex-col gap-4 w-full ${activeTab === 'metrics' ? 'block' : 'hidden lg:block'}`}>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full">
           {/* Node Count */}
           <div className="p-4 rounded-xl bg-surface border border-border-subtle shadow-md flex flex-col justify-between">
@@ -456,7 +523,7 @@ export default function TreesPage() {
       </div>
 
       {/* Educational Panels */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+      <div className={`grid grid-cols-1 md:grid-cols-3 gap-6 mt-6 ${activeTab === 'explanation' ? 'grid' : 'hidden lg:grid'}`}>
         <div className="md:col-span-2">
           <AlgorithmExplanation algorithmId={treeType} />
         </div>
@@ -464,6 +531,18 @@ export default function TreesPage() {
           <ComplexityChart activeComplexity="O(log n)" />
         </div>
       </div>
+
+      {/* Share Modal overlay */}
+      <ShareModal
+        isOpen={isShareOpen}
+        onClose={() => setIsShareOpen(false)}
+        title={treeTypeLabelMap[treeType]}
+        metrics={{
+          size: nodeCount,
+          steps: totalSteps,
+          executionTime,
+        }}
+      />
     </div>
   );
 }

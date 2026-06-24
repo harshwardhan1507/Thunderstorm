@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useVisualizerStore, SortingAlgorithmType } from '../../store/visualizerStore';
 import { SortingCanvas } from '../../components/visualizers/SortingCanvas';
@@ -13,19 +13,63 @@ import { TimelineScrubber } from '../../components/controls/TimelineScrubber';
 import { SORTING_ALGORITHMS_METADATA } from '../../lib/algorithms/metadata';
 import { AlgorithmExplanation } from '../../components/educational/AlgorithmExplanation';
 import { ComplexityChart } from '../../components/educational/ComplexityChart';
+import { useDeepLinking } from '../../lib/hooks/useDeepLinking';
+import { ShareModal } from '../../components/controls/ShareModal';
+import { ThunderBurst } from '../../components/visualizers/ThunderBurst';
+import { Share2 } from 'lucide-react';
 
 export default function SortingPage() {
+  return (
+    <Suspense fallback={<div className="flex-1 flex items-center justify-center text-text-muted font-mono text-xs">Loading Sorting Visualizer...</div>}>
+      <SortingPageInner />
+    </Suspense>
+  );
+}
+
+function SortingPageInner() {
   const {
     generateNewArray,
     selectedAlgorithm,
     setSelectedAlgorithm,
     isPlaying,
+    arraySize,
+    setArraySize,
+    speed,
+    setSpeed,
+    getMetrics,
+    steps,
+    currentStepIndex,
+    executionTime,
   } = useVisualizerStore();
 
-  // Initialize array on mount
+  const [isShareOpen, setIsShareOpen] = useState(false);
+
+  // Wire Deep Linking
+  const { updateUrl } = useDeepLinking(
+    () => ({
+      algo: selectedAlgorithm,
+      size: arraySize,
+      speed: speed,
+    }),
+    (params) => {
+      if (params.algo) setSelectedAlgorithm(params.algo as SortingAlgorithmType);
+      if (params.size) setArraySize(Number(params.size));
+      if (params.speed) setSpeed(Number(params.speed));
+    }
+  );
+
+  // Initialize array on mount if not deep linked
   useEffect(() => {
-    generateNewArray();
+    const hasParams = typeof window !== 'undefined' && new URLSearchParams(window.location.search).size > 0;
+    if (!hasParams) {
+      generateNewArray();
+    }
   }, [generateNewArray]);
+
+  // Sync state back to URL when these variables change
+  useEffect(() => {
+    updateUrl();
+  }, [selectedAlgorithm, arraySize, speed]);
 
   const algoLabel = SORTING_ALGORITHMS_METADATA[selectedAlgorithm]?.name || 'Sorting';
 
@@ -36,8 +80,11 @@ export default function SortingPage() {
     { key: 'heap', label: 'Heap Sort' },
   ];
 
+  const metrics = getMetrics();
+  const isFinished = steps.length > 0 && currentStepIndex === steps.length - 1 && !isPlaying;
+
   return (
-    <div className="flex-1 w-full max-w-6xl mx-auto px-6 py-6 flex flex-col font-sans select-none">
+    <div className="flex-1 w-full max-w-6xl mx-auto px-6 py-6 flex flex-col font-sans select-none relative">
       {/* Breadcrumb Bar */}
       <div className="text-xs text-text-muted font-mono mb-4 flex items-center gap-1.5">
         <Link href="/" className="hover:text-text-secondary transition-colors">
@@ -58,6 +105,14 @@ export default function SortingPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <button
+            onClick={() => setIsShareOpen(true)}
+            className="p-2 bg-surface hover:bg-elevated border border-[#333333] hover:border-text-secondary rounded-lg text-text-primary hover:text-white transition duration-200 cursor-pointer flex items-center gap-1.5 text-xs font-semibold"
+            title="Share Configuration"
+          >
+            <Share2 className="w-3.5 h-3.5" />
+            <span>Share</span>
+          </button>
           <button
             onClick={() => generateNewArray()}
             disabled={isPlaying}
@@ -87,10 +142,15 @@ export default function SortingPage() {
       </div>
 
       {/* Main Split-View Pane */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 rounded-xl overflow-hidden border border-[#2a2a2a] mb-6 shadow-2xl">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 rounded-xl overflow-hidden border border-[#2a2a2a] mb-6 shadow-2xl relative">
         {/* Left column: Visualizer */}
-        <div className="bg-[#141414] border-b lg:border-b-0 lg:border-r border-[#2a2a2a] p-0 h-[420px] w-full min-w-0">
+        <div className="bg-[#141414] border-b lg:border-b-0 lg:border-r border-[#2a2a2a] p-0 h-[420px] w-full min-w-0 relative">
           <SortingCanvas />
+          <ThunderBurst
+            show={isFinished}
+            title={`${algoLabel} Completed`}
+            metricsText={`Dataset Size: ${arraySize} elements\nComparisons: ${metrics.comparisons}\nSwaps: ${metrics.swaps}\nTime: ${executionTime.toFixed(2)}ms`}
+          />
         </div>
 
         {/* Right column: Code Panel */}
@@ -135,6 +195,19 @@ export default function SortingPage() {
           />
         </div>
       </div>
+
+      {/* Share Modal overlay */}
+      <ShareModal
+        isOpen={isShareOpen}
+        onClose={() => setIsShareOpen(false)}
+        title={algoLabel}
+        metrics={{
+          size: arraySize,
+          comparisons: metrics.comparisons,
+          swaps: metrics.swaps,
+          executionTime,
+        }}
+      />
     </div>
   );
 }

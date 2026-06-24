@@ -159,7 +159,7 @@ export const TreeCanvas: React.FC = () => {
       <svg
         width={dimensions.width}
         height={dimensions.height}
-        className="w-full h-full block select-none"
+        className="w-full h-full block select-none touch-none"
       >
         <defs>
           <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">

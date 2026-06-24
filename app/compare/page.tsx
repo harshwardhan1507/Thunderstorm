@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { Play, Pause, SkipForward, SkipBack, RotateCcw, ChevronUp, ChevronDown, Trophy, X } from 'lucide-react';
+import { Play, Pause, SkipForward, SkipBack, RotateCcw, ChevronUp, ChevronDown, Trophy, X, Share2 } from 'lucide-react';
 import { useCompareStore } from '../../store/compareStore';
 import { CompareCanvas } from '../../components/visualizers/CompareCanvas';
 import { SORTING_ALGORITHMS_METADATA } from '../../lib/algorithms/metadata';
@@ -14,6 +14,8 @@ import { mergeSnippets } from '../../lib/snippets/sorting/merge';
 import { heapSnippets } from '../../lib/snippets/sorting/heap';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { atomDark } from 'react-syntax-highlighter/dist/cjs/styles/prism';
+import { useDeepLinking } from '../../lib/hooks/useDeepLinking';
+import { ShareModal } from '../../components/controls/ShareModal';
 
 const snippetMap: Record<SortingAlgorithmType, Record<CodeLanguageType, string>> = {
   bubble: bubbleSnippets,
@@ -26,7 +28,7 @@ export default function ComparePage() {
   return (
     <Suspense fallback={
       <div className="flex-1 w-full max-w-7xl mx-auto px-6 py-6 flex flex-col font-mono text-xs text-text-muted justify-center items-center h-[400px]">
-        Loading Visualizer...
+        Loading Compare Visualizer...
       </div>
     }>
       <CompareDashboard />
@@ -62,8 +64,28 @@ function CompareDashboard() {
   const [isCodeExpanded, setIsCodeExpanded] = useState(false);
   const [activeCodeTab, setActiveCodeTab] = useState<'left' | 'right'>('left');
   const [codeLanguage, setCodeLanguage] = useState<CodeLanguageType>('javascript');
+  const [isShareOpen, setIsShareOpen] = useState(false);
+  const [countdown, setCountdown] = useState<number | 'BATTLE!' | null>(null);
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Wire Deep Linking
+  const { updateUrl } = useDeepLinking(
+    () => ({
+      mode: mode,
+      leftAlgo: left.selectedAlgorithm,
+      rightAlgo: right.selectedAlgorithm,
+      speed: speed,
+      size: arraySize,
+    }),
+    (params) => {
+      if (params.mode) setMode(params.mode as 'compare' | 'battle');
+      if (params.leftAlgo) setSelectedAlgorithm('left', params.leftAlgo as SortingAlgorithmType);
+      if (params.rightAlgo) setSelectedAlgorithm('right', params.rightAlgo as SortingAlgorithmType);
+      if (params.speed) setSpeed(Number(params.speed));
+      if (params.size) setArraySize(Number(params.size));
+    }
+  );
 
   // Sync mode from URL parameters
   useEffect(() => {
@@ -72,10 +94,18 @@ function CompareDashboard() {
     }
   }, [modeParam, setMode]);
 
-  // Initialize arrays on mount
+  // Initialize arrays on mount if not deep linked
   useEffect(() => {
-    generateNewArrays();
+    const hasParams = typeof window !== 'undefined' && new URLSearchParams(window.location.search).size > 0;
+    if (!hasParams) {
+      generateNewArrays();
+    }
   }, [generateNewArrays]);
+
+  // Sync state back to URL when these variables change
+  useEffect(() => {
+    updateUrl();
+  }, [mode, left.selectedAlgorithm, right.selectedAlgorithm, speed, arraySize]);
 
   // Synchronized Playback Loop
   useEffect(() => {
@@ -102,6 +132,36 @@ function CompareDashboard() {
       if (timerRef.current) clearTimeout(timerRef.current);
     };
   }, [isPlaying, speed, setIsPlaying]);
+
+  const startBattleSequence = () => {
+    if (isPlaying) {
+      setIsPlaying(false);
+      return;
+    }
+    
+    // Check if we are at the start of the race
+    const isAtStart = left.currentStepIndex === -1 && right.currentStepIndex === -1;
+    if (mode === 'battle' && isAtStart) {
+      setCountdown(3);
+      const startTimer = (count: number) => {
+        setTimeout(() => {
+          if (count > 1) {
+            setCountdown((count - 1) as any);
+            startTimer(count - 1);
+          } else if (count === 1) {
+            setCountdown('BATTLE!');
+            setTimeout(() => {
+              setCountdown(null);
+              setIsPlaying(true);
+            }, 800);
+          }
+        }, 800);
+      };
+      startTimer(3);
+    } else {
+      togglePlay();
+    }
+  };
 
   const algos: { key: SortingAlgorithmType; label: string }[] = [
     { key: 'bubble', label: 'Bubble Sort' },
@@ -156,6 +216,26 @@ function CompareDashboard() {
     ? Math.max(leftTotalSteps, rightTotalSteps) / Math.min(leftTotalSteps, rightTotalSteps)
     : 1;
 
+  // Compare Mode differences HUD
+  const showDeltaHUD = mode === 'compare' && (left.currentStepIndex >= 0 || right.currentStepIndex >= 0);
+  let deltaText = '';
+  let deltaColor = 'text-white';
+  
+  if (showDeltaHUD) {
+    const leftSteps = left.currentStepIndex + 1;
+    const rightSteps = right.currentStepIndex + 1;
+    
+    if (leftSteps !== rightSteps) {
+      const diff = Math.abs(leftSteps - rightSteps);
+      const ratio = Math.max(leftSteps, rightSteps) / Math.min(leftSteps, rightSteps || 1);
+      const fasterSide = leftSteps < rightSteps ? leftName : rightName;
+      deltaText = `${fasterSide} algorithm is ahead by ${diff} operations (${ratio.toFixed(1)}x faster)`;
+      deltaColor = leftSteps < rightSteps ? 'text-accent-purple' : 'text-accent-violet';
+    } else {
+      deltaText = 'Both algorithms are running in lockstep (exact same operations count)';
+    }
+  }
+
   return (
     <div className="flex-1 w-full max-w-7xl mx-auto px-6 py-6 flex flex-col font-sans select-none pb-24 relative">
       {/* Breadcrumb Bar */}
@@ -178,6 +258,14 @@ function CompareDashboard() {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <button
+            onClick={() => setIsShareOpen(true)}
+            className="p-2 bg-surface hover:bg-elevated border border-[#333333] hover:border-text-secondary rounded-lg text-text-primary hover:text-white transition duration-200 cursor-pointer flex items-center gap-1.5 text-xs font-semibold"
+            title="Share Configuration"
+          >
+            <Share2 className="w-3.5 h-3.5" />
+            <span>Share</span>
+          </button>
           <button
             onClick={() => generateNewArrays()}
             disabled={isPlaying}
@@ -225,6 +313,20 @@ function CompareDashboard() {
               </span>
             </div>
           )}
+          
+          {/* Winner Highlight Left */}
+          {winner === 'left' && mode === 'battle' && (
+            <div className="absolute inset-x-0 top-12 bottom-14 bg-black/25 pointer-events-none z-20 flex items-center justify-center">
+              <div className="absolute inset-0 bg-accent-purple/10 animate-pulse border-2 border-accent-purple shadow-[inset_0_0_40px_rgba(124,58,237,0.35)]" />
+              <div className="z-30 flex flex-col items-center">
+                <Trophy className="w-12 h-12 text-yellow-400 drop-shadow-[0_0_15px_rgba(234,179,8,0.7)] animate-bounce" />
+                <span className="bg-accent-purple text-white font-extrabold uppercase font-mono tracking-wider text-xs px-3 py-1.5 rounded-full shadow-lg border border-accent-purple/50 mt-3 animate-pulse">
+                  🏆 WINNER
+                </span>
+              </div>
+            </div>
+          )}
+
           <div className="flex justify-between items-center px-4 py-3 bg-[#0a0a0a]/50 border-b border-[#2a2a2a]">
             <span className="text-xs font-bold uppercase tracking-wider text-accent-purple font-mono">
               Left Algorithm
@@ -243,7 +345,7 @@ function CompareDashboard() {
             </select>
           </div>
 
-          <div className="bg-[#141414] h-[300px] w-full border-b border-[#2a2a2a] p-0">
+          <div className="bg-[#141414] h-[300px] w-full border-b border-[#2a2a2a] p-0 relative">
             <CompareCanvas side="left" />
           </div>
 
@@ -272,6 +374,20 @@ function CompareDashboard() {
               </span>
             </div>
           )}
+          
+          {/* Winner Highlight Right */}
+          {winner === 'right' && mode === 'battle' && (
+            <div className="absolute inset-x-0 top-12 bottom-14 bg-black/25 pointer-events-none z-20 flex items-center justify-center">
+              <div className="absolute inset-0 bg-accent-violet/10 animate-pulse border-2 border-accent-violet shadow-[inset_0_0_40px_rgba(139,92,246,0.35)]" />
+              <div className="z-30 flex flex-col items-center">
+                <Trophy className="w-12 h-12 text-yellow-400 drop-shadow-[0_0_15px_rgba(234,179,8,0.7)] animate-bounce" />
+                <span className="bg-accent-violet text-white font-extrabold uppercase font-mono tracking-wider text-xs px-3 py-1.5 rounded-full shadow-lg border border-accent-violet/50 mt-3 animate-pulse">
+                  🏆 WINNER
+                </span>
+              </div>
+            </div>
+          )}
+
           <div className="flex justify-between items-center px-4 py-3 bg-[#0a0a0a]/50 border-b border-[#2a2a2a]">
             <span className="text-xs font-bold uppercase tracking-wider text-accent-violet font-mono">
               Right Algorithm
@@ -290,7 +406,7 @@ function CompareDashboard() {
             </select>
           </div>
 
-          <div className="bg-[#141414] h-[300px] w-full border-b border-[#2a2a2a] p-0">
+          <div className="bg-[#141414] h-[300px] w-full border-b border-[#2a2a2a] p-0 relative">
             <CompareCanvas side="right" />
           </div>
 
@@ -311,6 +427,14 @@ function CompareDashboard() {
         </div>
       </div>
 
+      {/* Live Delta HUD */}
+      {showDeltaHUD && (
+        <div className="w-full flex items-center justify-center p-3 rounded-xl bg-[#0c0c0c] border border-[#2a2a2a] mb-6 shadow-md animate-in fade-in slide-in-from-bottom-2 duration-300 font-mono text-xs">
+          <span className="mr-2">⚡</span>
+          <span className={`font-bold ${deltaColor}`}>{deltaText}</span>
+        </div>
+      )}
+
       {/* Control Bar (Unified Playback controls) */}
       <div className="flex flex-col md:flex-row items-center gap-6 p-4 rounded-xl bg-surface border border-[#2a2a2a] mb-6 shadow-lg">
         <div className="flex items-center gap-2">
@@ -324,7 +448,7 @@ function CompareDashboard() {
           </button>
           
           <button
-            onClick={togglePlay}
+            onClick={mode === 'battle' && left.currentStepIndex === -1 && right.currentStepIndex === -1 ? startBattleSequence : togglePlay}
             title={isPlaying ? 'Pause' : 'Play'}
             className="w-12 h-12 rounded-lg bg-gradient-to-r from-accent-purple to-indigo-700 hover:from-accent-violet hover:to-accent-purple text-white flex items-center justify-center transition shadow-md cursor-pointer"
           >
@@ -491,7 +615,7 @@ function CompareDashboard() {
 
             {/* Winner Trophy Header */}
             <div className="w-16 h-16 rounded-full bg-accent-purple/10 border border-accent-purple/30 flex items-center justify-center mb-4">
-              <Trophy className="w-8 h-8 text-accent-violet animate-bounce" />
+              <Trophy className="w-8 h-8 text-yellow-400 animate-bounce" />
             </div>
 
             <h2 className="text-xl font-extrabold text-white tracking-tight mb-1">
@@ -560,6 +684,30 @@ function CompareDashboard() {
           </div>
         </div>
       )}
+
+      {/* Cinematic Battle Countdown Overlay */}
+      {countdown !== null && (
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/85 backdrop-blur-md select-none">
+          <div className="text-center animate-pulse">
+            <h2 className="text-sm font-bold tracking-widest text-text-muted uppercase font-mono mb-2">BATTLE SPEEDWAY</h2>
+            <div className="text-8xl font-black text-white drop-shadow-[0_0_30px_rgba(124,58,237,0.8)] scale-110 transition-all duration-200">
+              {countdown}
+            </div>
+            <p className="text-xs text-text-secondary font-mono mt-4">READY TO SPEEDRUN...</p>
+          </div>
+        </div>
+      )}
+
+      {/* Share Modal overlay */}
+      <ShareModal
+        isOpen={isShareOpen}
+        onClose={() => setIsShareOpen(false)}
+        title={`Compare: ${leftName} vs ${rightName}`}
+        metrics={{
+          size: arraySize,
+          steps: Math.max(leftTotalSteps, rightTotalSteps),
+        }}
+      />
     </div>
   );
 }
