@@ -31,7 +31,7 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-background text-text-primary font-sans relative">
+      <body className="min-h-screen bg-[#0a0a0a] text-[#f0f0f0] font-sans">
         <PWARegister />
         <AmbientStorm />
         <Navbar />

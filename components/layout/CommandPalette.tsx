@@ -155,12 +155,12 @@ export const CommandPalette: React.FC = () => {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.96, y: -10 }}
             transition={{ duration: 0.2, ease: 'easeOut' }}
-            className="w-full max-w-xl bg-surface-card border border-border-subtle rounded-2xl shadow-2xl overflow-hidden"
+            className="w-full max-w-xl bg-[#141414]-card border border-[#2a2a2a] rounded-2xl shadow-2xl overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Search Input */}
-            <div className="flex items-center gap-3 px-5 py-4 border-b border-border-subtle">
-              <Search className="w-5 h-5 text-text-muted" />
+            <div className="flex items-center gap-3 px-5 py-4 border-b border-[#2a2a2a]">
+              <Search className="w-5 h-5 text-[#555555]" />
               <input
                 ref={inputRef}
                 type="text"
@@ -173,7 +173,7 @@ export const CommandPalette: React.FC = () => {
                 className="flex-1 bg-transparent text-white placeholder-text-muted outline-none text-base"
               />
               <div className="flex items-center gap-1.5">
-                <kbd className="px-2 py-1 text-xs font-mono bg-surface-elevated text-text-muted rounded border border-border-subtle">
+                <kbd className="px-2 py-1 text-xs font-mono bg-[#141414]-elevated text-[#555555] rounded border border-[#2a2a2a]">
                   ESC
                 </kbd>
               </div>
@@ -182,7 +182,7 @@ export const CommandPalette: React.FC = () => {
             {/* Command List */}
             <div className="max-h-[400px] overflow-y-auto py-2">
               {filteredCommands.length === 0 ? (
-                <div className="px-5 py-8 text-center text-text-muted text-sm">
+                <div className="px-5 py-8 text-center text-[#555555] text-sm">
                   No results found
                 </div>
               ) : (
@@ -197,24 +197,24 @@ export const CommandPalette: React.FC = () => {
                         setIsOpen(false);
                       }}
                       className={`w-full flex items-center gap-3 px-5 py-3 transition-all duration-150 ${
-                        isSelected ? 'bg-accent-primary/10 border-l-2 border-accent-primary' : 'hover:bg-surface-elevated border-l-2 border-transparent'
+                        isSelected ? 'bg-[#3B82F6]/10 border-l-2 border-accent-primary' : 'hover:bg-[#141414]-elevated border-l-2 border-transparent'
                       }`}
                     >
-                      <div className={`p-2 rounded-lg ${isSelected ? 'bg-accent-primary/20' : 'bg-surface-elevated'}`}>
-                        <Icon className={`w-4 h-4 ${isSelected ? 'text-accent-primary' : 'text-text-muted'}`} />
+                      <div className={`p-2 rounded-lg ${isSelected ? 'bg-[#3B82F6]/20' : 'bg-[#141414]-elevated'}`}>
+                        <Icon className={`w-4 h-4 ${isSelected ? 'text-[#3B82F6]' : 'text-[#555555]'}`} />
                       </div>
                       <div className="flex-1 text-left">
-                        <div className={`text-sm font-medium ${isSelected ? 'text-white' : 'text-text-secondary'}`}>
+                        <div className={`text-sm font-medium ${isSelected ? 'text-white' : 'text-[#888888]'}`}>
                           {command.label}
                         </div>
                         {command.description && (
-                          <div className="text-xs text-text-muted mt-0.5">
+                          <div className="text-xs text-[#555555] mt-0.5">
                             {command.description}
                           </div>
                         )}
                       </div>
                       {isSelected && (
-                        <div className="text-xs text-text-muted font-mono">
+                        <div className="text-xs text-[#555555] font-mono">
                           ↵
                         </div>
                       )}
@@ -225,19 +225,19 @@ export const CommandPalette: React.FC = () => {
             </div>
 
             {/* Footer */}
-            <div className="px-5 py-3 border-t border-border-subtle flex items-center justify-between text-xs text-text-muted">
+            <div className="px-5 py-3 border-t border-[#2a2a2a] flex items-center justify-between text-xs text-[#555555]">
               <div className="flex items-center gap-4">
                 <span className="flex items-center gap-1.5">
-                  <kbd className="px-1.5 py-0.5 bg-surface-elevated rounded border border-border-subtle font-mono">↑↓</kbd>
+                  <kbd className="px-1.5 py-0.5 bg-[#141414]-elevated rounded border border-[#2a2a2a] font-mono">↑↓</kbd>
                   Navigate
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <kbd className="px-1.5 py-0.5 bg-surface-elevated rounded border border-border-subtle font-mono">↵</kbd>
+                  <kbd className="px-1.5 py-0.5 bg-[#141414]-elevated rounded border border-[#2a2a2a] font-mono">↵</kbd>
                   Select
                 </span>
               </div>
               <span className="flex items-center gap-1.5">
-                <kbd className="px-1.5 py-0.5 bg-surface-elevated rounded border border-border-subtle font-mono">esc</kbd>
+                <kbd className="px-1.5 py-0.5 bg-[#141414]-elevated rounded border border-[#2a2a2a] font-mono">esc</kbd>
                 Close
               </span>
             </div>

@@ -140,55 +140,55 @@ export const GraphCanvas: React.FC = () => {
   const selectedNodeObj = nodes.find((n) => n.id === selectedNodeId);
 
   return (
-    <div className="w-full h-full flex flex-col relative bg-surface">
+    <div className="w-full h-full flex flex-col relative bg-[#141414]">
       {/* HUD Bar */}
-      <div className="flex items-center justify-between p-3 border-b border-border-subtle bg-surface-card/90 backdrop-blur-md z-10">
+      <div className="flex items-center justify-between p-3 border-b border-[#2a2a2a] bg-[#141414]-card/90 backdrop-blur-md z-10">
         <div className="flex items-center gap-2">
-          <span className="text-[10px] uppercase font-bold text-text-muted">Preset Graphs:</span>
+          <span className="text-[10px] uppercase font-bold text-[#555555]">Preset Graphs:</span>
           <button
             onClick={() => loadPreset('default')}
             disabled={isPlaying}
-            className="px-2 py-1 rounded bg-surface-elevated hover:bg-elevated border border-border-subtle text-[10px] text-white transition-all duration-200 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+            className="px-2 py-1 rounded bg-[#141414]-elevated hover:bg-[#1c1c1c] border border-[#2a2a2a] text-[10px] text-white transition-all duration-200 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
           >
             Default
           </button>
           <button
             onClick={() => loadPreset('tree')}
             disabled={isPlaying}
-            className="px-2 py-1 rounded bg-surface-elevated hover:bg-elevated border border-border-subtle text-[10px] text-white transition-all duration-200 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+            className="px-2 py-1 rounded bg-[#141414]-elevated hover:bg-[#1c1c1c] border border-[#2a2a2a] text-[10px] text-white transition-all duration-200 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
           >
             Tree
           </button>
           <button
             onClick={() => loadPreset('cycle')}
             disabled={isPlaying}
-            className="px-2 py-1 rounded bg-surface-elevated hover:bg-elevated border border-border-subtle text-[10px] text-white transition-all duration-200 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+            className="px-2 py-1 rounded bg-[#141414]-elevated hover:bg-[#1c1c1c] border border-[#2a2a2a] text-[10px] text-white transition-all duration-200 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
           >
             Cycle
           </button>
           <button
             onClick={() => loadPreset('star')}
             disabled={isPlaying}
-            className="px-2 py-1 rounded bg-surface-elevated hover:bg-elevated border border-border-subtle text-[10px] text-white transition-all duration-200 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+            className="px-2 py-1 rounded bg-[#141414]-elevated hover:bg-[#1c1c1c] border border-[#2a2a2a] text-[10px] text-white transition-all duration-200 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
           >
             Star
           </button>
           <button
             onClick={() => loadPreset('grid')}
             disabled={isPlaying}
-            className="px-2 py-1 rounded bg-surface-elevated hover:bg-elevated border border-border-subtle text-[10px] text-white transition-all duration-200 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+            className="px-2 py-1 rounded bg-[#141414]-elevated hover:bg-[#1c1c1c] border border-[#2a2a2a] text-[10px] text-white transition-all duration-200 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
           >
             Grid
           </button>
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-[10px] uppercase font-bold text-text-muted">Start Node:</span>
+          <span className="text-[10px] uppercase font-bold text-[#555555]">Start Node:</span>
           <select
             value={startNodeId}
             onChange={(e) => setStartNodeId(e.target.value)}
             disabled={isPlaying}
-            className="bg-surface-elevated border border-border-subtle text-[10px] rounded text-white p-0.5 focus:border-border-hover outline-none transition-colors"
+            className="bg-[#141414]-elevated border border-[#2a2a2a] text-[10px] rounded text-white p-0.5 focus:border-[rgba(255,255,255,0.18)] outline-none transition-colors"
           >
             {nodes.map((n) => (
               <option key={n.id} value={n.id}>
@@ -337,7 +337,7 @@ export const GraphCanvas: React.FC = () => {
 
       {/* Editing Instructions Overlay */}
       {!isPlaying && (
-        <div className="absolute bottom-3 left-3 bg-surface-card/90 backdrop-blur-md border border-border-subtle rounded-lg p-2.5 text-[10px] text-text-secondary select-none pointer-events-none font-mono max-w-[280px] shadow-lg">
+        <div className="absolute bottom-3 left-3 bg-[#141414]-card/90 backdrop-blur-md border border-[#2a2a2a] rounded-lg p-2.5 text-[10px] text-[#888888] select-none pointer-events-none font-mono max-w-[280px] shadow-lg">
           <p className="text-white font-bold mb-1">Interactive Controls:</p>
           <ul className="list-disc pl-3.5 space-y-0.5">
             <li>Click empty space to add a new Node.</li>

@@ -121,15 +121,15 @@ export const AlgorithmExplanation: React.FC<AlgorithmExplanationProps> = ({ algo
   };
 
   return (
-    <div className="w-full bg-surface-card border border-border-subtle rounded-xl overflow-hidden shadow-lg select-none font-sans mt-6">
+    <div className="w-full bg-[#141414]-card border border-[#2a2a2a] rounded-xl overflow-hidden shadow-lg select-none font-sans mt-6">
       {/* Tabs */}
-      <div className="flex bg-surface-elevated/50 border-b border-border-subtle p-0.5">
+      <div className="flex bg-[#141414]-elevated/50 border-b border-[#2a2a2a] p-0.5">
         <button
           onClick={() => setActiveTab('intuition')}
           className={`flex-1 py-2 text-center text-xs font-bold uppercase tracking-wider transition cursor-pointer ${
             activeTab === 'intuition'
               ? 'text-white border-b-2 border-accent-primary'
-              : 'text-text-secondary hover:text-white'
+              : 'text-[#888888] hover:text-white'
           }`}
         >
           Intuition
@@ -139,7 +139,7 @@ export const AlgorithmExplanation: React.FC<AlgorithmExplanationProps> = ({ algo
           className={`flex-1 py-2 text-center text-xs font-bold uppercase tracking-wider transition cursor-pointer ${
             activeTab === 'proscons'
               ? 'text-white border-b-2 border-accent-primary'
-              : 'text-text-secondary hover:text-white'
+              : 'text-[#888888] hover:text-white'
           }`}
         >
           Pros & Cons
@@ -149,7 +149,7 @@ export const AlgorithmExplanation: React.FC<AlgorithmExplanationProps> = ({ algo
           className={`flex-1 py-2 text-center text-xs font-bold uppercase tracking-wider transition cursor-pointer ${
             activeTab === 'applications'
               ? 'text-white border-b-2 border-accent-primary'
-              : 'text-text-secondary hover:text-white'
+              : 'text-[#888888] hover:text-white'
           }`}
         >
           Applications
@@ -157,11 +157,11 @@ export const AlgorithmExplanation: React.FC<AlgorithmExplanationProps> = ({ algo
       </div>
 
       {/* Tab Contents */}
-      <div className="p-5 text-sm text-text-secondary leading-relaxed">
+      <div className="p-5 text-sm text-[#888888] leading-relaxed">
         {activeTab === 'intuition' && (
           <div>
             <h4 className="text-white font-bold mb-2">How it works:</h4>
-            <p className="font-sans text-xs text-text-primary">{data.intuition}</p>
+            <p className="font-sans text-xs text-[#f0f0f0]">{data.intuition}</p>
           </div>
         )}
 
@@ -169,7 +169,7 @@ export const AlgorithmExplanation: React.FC<AlgorithmExplanationProps> = ({ algo
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <h4 className="text-accent-success font-bold text-xs uppercase tracking-wide mb-2">Advantages:</h4>
-              <ul className="list-disc pl-4 space-y-1 text-xs text-text-primary">
+              <ul className="list-disc pl-4 space-y-1 text-xs text-[#f0f0f0]">
                 {data.pros.map((p, idx) => (
                   <li key={`pro-${idx}`}>{p}</li>
                 ))}
@@ -178,7 +178,7 @@ export const AlgorithmExplanation: React.FC<AlgorithmExplanationProps> = ({ algo
             </div>
             <div>
               <h4 className="text-accent-error font-bold text-xs uppercase tracking-wide mb-2">Disadvantages:</h4>
-              <ul className="list-disc pl-4 space-y-1 text-xs text-text-primary">
+              <ul className="list-disc pl-4 space-y-1 text-xs text-[#f0f0f0]">
                 {data.cons.map((c, idx) => (
                   <li key={`con-${idx}`}>{c}</li>
                 ))}
@@ -191,7 +191,7 @@ export const AlgorithmExplanation: React.FC<AlgorithmExplanationProps> = ({ algo
         {activeTab === 'applications' && (
           <div>
             <h4 className="text-white font-bold mb-2 font-mono text-xs uppercase tracking-wider">Real-world Uses:</h4>
-            <ul className="list-disc pl-4 space-y-1.5 text-xs text-text-primary">
+            <ul className="list-disc pl-4 space-y-1.5 text-xs text-[#f0f0f0]">
               {data.applications.map((app, idx) => (
                 <li key={`app-${idx}`}>{app}</li>
               ))}

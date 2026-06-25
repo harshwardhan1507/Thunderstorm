@@ -27,7 +27,7 @@ const snippetMap: Record<SortingAlgorithmType, Record<CodeLanguageType, string>>
 export default function ComparePage() {
   return (
     <Suspense fallback={
-      <div className="flex-1 w-full max-w-7xl mx-auto px-6 py-6 flex flex-col font-mono text-xs text-text-muted justify-center items-center h-[400px]">
+      <div className="flex-1 w-full max-w-7xl mx-auto px-6 py-6 flex flex-col font-mono text-xs text-[#555555] justify-center items-center h-[400px]">
         Loading Compare Visualizer...
       </div>
     }>
@@ -207,7 +207,7 @@ function CompareDashboard() {
   const rightName = SORTING_ALGORITHMS_METADATA[right.selectedAlgorithm]?.name || 'Right Sort';
   
   const winnerName = winner === 'left' ? leftName : winner === 'right' ? rightName : 'Tie';
-  const winnerColor = winner === 'left' ? 'text-accent-purple' : winner === 'right' ? 'text-accent-violet' : 'text-white';
+  const winnerColor = winner === 'left' ? 'text-[#7c3aed]' : winner === 'right' ? 'text-[#8b5cf6]' : 'text-white';
   
   const leftTotalSteps = left.steps.length;
   const rightTotalSteps = right.steps.length;
@@ -230,7 +230,7 @@ function CompareDashboard() {
       const ratio = Math.max(leftSteps, rightSteps) / Math.min(leftSteps, rightSteps || 1);
       const fasterSide = leftSteps < rightSteps ? leftName : rightName;
       deltaText = `${fasterSide} algorithm is ahead by ${diff} operations (${ratio.toFixed(1)}x faster)`;
-      deltaColor = leftSteps < rightSteps ? 'text-accent-purple' : 'text-accent-violet';
+      deltaColor = leftSteps < rightSteps ? 'text-[#7c3aed]' : 'text-[#8b5cf6]';
     } else {
       deltaText = 'Both algorithms are running in lockstep (exact same operations count)';
     }
@@ -239,28 +239,28 @@ function CompareDashboard() {
   return (
     <div className="flex-1 w-full max-w-7xl mx-auto px-6 py-6 flex flex-col font-sans select-none pb-24 relative">
       {/* Breadcrumb Bar */}
-      <div className="text-xs text-text-muted font-mono mb-4 flex items-center gap-1.5">
-        <Link href="/" className="hover:text-text-secondary transition-colors">
+      <div className="text-xs text-[#555555] font-mono mb-4 flex items-center gap-1.5">
+        <Link href="/" className="hover:text-[#888888] transition-colors">
           Home
         </Link>
         <span>›</span>
-        <span className="text-text-secondary">Practice</span>
+        <span className="text-[#888888]">Practice</span>
         <span>›</span>
-        <span className="text-text-primary font-semibold">Compare & Battle</span>
+        <span className="text-[#f0f0f0] font-semibold">Compare & Battle</span>
       </div>
 
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
           <h1 className="text-2xl font-bold text-white tracking-tight">Compare & Battle</h1>
-          <p className="text-text-secondary text-sm mt-1">
+          <p className="text-[#888888] text-sm mt-1">
             Analyze two sorting algorithms side-by-side or race them head-to-head.
           </p>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setIsShareOpen(true)}
-            className="p-2 bg-surface hover:bg-elevated border border-[#333333] hover:border-text-secondary rounded-lg text-text-primary hover:text-white transition duration-200 cursor-pointer flex items-center gap-1.5 text-xs font-semibold"
+            className="p-2 bg-[#141414] hover:bg-[#1c1c1c] border border-[#333333] rounded-lg text-[#f0f0f0] hover:text-white transition duration-200 cursor-pointer flex items-center gap-1.5 text-xs font-semibold"
             title="Share Configuration"
           >
             <Share2 className="w-3.5 h-3.5" />
@@ -269,7 +269,7 @@ function CompareDashboard() {
           <button
             onClick={() => generateNewArrays()}
             disabled={isPlaying}
-            className="px-4 py-2 text-xs font-bold uppercase bg-surface border border-[#333333] hover:border-text-secondary rounded-lg text-text-primary hover:bg-elevated transition-all duration-200 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+            className="px-4 py-2 text-xs font-bold uppercase bg-[#141414] border border-[#333333] hover:border-text-secondary rounded-lg text-[#f0f0f0] hover:bg-[#1c1c1c] transition-all duration-200 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
           >
             Generate New Data
           </button>
@@ -277,14 +277,14 @@ function CompareDashboard() {
       </div>
 
       {/* Mode Switcher Tabs */}
-      <div className="flex gap-1 bg-[#141414]/40 border border-[#2a2a2a] rounded-lg p-0.5 self-start mb-6">
+      <div className="flex gap-1 bg-[#141414] border border-[#2a2a2a] rounded-lg p-1 self-start mb-6">
         <button
           onClick={() => setMode('compare')}
           disabled={isPlaying}
           className={`px-4 py-1.5 rounded-md text-xs font-semibold tracking-wide transition-all duration-200 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed ${
             mode === 'compare'
-              ? 'bg-highlight text-white border-b border-accent-purple shadow-sm'
-              : 'text-text-secondary hover:text-white hover:bg-elevated'
+              ? 'bg-[#232323] text-white shadow-sm'
+              : 'text-[#888888] hover:text-white hover:bg-[#1c1c1c]'
           }`}
         >
           Compare Mode (Sync)
@@ -294,8 +294,8 @@ function CompareDashboard() {
           disabled={isPlaying}
           className={`px-4 py-1.5 rounded-md text-xs font-semibold tracking-wide transition-all duration-200 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed ${
             mode === 'battle'
-              ? 'bg-highlight text-white border-b border-accent-purple shadow-sm'
-              : 'text-text-secondary hover:text-white hover:bg-elevated'
+              ? 'bg-[#232323] text-white shadow-sm'
+              : 'text-[#888888] hover:text-white hover:bg-[#1c1c1c]'
           }`}
         >
           Battle Mode (Race)
@@ -305,7 +305,7 @@ function CompareDashboard() {
       {/* Main Dual Visualizer Panel */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         {/* Left Algorithm Panel */}
-        <div className="flex flex-col bg-surface border border-[#2a2a2a] rounded-xl overflow-hidden shadow-2xl relative">
+        <div className="flex flex-col bg-[#141414] border border-[#2a2a2a] rounded-xl overflow-hidden shadow-2xl relative">
           {left.isFinished && mode === 'battle' && (
             <div className="absolute top-12 left-0 right-0 bottom-14 bg-black/60 backdrop-blur-xs flex items-center justify-center z-10">
               <span className="bg-[#22c55e]/90 text-white font-bold text-xs px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1">
@@ -317,10 +317,10 @@ function CompareDashboard() {
           {/* Winner Highlight Left */}
           {winner === 'left' && mode === 'battle' && (
             <div className="absolute inset-x-0 top-12 bottom-14 bg-black/25 pointer-events-none z-20 flex items-center justify-center">
-              <div className="absolute inset-0 bg-accent-purple/10 animate-pulse border-2 border-accent-purple shadow-[inset_0_0_40px_rgba(124,58,237,0.35)]" />
+              <div className="absolute inset-0 bg-[#7c3aed]/10 animate-pulse border-2 border-accent-purple shadow-[inset_0_0_40px_rgba(124,58,237,0.35)]" />
               <div className="z-30 flex flex-col items-center">
                 <Trophy className="w-12 h-12 text-yellow-400 drop-shadow-[0_0_15px_rgba(234,179,8,0.7)] animate-bounce" />
-                <span className="bg-accent-purple text-white font-extrabold uppercase font-mono tracking-wider text-xs px-3 py-1.5 rounded-full shadow-lg border border-accent-purple/50 mt-3 animate-pulse">
+                <span className="bg-[#7c3aed] text-white font-extrabold uppercase font-mono tracking-wider text-xs px-3 py-1.5 rounded-full shadow-lg border border-accent-purple/50 mt-3 animate-pulse">
                   🏆 WINNER
                 </span>
               </div>
@@ -328,7 +328,7 @@ function CompareDashboard() {
           )}
 
           <div className="flex justify-between items-center px-4 py-3 bg-[#0a0a0a]/50 border-b border-[#2a2a2a]">
-            <span className="text-xs font-bold uppercase tracking-wider text-accent-purple font-mono">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#7c3aed] font-mono">
               Left Algorithm
             </span>
             <select
@@ -351,22 +351,22 @@ function CompareDashboard() {
 
           <div className="p-4 grid grid-cols-3 gap-2 bg-[#0c0c0c] text-center border-b border-[#2a2a2a]/50">
             <div>
-              <div className="text-[10px] text-text-muted font-mono uppercase">Comparisons</div>
+              <div className="text-[10px] text-[#555555] font-mono uppercase">Comparisons</div>
               <div className="text-lg font-bold text-white mt-1">{metrics.left.comparisons}</div>
             </div>
             <div>
-              <div className="text-[10px] text-text-muted font-mono uppercase">Swaps</div>
+              <div className="text-[10px] text-[#555555] font-mono uppercase">Swaps</div>
               <div className="text-lg font-bold text-white mt-1">{metrics.left.swaps}</div>
             </div>
             <div>
-              <div className="text-[10px] text-text-muted font-mono uppercase">Steps</div>
+              <div className="text-[10px] text-[#555555] font-mono uppercase">Steps</div>
               <div className="text-lg font-bold text-white mt-1">{metrics.left.steps}</div>
             </div>
           </div>
         </div>
 
         {/* Right Algorithm Panel */}
-        <div className="flex flex-col bg-surface border border-[#2a2a2a] rounded-xl overflow-hidden shadow-2xl relative">
+        <div className="flex flex-col bg-[#141414] border border-[#2a2a2a] rounded-xl overflow-hidden shadow-2xl relative">
           {right.isFinished && mode === 'battle' && (
             <div className="absolute top-12 left-0 right-0 bottom-14 bg-black/60 backdrop-blur-xs flex items-center justify-center z-10">
               <span className="bg-[#22c55e]/90 text-white font-bold text-xs px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1">
@@ -378,10 +378,10 @@ function CompareDashboard() {
           {/* Winner Highlight Right */}
           {winner === 'right' && mode === 'battle' && (
             <div className="absolute inset-x-0 top-12 bottom-14 bg-black/25 pointer-events-none z-20 flex items-center justify-center">
-              <div className="absolute inset-0 bg-accent-violet/10 animate-pulse border-2 border-accent-violet shadow-[inset_0_0_40px_rgba(139,92,246,0.35)]" />
+              <div className="absolute inset-0 bg-[#8b5cf6]/10 animate-pulse border-2 border-accent-violet shadow-[inset_0_0_40px_rgba(139,92,246,0.35)]" />
               <div className="z-30 flex flex-col items-center">
                 <Trophy className="w-12 h-12 text-yellow-400 drop-shadow-[0_0_15px_rgba(234,179,8,0.7)] animate-bounce" />
-                <span className="bg-accent-violet text-white font-extrabold uppercase font-mono tracking-wider text-xs px-3 py-1.5 rounded-full shadow-lg border border-accent-violet/50 mt-3 animate-pulse">
+                <span className="bg-[#8b5cf6] text-white font-extrabold uppercase font-mono tracking-wider text-xs px-3 py-1.5 rounded-full shadow-lg border border-accent-violet/50 mt-3 animate-pulse">
                   🏆 WINNER
                 </span>
               </div>
@@ -389,7 +389,7 @@ function CompareDashboard() {
           )}
 
           <div className="flex justify-between items-center px-4 py-3 bg-[#0a0a0a]/50 border-b border-[#2a2a2a]">
-            <span className="text-xs font-bold uppercase tracking-wider text-accent-violet font-mono">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#8b5cf6] font-mono">
               Right Algorithm
             </span>
             <select
@@ -412,15 +412,15 @@ function CompareDashboard() {
 
           <div className="p-4 grid grid-cols-3 gap-2 bg-[#0c0c0c] text-center border-b border-[#2a2a2a]/50">
             <div>
-              <div className="text-[10px] text-text-muted font-mono uppercase">Comparisons</div>
+              <div className="text-[10px] text-[#555555] font-mono uppercase">Comparisons</div>
               <div className="text-lg font-bold text-white mt-1">{metrics.right.comparisons}</div>
             </div>
             <div>
-              <div className="text-[10px] text-text-muted font-mono uppercase">Swaps</div>
+              <div className="text-[10px] text-[#555555] font-mono uppercase">Swaps</div>
               <div className="text-lg font-bold text-white mt-1">{metrics.right.swaps}</div>
             </div>
             <div>
-              <div className="text-[10px] text-text-muted font-mono uppercase">Steps</div>
+              <div className="text-[10px] text-[#555555] font-mono uppercase">Steps</div>
               <div className="text-lg font-bold text-white mt-1">{metrics.right.steps}</div>
             </div>
           </div>
@@ -436,13 +436,13 @@ function CompareDashboard() {
       )}
 
       {/* Control Bar (Unified Playback controls) */}
-      <div className="flex flex-col md:flex-row items-center gap-6 p-4 rounded-xl bg-surface border border-[#2a2a2a] mb-6 shadow-lg">
+      <div className="flex flex-col md:flex-row items-center gap-6 p-4 rounded-xl bg-[#141414] border border-[#2a2a2a] mb-6 shadow-lg">
         <div className="flex items-center gap-2">
           <button
             onClick={stepBackwardBoth}
             disabled={isPlaying}
             title="Step Backward"
-            className="w-10 h-10 rounded-lg border border-[#333333] hover:border-text-secondary text-text-primary hover:text-white flex items-center justify-center transition cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+            className="w-10 h-10 rounded-lg border border-[#333333] hover:border-text-secondary text-[#f0f0f0] hover:text-white flex items-center justify-center transition cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
           >
             <SkipBack className="w-4 h-4" />
           </button>
@@ -459,7 +459,7 @@ function CompareDashboard() {
             onClick={stepForwardBoth}
             disabled={isPlaying}
             title="Step Forward"
-            className="w-10 h-10 rounded-lg border border-[#333333] hover:border-text-secondary text-text-primary hover:text-white flex items-center justify-center transition cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+            className="w-10 h-10 rounded-lg border border-[#333333] hover:border-text-secondary text-[#f0f0f0] hover:text-white flex items-center justify-center transition cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
           >
             <SkipForward className="w-4 h-4" />
           </button>
@@ -467,14 +467,14 @@ function CompareDashboard() {
           <button
             onClick={resetBothPlayback}
             title="Reset"
-            className="w-10 h-10 rounded-lg border border-[#333333] hover:border-text-secondary text-text-primary hover:text-white flex items-center justify-center transition cursor-pointer"
+            className="w-10 h-10 rounded-lg border border-[#333333] hover:border-text-secondary text-[#f0f0f0] hover:text-white flex items-center justify-center transition cursor-pointer"
           >
             <RotateCcw className="w-4 h-4" />
           </button>
         </div>
 
         <div className="flex-1 w-full md:w-auto flex flex-col gap-1.5 min-w-[150px]">
-          <div className="flex justify-between items-center text-xs font-mono text-text-secondary">
+          <div className="flex justify-between items-center text-xs font-mono text-[#888888]">
             <span>Playback Speed</span>
             <span className="text-white">{(1000 / speed).toFixed(1)} steps/s</span>
           </div>
@@ -485,12 +485,12 @@ function CompareDashboard() {
             step="10"
             value={1010 - speed}
             onChange={(e) => setSpeed(1010 - parseInt(e.target.value))}
-            className="w-full h-1 bg-elevated rounded-lg appearance-none cursor-pointer accent-accent-purple"
+            className="w-full h-1 bg-[#1c1c1c] rounded-lg appearance-none cursor-pointer accent-accent-purple"
           />
         </div>
 
         <div className="flex-1 w-full md:w-auto flex flex-col gap-1.5 min-w-[150px]">
-          <div className="flex justify-between items-center text-xs font-mono text-text-secondary">
+          <div className="flex justify-between items-center text-xs font-mono text-[#888888]">
             <span>Array Size</span>
             <span className="text-white">{arraySize} items</span>
           </div>
@@ -502,7 +502,7 @@ function CompareDashboard() {
             disabled={isPlaying}
             value={arraySize}
             onChange={(e) => setArraySize(parseInt(e.target.value))}
-            className="w-full h-1 bg-elevated rounded-lg appearance-none cursor-pointer accent-accent-purple disabled:opacity-40 disabled:cursor-not-allowed"
+            className="w-full h-1 bg-[#1c1c1c] rounded-lg appearance-none cursor-pointer accent-accent-purple disabled:opacity-40 disabled:cursor-not-allowed"
           />
         </div>
       </div>
@@ -511,17 +511,17 @@ function CompareDashboard() {
       <div className={`fixed bottom-0 left-0 right-0 z-40 bg-[#0c0c0c] border-t border-[#2a2a2a] transition-all duration-300 ${isCodeExpanded ? 'h-[360px]' : 'h-11'} flex flex-col`}>
         <div
           onClick={() => setIsCodeExpanded(!isCodeExpanded)}
-          className="h-11 px-6 flex justify-between items-center border-b border-[#2a2a2a] cursor-pointer hover:bg-elevated transition duration-200 select-none"
+          className="h-11 px-6 flex justify-between items-center border-b border-[#2a2a2a] cursor-pointer hover:bg-[#1c1c1c] transition duration-200 select-none"
         >
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-text-secondary font-mono">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#888888] font-mono">
               Code Drawer
             </span>
-            <span className="text-[10px] text-text-muted font-mono">
+            <span className="text-[10px] text-[#555555] font-mono">
               ({langLabelMap[codeLanguage]} — {activeCodeTab === 'left' ? 'Left' : 'Right'} Algorithm)
             </span>
           </div>
-          <div className="text-text-secondary">
+          <div className="text-[#888888]">
             {isCodeExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
           </div>
         </div>
@@ -534,8 +534,8 @@ function CompareDashboard() {
                   onClick={() => setActiveCodeTab('left')}
                   className={`px-3 py-1 rounded text-xs font-semibold transition-all duration-200 cursor-pointer ${
                     activeCodeTab === 'left'
-                      ? 'bg-accent-purple text-white shadow-sm'
-                      : 'text-text-secondary hover:text-white'
+                      ? 'bg-[#7c3aed] text-white shadow-sm'
+                      : 'text-[#888888] hover:text-white'
                   }`}
                 >
                   Left Code ({SORTING_ALGORITHMS_METADATA[left.selectedAlgorithm]?.name})
@@ -544,8 +544,8 @@ function CompareDashboard() {
                   onClick={() => setActiveCodeTab('right')}
                   className={`px-3 py-1 rounded text-xs font-semibold transition-all duration-200 cursor-pointer ${
                     activeCodeTab === 'right'
-                      ? 'bg-accent-purple text-white shadow-sm'
-                      : 'text-text-secondary hover:text-white'
+                      ? 'bg-[#7c3aed] text-white shadow-sm'
+                      : 'text-[#888888] hover:text-white'
                   }`}
                 >
                   Right Code ({SORTING_ALGORITHMS_METADATA[right.selectedAlgorithm]?.name})
@@ -559,8 +559,8 @@ function CompareDashboard() {
                     onClick={() => setCodeLanguage(lang)}
                     className={`px-3 py-1 rounded text-xs font-semibold transition-all duration-200 cursor-pointer ${
                       codeLanguage === lang
-                        ? 'bg-elevated text-white border border-[#444444]'
-                        : 'text-text-secondary hover:text-white hover:bg-elevated'
+                        ? 'bg-[#1c1c1c] text-white border border-[#444444]'
+                        : 'text-[#888888] hover:text-white hover:bg-[#1c1c1c]'
                     }`}
                   >
                     {langLabelMap[lang]}
@@ -608,20 +608,20 @@ function CompareDashboard() {
             {/* Close Button */}
             <button
               onClick={clearWinner}
-              className="absolute top-4 right-4 text-text-secondary hover:text-white cursor-pointer transition duration-150"
+              className="absolute top-4 right-4 text-[#888888] hover:text-white cursor-pointer transition duration-150"
             >
               <X className="w-5 h-5" />
             </button>
 
             {/* Winner Trophy Header */}
-            <div className="w-16 h-16 rounded-full bg-accent-purple/10 border border-accent-purple/30 flex items-center justify-center mb-4">
+            <div className="w-16 h-16 rounded-full bg-[#7c3aed]/10 border border-accent-purple/30 flex items-center justify-center mb-4">
               <Trophy className="w-8 h-8 text-yellow-400 animate-bounce" />
             </div>
 
             <h2 className="text-xl font-extrabold text-white tracking-tight mb-1">
               Race Completed!
             </h2>
-            <p className="text-text-secondary text-sm mb-6">
+            <p className="text-[#888888] text-sm mb-6">
               {winner === 'tie' ? (
                 "It's a dead heat! Both finished in the exact same step count."
               ) : (
@@ -633,26 +633,26 @@ function CompareDashboard() {
 
             {/* Detailed Side-by-Side metrics table */}
             <div className="w-full bg-[#141414] border border-[#2a2a2a] rounded-xl overflow-hidden mb-6 text-xs font-mono">
-              <div className="grid grid-cols-3 gap-2 px-4 py-2 border-b border-[#2a2a2a] bg-[#0c0c0c] text-text-muted uppercase text-[9px] font-bold">
+              <div className="grid grid-cols-3 gap-2 px-4 py-2 border-b border-[#2a2a2a] bg-[#0c0c0c] text-[#555555] uppercase text-[9px] font-bold">
                 <div>Metric</div>
                 <div>{leftName}</div>
                 <div>{rightName}</div>
               </div>
 
               <div className="grid grid-cols-3 gap-2 px-4 py-3 border-b border-[#2a2a2a]/50 text-white items-center">
-                <div className="text-text-secondary text-left font-sans font-medium text-[11px]">Total Steps</div>
+                <div className="text-[#888888] text-left font-sans font-medium text-[11px]">Total Steps</div>
                 <div className={winner === 'left' ? 'text-[#22c55e] font-bold' : ''}>{leftTotalSteps}</div>
                 <div className={winner === 'right' ? 'text-[#22c55e] font-bold' : ''}>{rightTotalSteps}</div>
               </div>
 
               <div className="grid grid-cols-3 gap-2 px-4 py-3 border-b border-[#2a2a2a]/50 text-white items-center">
-                <div className="text-text-secondary text-left font-sans font-medium text-[11px]">Comparisons</div>
+                <div className="text-[#888888] text-left font-sans font-medium text-[11px]">Comparisons</div>
                 <div className={winner === 'left' && metrics.left.comparisons < metrics.right.comparisons ? 'text-[#22c55e] font-bold' : ''}>{metrics.left.comparisons}</div>
                 <div className={winner === 'right' && metrics.right.comparisons < metrics.left.comparisons ? 'text-[#22c55e] font-bold' : ''}>{metrics.right.comparisons}</div>
               </div>
 
               <div className="grid grid-cols-3 gap-2 px-4 py-3 text-white items-center">
-                <div className="text-text-secondary text-left font-sans font-medium text-[11px]">Swaps</div>
+                <div className="text-[#888888] text-left font-sans font-medium text-[11px]">Swaps</div>
                 <div className={winner === 'left' && metrics.left.swaps < metrics.right.swaps ? 'text-[#22c55e] font-bold' : ''}>{metrics.left.swaps}</div>
                 <div className={winner === 'right' && metrics.right.swaps < metrics.left.swaps ? 'text-[#22c55e] font-bold' : ''}>{metrics.right.swaps}</div>
               </div>
@@ -660,9 +660,9 @@ function CompareDashboard() {
 
             {/* Efficiency breakdown message */}
             {winner !== 'tie' && speedup > 1.05 && (
-              <p className="text-xs text-text-secondary leading-relaxed bg-elevated/40 border border-border-subtle/30 px-3 py-2.5 rounded-lg mb-6 w-full font-sans">
+              <p className="text-xs text-[#888888] leading-relaxed bg-[#1c1c1c]/40 border border-[#2a2a2a]/30 px-3 py-2.5 rounded-lg mb-6 w-full font-sans">
                 💡 <span className="font-semibold text-white">{winnerName}</span> completed the sort{' '}
-                <span className="text-accent-violet font-bold">{(speedup).toFixed(1)}x faster</span> (in visual operations) than {winner === 'left' ? rightName : leftName}.
+                <span className="text-[#8b5cf6] font-bold">{(speedup).toFixed(1)}x faster</span> (in visual operations) than {winner === 'left' ? rightName : leftName}.
               </p>
             )}
 
@@ -670,7 +670,7 @@ function CompareDashboard() {
             <div className="flex gap-3 w-full">
               <button
                 onClick={clearWinner}
-                className="flex-1 py-2.5 rounded-lg border border-[#333333] hover:border-text-secondary text-text-primary hover:text-white text-xs font-semibold transition cursor-pointer"
+                className="flex-1 py-2.5 rounded-lg border border-[#333333] hover:border-text-secondary text-[#f0f0f0] hover:text-white text-xs font-semibold transition cursor-pointer"
               >
                 Inspect Results
               </button>
@@ -689,11 +689,11 @@ function CompareDashboard() {
       {countdown !== null && (
         <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/85 backdrop-blur-md select-none">
           <div className="text-center animate-pulse">
-            <h2 className="text-sm font-bold tracking-widest text-text-muted uppercase font-mono mb-2">BATTLE SPEEDWAY</h2>
+            <h2 className="text-sm font-bold tracking-widest text-[#555555] uppercase font-mono mb-2">BATTLE SPEEDWAY</h2>
             <div className="text-8xl font-black text-white drop-shadow-[0_0_30px_rgba(124,58,237,0.8)] scale-110 transition-all duration-200">
               {countdown}
             </div>
-            <p className="text-xs text-text-secondary font-mono mt-4">READY TO SPEEDRUN...</p>
+            <p className="text-xs text-[#888888] font-mono mt-4">READY TO SPEEDRUN...</p>
           </div>
         </div>
       )}

@@ -48,10 +48,10 @@ export const CodePanel: React.FC<CodePanelProps> = ({
   };
 
   return (
-    <div className="flex flex-col h-full bg-surface w-full min-w-0">
+    <div className="flex flex-col h-full bg-[#141414] w-full min-w-0">
       {/* Header controls */}
-      <div className="flex justify-between items-center px-4 py-3 bg-surface-card/90 backdrop-blur-md border-b border-border-subtle">
-        <span className="text-xs font-bold uppercase tracking-wider text-text-secondary font-mono">Code Panel</span>
+      <div className="flex justify-between items-center px-4 py-3 bg-[#141414]-card/90 backdrop-blur-md border-b border-[#2a2a2a]">
+        <span className="text-xs font-bold uppercase tracking-wider text-[#888888] font-mono">Code Panel</span>
         <div className="flex gap-1.5 p-0.5">
           {(['javascript', 'java', 'python', 'cpp'] as CodeLanguageType[]).map((lang) => (
             <button
@@ -59,8 +59,8 @@ export const CodePanel: React.FC<CodePanelProps> = ({
               onClick={() => setLanguage(lang)}
               className={`px-3 py-1 rounded text-xs font-semibold tracking-wide transition-all duration-200 cursor-pointer ${
                 language === lang
-                  ? 'bg-accent-primary text-white shadow-sm'
-                  : 'text-text-secondary hover:text-white hover:bg-surface-elevated'
+                  ? 'bg-[#3B82F6] text-white shadow-sm'
+                  : 'text-[#888888] hover:text-white hover:bg-[#141414]-elevated'
               }`}
             >
               {langLabelMap[lang]}

@@ -93,12 +93,12 @@ export const GenericGraphVisualizer: React.FC = () => {
         </svg>
       </div>
 
-      <div className="mt-4 flex gap-4 text-xs font-mono text-text-secondary bg-[#1a1a1a] p-3 rounded-lg border border-[#2a2a2a] w-full max-w-sm justify-between">
+      <div className="mt-4 flex gap-4 text-xs font-mono text-[#888888] bg-[#1a1a1a] p-3 rounded-lg border border-[#2a2a2a] w-full max-w-sm justify-between">
         <div>
-          <span className="text-text-muted">Visited:</span> {visitedNodeIds.size} / {nodes.length}
+          <span className="text-[#555555]">Visited:</span> {visitedNodeIds.size} / {nodes.length}
         </div>
         <div>
-          <span className="text-text-muted">Edges:</span> {edges.length}
+          <span className="text-[#555555]">Edges:</span> {edges.length}
         </div>
       </div>
     </div>

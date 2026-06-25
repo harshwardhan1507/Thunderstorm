@@ -38,8 +38,8 @@ export const ComplexityChart: React.FC<ComplexityChartProps> = ({ activeComplexi
   };
 
   return (
-    <div className="p-4 rounded-xl bg-surface-card border border-border-subtle shadow-md select-none font-mono flex flex-col items-center">
-      <span className="text-[10px] text-text-muted font-bold uppercase tracking-wider mb-2 self-start">
+    <div className="p-4 rounded-xl bg-[#141414]-card border border-[#2a2a2a] shadow-md select-none font-mono flex flex-col items-center">
+      <span className="text-[10px] text-[#555555] font-bold uppercase tracking-wider mb-2 self-start">
         Complexity Growth Chart
       </span>
 
@@ -94,7 +94,7 @@ export const ComplexityChart: React.FC<ComplexityChartProps> = ({ activeComplexi
         </svg>
       </div>
 
-      <div className="mt-2 text-[9px] text-text-secondary text-center leading-relaxed">
+      <div className="mt-2 text-[9px] text-[#888888] text-center leading-relaxed">
         Active Complexity: <span className="text-white font-bold">{activeComplexity}</span>
       </div>
     </div>

@@ -167,7 +167,7 @@ export const CompareCanvas: React.FC<CompareCanvasProps> = ({ side }) => {
         const swapped = currentStep ? currentStep.swapped : false;
         const isComparing = comparing.includes(bar.currentIndex);
 
-        let barBg = side === 'left' ? 'bg-accent-purple/80' : 'bg-accent-violet/80';
+        let barBg = side === 'left' ? 'bg-[#7c3aed]/80' : 'bg-[#8b5cf6]/80';
         let borderCol = 'border-[#2a2a2a]';
 
         if (isComparing) {

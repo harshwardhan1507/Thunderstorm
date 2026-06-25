@@ -74,15 +74,15 @@ export const DPDependencyGrid: React.FC = () => {
                   onMouseLeave={() => setHoveredCell(null)}
                   className={`w-11 h-11 flex flex-col items-center justify-center rounded border transition-all duration-300 ${
                     isHovered
-                      ? "bg-accent-purple border-white text-white scale-105 shadow-md"
+                      ? "bg-[#7c3aed] border-white text-white scale-105 shadow-md"
                       : isDependency
-                      ? "bg-accent-purple/20 border-accent-purple text-white"
+                      ? "bg-[#7c3aed]/20 border-accent-purple text-white"
                       : isComputed
                       ? "bg-[#181818] border-[#333] text-white"
-                      : "bg-[#0a0a0a] border-[#1a1a1a] text-text-muted opacity-40"
+                      : "bg-[#0a0a0a] border-[#1a1a1a] text-[#555555] opacity-40"
                   }`}
                 >
-                  <span className="text-[10px] text-text-muted mb-0.5">
+                  <span className="text-[10px] text-[#555555] mb-0.5">
                     ({r},{c})
                   </span>
                   <span className="font-bold text-[10px]">
@@ -95,7 +95,7 @@ export const DPDependencyGrid: React.FC = () => {
         </div>
       </div>
 
-      <div className="mt-4 text-[10px] text-text-muted font-mono text-center">
+      <div className="mt-4 text-[10px] text-[#555555] font-mono text-center">
         * Hover computed cells to inspect DP recursive dependencies
       </div>
     </div>

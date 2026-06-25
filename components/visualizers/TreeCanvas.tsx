@@ -155,7 +155,7 @@ export const TreeCanvas: React.FC = () => {
   const rotationFlashIds = new Set(currentStep?.rotationFlashIds || []);
 
   return (
-    <div ref={containerRef} className="w-full h-full relative bg-surface overflow-hidden">
+    <div ref={containerRef} className="w-full h-full relative bg-[#141414] overflow-hidden">
       <svg
         width={dimensions.width}
         height={dimensions.height}

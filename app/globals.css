@@ -1,51 +1,62 @@
 @import "tailwindcss";
 
 @theme {
-  /* Background Colors - Near-black layered surfaces */
-  --color-background: #080808;
-  --color-background-secondary: #0A0A0A;
-  --color-background-tertiary: #0D0D0D;
-  
-  --color-base: #0A0A0A;
-  --color-surface: #111111;
-  --color-surface-elevated: #151515;
-  --color-surface-card: #171717;
-  --color-elevated: #1B1B1B;
-  
-  /* Border Colors - Subtle separators */
-  --color-border-subtle: rgba(255, 255, 255, 0.08);
-  --color-border-default: rgba(255, 255, 255, 0.1);
-  --color-border-hover: rgba(255, 255, 255, 0.14);
-  
-  /* Text Colors - Hierarchy through typography */
-  --color-text-primary: #f0f0f0;
-  --color-text-secondary: #a0a0a0;
-  --color-text-muted: #666666;
-  
-  /* Accent Colors - State communication */
-  --color-accent-primary: #3B82F6;
-  --color-accent-secondary: #06B6D4;
-  --color-accent-success: #22C55E;
-  --color-accent-warning: #F59E0B;
-  --color-accent-error: #EF4444;
-  
-  /* Legacy accent colors for visualizations */
+  /* ── Backgrounds ── */
+  --color-base:             #0a0a0a;
+  --color-surface:          #141414;
+  --color-elevated:         #1c1c1c;
+  --color-highlight:        #232323;
+
+  /* Legacy aliases */
+  --color-background:           #0a0a0a;
+  --color-background-secondary: #0a0a0a;
+  --color-background-tertiary:  #0d0d0d;
+  --color-surface-elevated:     #1c1c1c;
+  --color-surface-card:         #141414;
+
+  /* ── Borders ── */
+  --color-border-subtle:  #2a2a2a;
+  --color-border-default: #333333;
+  --color-border-hover:   rgba(255,255,255,0.18);
+
+  /* ── Text ── */
+  --color-text-primary:   #f0f0f0;
+  --color-text-secondary: #888888;
+  --color-text-muted:     #555555;
+
+  /* ── ThunderStorm Accents ── */
   --color-accent-purple: #7c3aed;
   --color-accent-violet: #8b5cf6;
-  --color-compare: #3b82f6;
-  --color-swap: #facc15;
-  --color-traverse: #a78bfa;
-  --color-code: #60a5fa;
-  
-  /* Typography */
+  --color-accent-glow:   rgba(124, 58, 237, 0.18);
+
+  /* ── Algorithm State Colors ── */
+  --color-compare:  #3B82F6;
+  --color-swap:     #FACC15;
+  --color-traverse: #A78BFA;
+  --color-success:  #22C55E;
+  --color-error:    #EF4444;
+  --color-code:     #60A5FA;
+
+  /* Legacy accent aliases */
+  --color-accent-primary:   #3B82F6;
+  --color-accent-secondary: #06B6D4;
+  --color-accent-success:   #22C55E;
+  --color-accent-warning:   #F59E0B;
+  --color-accent-error:     #EF4444;
+
+  /* ── Typography ── */
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
+html { scroll-behavior: smooth; }
+
 body {
-  background: var(--color-background);
-  color: var(--color-foreground);
+  background: var(--color-base);
+  color: var(--color-text-primary);
   font-family: var(--font-sans), sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .active-line {
@@ -54,21 +65,24 @@ body {
   padding-left: 10px;
 }
 
-/* Custom scrollbar styling for premium dark theme */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
+::-webkit-scrollbar        { width: 6px; height: 6px; }
+::-webkit-scrollbar-track  { background: transparent; }
+::-webkit-scrollbar-thumb  { background: #2a2a2a; border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: #333333; }
 
-::-webkit-scrollbar-track {
-  background: transparent;
+input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: #7c3aed;
+  cursor: pointer;
+  box-shadow: 0 0 6px rgba(124,58,237,0.5);
 }
-
-::-webkit-scrollbar-thumb {
-  background: #2a2a2a;
-  border-radius: 9999px;
+input[type="range"]::-moz-range-thumb {
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: #7c3aed;
+  cursor: pointer;
+  border: none;
 }
-
-::-webkit-scrollbar-thumb:hover {
-  background: #333333;
-}
+input[type="range"] { accent-color: #7c3aed; }

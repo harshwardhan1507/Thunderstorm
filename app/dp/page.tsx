@@ -29,7 +29,7 @@ interface ChromePerformance extends Performance {
 
 export default function DPPage() {
   return (
-    <Suspense fallback={<div className="flex-1 flex items-center justify-center text-text-muted font-mono text-xs">Loading DP Visualizer...</div>}>
+    <Suspense fallback={<div className="flex-1 flex items-center justify-center text-[#555555] font-mono text-xs">Loading DP Visualizer...</div>}>
       <DPPageInner />
     </Suspense>
   );
@@ -187,30 +187,30 @@ function DPPageInner() {
   const isFinished = steps.length > 0 && currentStepIndex === steps.length - 1 && !isPlaying;
 
   return (
-    <div className="flex-1 w-full max-w-6xl mx-auto px-6 py-6 flex flex-col font-sans select-none relative">
+    <div className="flex-1 w-full px-6 py-6 flex flex-col select-none">
       {/* Breadcrumbs */}
-      <div className="text-xs text-text-muted font-mono mb-4 flex items-center gap-1.5">
-        <Link href="/" className="hover:text-text-secondary transition-colors">
+      <div className="text-xs text-[#555555] font-mono mb-4 flex items-center gap-1.5">
+        <Link href="/" className="hover:text-[#888888] transition-colors">
           Home
         </Link>
         <span>›</span>
-        <span className="text-text-secondary">Dynamic Programming</span>
+        <span className="text-[#888888]">Dynamic Programming</span>
         <span>›</span>
-        <span className="text-text-primary font-semibold">{selectedAlgorithm.toUpperCase()}</span>
+        <span className="text-[#f0f0f0] font-semibold">{selectedAlgorithm.toUpperCase()}</span>
       </div>
 
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
           <h1 className="text-2xl font-bold text-white tracking-tight">Dynamic Programming</h1>
-          <p className="text-text-secondary text-sm mt-1">
+          <p className="text-[#888888] text-sm mt-1">
             Watch bottom-up tabulation tables fill cell-by-cell with interactive transitions
           </p>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setIsShareOpen(true)}
-            className="p-2 bg-surface hover:bg-elevated border border-[#333333] hover:border-text-secondary rounded-lg text-text-primary hover:text-white transition duration-200 cursor-pointer flex items-center gap-1.5 text-xs font-semibold"
+            className="p-2 bg-[#141414] hover:bg-[#1c1c1c] border border-[#333333] rounded-lg text-[#f0f0f0] hover:text-white transition duration-200 cursor-pointer flex items-center gap-1.5 text-xs font-semibold"
             title="Share Configuration"
           >
             <Share2 className="w-3.5 h-3.5" />
@@ -220,7 +220,7 @@ function DPPageInner() {
       </div>
 
       {/* DP Algorithm Selection Tabs */}
-      <div className="flex gap-1 bg-[#141414]/40 border border-[#2a2a2a] rounded-lg p-0.5 self-start mb-6">
+      <div className="flex gap-1 bg-[#141414] border border-[#2a2a2a] rounded-lg p-1 self-start mb-6">
         {(['lcs', 'knapsack', 'fibonacci'] as DPAlgorithmType[]).map((type) => (
           <button
             key={type}
@@ -228,8 +228,8 @@ function DPPageInner() {
             disabled={isPlaying}
             className={`px-4 py-1.5 rounded-md text-xs font-semibold tracking-wide transition-all duration-200 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed ${
               selectedAlgorithm === type
-                ? 'bg-highlight text-white border-b border-accent-purple shadow-sm'
-                : 'text-text-secondary hover:text-white hover:bg-elevated'
+                ? 'bg-[#232323] text-white shadow-sm'
+                : 'text-[#888888] hover:text-white hover:bg-[#1c1c1c]'
             }`}
           >
             {algoLabelMap[type]}
@@ -238,10 +238,10 @@ function DPPageInner() {
       </div>
 
       {/* Dynamic Inputs Panel */}
-      <div className={`flex flex-col md:flex-row items-center justify-between gap-4 p-4 rounded-xl bg-surface border border-[#2a2a2a] mb-6 shadow-md ${activeTab === 'visualizer' ? 'flex' : 'hidden lg:flex'}`}>
+      <div className={`flex flex-col md:flex-row items-center justify-between gap-4 p-4 rounded-xl bg-[#141414] border border-[#2a2a2a] mb-6 shadow-md ${activeTab === 'visualizer' ? 'flex' : 'hidden lg:flex'}`}>
         {selectedAlgorithm === 'lcs' && (
           <form onSubmit={handleLCSUpdate} className="flex flex-wrap items-center gap-3 w-full">
-            <span className="text-[10px] uppercase font-bold text-text-muted">Strings:</span>
+            <span className="text-[10px] uppercase font-bold text-[#555555]">Strings:</span>
             <input
               type="text"
               value={inputLcsA}
@@ -261,7 +261,7 @@ function DPPageInner() {
             <button
               type="submit"
               disabled={isPlaying || !inputLcsA || !inputLcsB}
-              className="px-3 py-1.5 rounded bg-accent-purple text-xs font-semibold text-white transition hover:bg-accent-violet cursor-pointer disabled:opacity-40"
+              className="px-3 py-1.5 rounded bg-[#7c3aed] text-xs font-semibold text-white transition hover:bg-[#8b5cf6] cursor-pointer disabled:opacity-40"
             >
               Update Strings
             </button>
@@ -270,7 +270,7 @@ function DPPageInner() {
 
         {selectedAlgorithm === 'knapsack' && (
           <form onSubmit={handleKnapsackUpdate} className="flex flex-wrap items-center gap-3 w-full">
-            <span className="text-[10px] uppercase font-bold text-text-muted">Max Capacity:</span>
+            <span className="text-[10px] uppercase font-bold text-[#555555]">Max Capacity:</span>
             <input
               type="number"
               min={2}
@@ -283,17 +283,17 @@ function DPPageInner() {
             <button
               type="submit"
               disabled={isPlaying || !inputCapacity}
-              className="px-3 py-1.5 rounded bg-accent-purple text-xs font-semibold text-white transition hover:bg-accent-violet cursor-pointer disabled:opacity-40"
+              className="px-3 py-1.5 rounded bg-[#7c3aed] text-xs font-semibold text-white transition hover:bg-[#8b5cf6] cursor-pointer disabled:opacity-40"
             >
               Update Capacity
             </button>
-            <span className="text-[10px] text-text-muted">Items: [wt: 1, v: 6], [wt: 2, v: 10], [wt: 3, v: 12], [wt: 5, v: 20]</span>
+            <span className="text-[10px] text-[#555555]">Items: [wt: 1, v: 6], [wt: 2, v: 10], [wt: 3, v: 12], [wt: 5, v: 20]</span>
           </form>
         )}
 
         {selectedAlgorithm === 'fibonacci' && (
           <form onSubmit={handleFibUpdate} className="flex flex-wrap items-center gap-3 w-full">
-            <span className="text-[10px] uppercase font-bold text-text-muted">N (Term Index):</span>
+            <span className="text-[10px] uppercase font-bold text-[#555555]">N (Term Index):</span>
             <input
               type="number"
               min={2}
@@ -306,11 +306,11 @@ function DPPageInner() {
             <button
               type="submit"
               disabled={isPlaying || !inputFibN}
-              className="px-3 py-1.5 rounded bg-accent-purple text-xs font-semibold text-white transition hover:bg-accent-violet cursor-pointer disabled:opacity-40"
+              className="px-3 py-1.5 rounded bg-[#7c3aed] text-xs font-semibold text-white transition hover:bg-[#8b5cf6] cursor-pointer disabled:opacity-40"
             >
               Update N
             </button>
-            <span className="text-[10px] text-text-muted">N must be between 2 and 12 for canvas spacing</span>
+            <span className="text-[10px] text-[#555555]">N must be between 2 and 12 for canvas spacing</span>
           </form>
         )}
       </div>
@@ -323,8 +323,8 @@ function DPPageInner() {
             onClick={() => setActiveTab(tab)}
             className={`flex-1 py-2 text-center rounded-md text-xs font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer ${
               activeTab === tab
-                ? 'bg-accent-purple text-white shadow-sm'
-                : 'text-text-secondary hover:text-white'
+                ? 'bg-[#7c3aed] text-white shadow-sm'
+                : 'text-[#888888] hover:text-white'
             }`}
           >
             {tab}
@@ -356,13 +356,13 @@ function DPPageInner() {
       </div>
 
       {/* Controls Bar */}
-      <div className={`flex flex-col md:flex-row items-center gap-6 p-4 rounded-xl bg-surface border border-[#2a2a2a] mb-6 shadow-lg ${activeTab === 'visualizer' || activeTab === 'metrics' ? 'flex' : 'hidden lg:flex'}`}>
+      <div className={`flex flex-col md:flex-row items-center gap-6 p-4 rounded-xl bg-[#141414] border border-[#2a2a2a] mb-6 shadow-lg ${activeTab === 'visualizer' || activeTab === 'metrics' ? 'flex' : 'hidden lg:flex'}`}>
         {/* Play Pause Controls */}
         <div className="flex items-center gap-2 select-none">
           <button
             onClick={resetPlayback}
             disabled={currentStepIndex === -1}
-            className="w-8 h-8 flex items-center justify-center rounded-lg bg-elevated border border-border-subtle text-text-secondary hover:text-white hover:border-border-default transition duration-200 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+            className="w-8 h-8 flex items-center justify-center rounded-lg bg-[#1c1c1c] border border-[#2a2a2a] text-[#888888] hover:text-white hover:border-[#333333] transition duration-200 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
             title="Reset"
           >
             <RotateCcw className="w-3.5 h-3.5" />
@@ -370,14 +370,14 @@ function DPPageInner() {
           <button
             onClick={stepBackward}
             disabled={currentStepIndex === -1 || isPlaying}
-            className="w-8 h-8 flex items-center justify-center rounded-lg bg-elevated border border-border-subtle text-text-secondary hover:text-white hover:border-border-default transition duration-200 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+            className="w-8 h-8 flex items-center justify-center rounded-lg bg-[#1c1c1c] border border-[#2a2a2a] text-[#888888] hover:text-white hover:border-[#333333] transition duration-200 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
             title="Step Backward"
           >
             <SkipBack className="w-3.5 h-3.5" />
           </button>
           <button
             onClick={togglePlay}
-            className="w-10 h-10 flex items-center justify-center rounded-lg bg-accent-purple text-white hover:bg-accent-violet transition duration-250 cursor-pointer shadow-[0_0_12px_rgba(124,58,237,0.4)] active:scale-95"
+            className="w-10 h-10 flex items-center justify-center rounded-lg bg-[#7c3aed] text-white hover:bg-[#8b5cf6] transition duration-250 cursor-pointer shadow-[0_0_12px_rgba(124,58,237,0.4)] active:scale-95"
             title={isPlaying ? 'Pause' : 'Play'}
           >
             {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 fill-current ml-0.5" />}
@@ -385,7 +385,7 @@ function DPPageInner() {
           <button
             onClick={stepForward}
             disabled={totalSteps === 0 || currentStepIndex === totalSteps - 1 || isPlaying}
-            className="w-8 h-8 flex items-center justify-center rounded-lg bg-elevated border border-border-subtle text-text-secondary hover:text-white hover:border-border-default transition duration-200 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+            className="w-8 h-8 flex items-center justify-center rounded-lg bg-[#1c1c1c] border border-[#2a2a2a] text-[#888888] hover:text-white hover:border-[#333333] transition duration-200 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
             title="Step Forward"
           >
             <SkipForward className="w-3.5 h-3.5" />
@@ -394,11 +394,11 @@ function DPPageInner() {
 
         {/* Timeline Scrubber */}
         <div className="flex-1 w-full min-w-[200px] flex items-center gap-3 font-mono">
-          <span className="text-text-muted text-xs w-6 text-center">0</span>
+          <span className="text-[#555555] text-xs w-6 text-center">0</span>
           <div className="relative flex-1 flex items-center h-6 cursor-pointer">
-            <div className="absolute left-0 right-0 h-1.5 bg-highlight rounded-full pointer-events-none border border-border-subtle/50"></div>
+            <div className="absolute left-0 right-0 h-1.5 bg-[#232323] rounded-full pointer-events-none border border-[#2a2a2a]/50"></div>
             <div
-              className="absolute left-0 h-1.5 bg-accent-purple rounded-full pointer-events-none"
+              className="absolute left-0 h-1.5 bg-[#7c3aed] rounded-full pointer-events-none"
               style={{ width: `${percentage}%` }}
             ></div>
             <input
@@ -409,13 +409,13 @@ function DPPageInner() {
               onChange={handleScrubberChange}
               disabled={totalSteps === 0 || isPlaying}
               className="absolute w-full h-6 appearance-none bg-transparent cursor-pointer disabled:cursor-not-allowed focus:outline-none z-10
-                [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-accent-purple [&::-webkit-slider-thumb]:shadow-[0_0_8px_rgba(124,58,237,0.8)] [&::-webkit-slider-thumb]:border-0 [&::-webkit-slider-thumb]:transition-all [&::-webkit-slider-thumb]:duration-150
+                [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#7c3aed] [&::-webkit-slider-thumb]:shadow-[0_0_8px_rgba(124,58,237,0.8)] [&::-webkit-slider-thumb]:border-0 [&::-webkit-slider-thumb]:transition-all [&::-webkit-slider-thumb]:duration-150
                 [&::-webkit-slider-thumb]:hover:scale-125 [&::-webkit-slider-thumb]:active:scale-125
-                [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-accent-purple [&::-moz-range-thumb]:shadow-[0_0_8px_rgba(124,58,237,0.8)] [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:transition-all [&::-moz-range-thumb]:duration-150
+                [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-[#7c3aed] [&::-moz-range-thumb]:shadow-[0_0_8px_rgba(124,58,237,0.8)] [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:transition-all [&::-moz-range-thumb]:duration-150
                 [&::-moz-range-thumb]:hover:scale-125 [&::-moz-range-thumb]:active:scale-125"
             />
           </div>
-          <span className="text-text-secondary text-xs whitespace-nowrap min-w-[70px] text-right">
+          <span className="text-[#888888] text-xs whitespace-nowrap min-w-[70px] text-right">
             {scrubberValue} / {totalSteps}
           </span>
         </div>
@@ -423,7 +423,7 @@ function DPPageInner() {
         {/* Speed Slider */}
         <div className="flex items-center gap-4 flex-wrap w-full md:w-auto">
           <div className="flex items-center gap-2 font-mono">
-            <span className="text-text-secondary text-[11px] font-bold uppercase tracking-wider">Speed:</span>
+            <span className="text-[#555555] text-[11px] font-bold uppercase tracking-wider">Speed:</span>
             <input
               type="range"
               min={100}
@@ -433,7 +433,7 @@ function DPPageInner() {
               onChange={(e) => setSpeed(1600 - parseInt(e.target.value, 10))}
               className="w-24 h-1.5 bg-[#2a2a2a] rounded-lg appearance-none cursor-pointer accent-accent-purple focus:outline-none"
             />
-            <span className="text-text-primary text-xs w-12 text-right">
+            <span className="text-[#f0f0f0] text-xs w-12 text-right">
               {((1600 - speed) / 100).toFixed(1)}x
             </span>
           </div>
@@ -444,19 +444,19 @@ function DPPageInner() {
       <div className={`flex flex-col gap-4 w-full ${activeTab === 'metrics' ? 'block' : 'hidden lg:block'}`}>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full">
           {/* Cells Calculated */}
-          <div className="p-4 rounded-xl bg-surface border border-border-subtle shadow-md flex flex-col justify-between">
+          <div className="p-4 rounded-xl bg-[#141414] border border-[#2a2a2a] hover:border-[#333333] flex flex-col justify-between">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-text-secondary text-[11px] font-bold uppercase tracking-wider">Cells Calculated</span>
-              <Grid3X3 className="w-3.5 h-3.5 text-text-secondary" />
+              <span className="text-[#555555] text-[11px] font-bold uppercase tracking-wider">Cells Calculated</span>
+              <Grid3X3 className="w-3.5 h-3.5 text-[#555555]" />
             </div>
             <div className="text-2xl font-black text-white font-mono leading-none mt-1">{cellCalculatedCount}</div>
           </div>
 
           {/* Active Value */}
-          <div className="p-4 rounded-xl bg-surface border border-border-subtle shadow-md flex flex-col justify-between">
+          <div className="p-4 rounded-xl bg-[#141414] border border-[#2a2a2a] hover:border-[#333333] flex flex-col justify-between">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-text-secondary text-[11px] font-bold uppercase tracking-wider">Active Value</span>
-              <Layers className="w-3.5 h-3.5 text-text-secondary" />
+              <span className="text-[#555555] text-[11px] font-bold uppercase tracking-wider">Active Value</span>
+              <Layers className="w-3.5 h-3.5 text-[#555555]" />
             </div>
             <div className="text-2xl font-black text-white font-mono leading-none mt-1">
               {activeVal !== null && activeVal !== undefined ? activeVal : '-'}
@@ -464,10 +464,10 @@ function DPPageInner() {
           </div>
 
           {/* Execution Time */}
-          <div className="p-4 rounded-xl bg-surface border border-border-subtle shadow-md flex flex-col justify-between">
+          <div className="p-4 rounded-xl bg-[#141414] border border-[#2a2a2a] hover:border-[#333333] flex flex-col justify-between">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-text-secondary text-[11px] font-bold uppercase tracking-wider">Time</span>
-              <Clock className="w-3.5 h-3.5 text-text-secondary" />
+              <span className="text-[#555555] text-[11px] font-bold uppercase tracking-wider">Time</span>
+              <Clock className="w-3.5 h-3.5 text-[#555555]" />
             </div>
             <div className="text-2xl font-black text-white font-mono leading-none mt-1">
               {executionTime.toFixed(2)}ms
@@ -475,15 +475,15 @@ function DPPageInner() {
           </div>
 
           {/* Heap Memory */}
-          <div className="p-4 rounded-xl bg-surface border border-border-subtle shadow-md flex flex-col justify-between">
+          <div className="p-4 rounded-xl bg-[#141414] border border-[#2a2a2a] hover:border-[#333333] flex flex-col justify-between">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-text-secondary text-[11px] font-bold uppercase tracking-wider">Heap</span>
-              <Activity className="w-3.5 h-3.5 text-text-secondary" />
+              <span className="text-[#555555] text-[11px] font-bold uppercase tracking-wider">Heap</span>
+              <Activity className="w-3.5 h-3.5 text-[#555555]" />
             </div>
             <div>
               <div className="text-2xl font-black text-white font-mono leading-none mt-1">{heapMemory}</div>
               {heapMemory !== 'N/A' && (
-                <div className="text-[9px] text-text-muted mt-1 leading-none font-mono">Chrome only, approx</div>
+                <div className="text-[9px] text-[#555555] mt-1 leading-none font-mono">Chrome only, approx</div>
               )}
             </div>
           </div>
@@ -491,14 +491,14 @@ function DPPageInner() {
 
         {/* Complexity Badges */}
         <div className="flex gap-2.5 mt-2 flex-wrap font-mono">
-          <span className="px-3 py-1.5 rounded-lg bg-elevated border border-border-default text-xs font-semibold text-text-secondary shadow-sm">
-            LCS Complexity: <span className="text-success">O(M * N) time/space</span>
+          <span className="px-3 py-1.5 rounded-lg bg-[#1c1c1c] border border-[#2a2a2a] text-xs font-semibold text-[#888888]">
+            LCS Complexity: <span className="text-[#22C55E]">O(M * N) time/space</span>
           </span>
-          <span className="px-3 py-1.5 rounded-lg bg-elevated border border-border-default text-xs font-semibold text-text-secondary shadow-sm">
-            Knapsack Complexity: <span className="text-success">O(N * W) time/space</span>
+          <span className="px-3 py-1.5 rounded-lg bg-[#1c1c1c] border border-[#2a2a2a] text-xs font-semibold text-[#888888]">
+            Knapsack Complexity: <span className="text-[#22C55E]">O(N * W) time/space</span>
           </span>
-          <span className="px-3 py-1.5 rounded-lg bg-elevated border border-border-default text-xs font-semibold text-text-secondary shadow-sm">
-            Fibonacci Complexity: <span className="text-success">O(N) tabulation</span>
+          <span className="px-3 py-1.5 rounded-lg bg-[#1c1c1c] border border-[#2a2a2a] text-xs font-semibold text-[#888888]">
+            Fibonacci Complexity: <span className="text-[#22C55E]">O(N) tabulation</span>
           </span>
         </div>
       </div>

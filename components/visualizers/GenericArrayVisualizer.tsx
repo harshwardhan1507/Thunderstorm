@@ -79,7 +79,7 @@ export const GenericArrayVisualizer: React.FC = () => {
                     return (
                       <span
                         key={name}
-                        className="px-1.5 py-0.5 rounded text-[10px] font-black uppercase font-mono bg-accent-purple text-white shadow-md animate-pulse border border-[#555]"
+                        className="px-1.5 py-0.5 rounded text-[10px] font-black uppercase font-mono bg-[#7c3aed] text-white shadow-md animate-pulse border border-[#555]"
                       >
                         {name}
                       </span>
@@ -95,7 +95,7 @@ export const GenericArrayVisualizer: React.FC = () => {
                   isSwapping
                     ? "bg-[#FACC15] border-[#D97706] text-black scale-110 shadow-[0_0_12px_rgba(250,204,21,0.6)]"
                     : isComparing
-                    ? "bg-accent-purple border-[#7C3AED] text-white scale-105 shadow-[0_0_10px_rgba(124,58,237,0.5)]"
+                    ? "bg-[#7c3aed] border-[#7C3AED] text-white scale-105 shadow-[0_0_10px_rgba(124,58,237,0.5)]"
                     : "bg-[#181818] border-[#333] text-white"
                 }`}
                 style={{
@@ -106,22 +106,22 @@ export const GenericArrayVisualizer: React.FC = () => {
               </div>
 
               {/* Index Number */}
-              <span className="text-[10px] text-text-muted mt-2 font-mono">{idx}</span>
+              <span className="text-[10px] text-[#555555] mt-2 font-mono">{idx}</span>
             </div>
           );
         })}
       </div>
 
       {/* Heatmap/Metadata footer */}
-      <div className="mt-4 flex gap-4 text-xs font-mono text-text-secondary bg-[#1a1a1a] p-3 rounded-lg border border-[#2a2a2a] w-full max-w-md justify-between">
+      <div className="mt-4 flex gap-4 text-xs font-mono text-[#888888] bg-[#1a1a1a] p-3 rounded-lg border border-[#2a2a2a] w-full max-w-md justify-between">
         <div>
-          <span className="text-text-muted">Total Steps:</span> {totalSteps}
+          <span className="text-[#555555]">Total Steps:</span> {totalSteps}
         </div>
         <div>
-          <span className="text-text-muted">Active Step:</span> {currentStepIndex + 1}
+          <span className="text-[#555555]">Active Step:</span> {currentStepIndex + 1}
         </div>
         <div>
-          <span className="text-text-muted">Active Variable Count:</span> {Object.keys(pointers).length}
+          <span className="text-[#555555]">Active Variable Count:</span> {Object.keys(pointers).length}
         </div>
       </div>
     </div>

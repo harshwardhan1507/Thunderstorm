@@ -110,15 +110,15 @@ export const DPTable: React.FC = () => {
     const isDep = dependentSet.has(`${r},${c}`);
     
     if (isAct) {
-      return 'bg-accent-primary/30 border-accent-primary text-white shadow-[0_0_12px_rgba(59,130,246,0.5)] font-extrabold';
+      return 'bg-[#3B82F6]/30 border-accent-primary text-white shadow-[0_0_12px_rgba(59,130,246,0.5)] font-extrabold';
     }
     if (isDep) {
       return 'bg-accent-secondary/20 border-accent-secondary text-accent-secondary font-semibold';
     }
     if (tableData[r]?.[c] !== null) {
-      return 'bg-surface-card border-border-subtle text-text-primary';
+      return 'bg-[#141414]-card border-[#2a2a2a] text-[#f0f0f0]';
     }
-    return 'bg-surface border-border-subtle/30 text-text-muted';
+    return 'bg-[#141414] border-[#2a2a2a]/30 text-[#555555]';
   };
 
   // Render LCS grid
@@ -127,7 +127,7 @@ export const DPTable: React.FC = () => {
     const colsList = ['', ...strB.split('')];
 
     return (
-      <div ref={containerRef} className="w-full h-full relative overflow-auto p-6 bg-surface min-w-0">
+      <div ref={containerRef} className="w-full h-full relative overflow-auto p-6 bg-[#141414] min-w-0">
         {/* SVG Arrow Overlay */}
         <svg
           className="absolute inset-0 pointer-events-none z-10"
@@ -178,11 +178,11 @@ export const DPTable: React.FC = () => {
         <table ref={tableRef} className="border-collapse mx-auto select-none font-mono">
           <thead>
             <tr>
-              <th className="p-2 border border-border-subtle text-xs text-text-muted"></th>
+              <th className="p-2 border border-[#2a2a2a] text-xs text-[#555555]"></th>
               {colsList.map((char, colIdx) => (
-                <th key={`col-${colIdx}`} className="p-2.5 border border-border-subtle text-center text-xs font-bold text-text-secondary min-w-[45px]">
+                <th key={`col-${colIdx}`} className="p-2.5 border border-[#2a2a2a] text-center text-xs font-bold text-[#888888] min-w-[45px]">
                   {char || '-'}
-                  <div className="text-[8px] text-text-muted mt-0.5">{colIdx}</div>
+                  <div className="text-[8px] text-[#555555] mt-0.5">{colIdx}</div>
                 </th>
               ))}
             </tr>
@@ -190,9 +190,9 @@ export const DPTable: React.FC = () => {
           <tbody>
             {rowsList.map((char, rowIdx) => (
               <tr key={`row-${rowIdx}`}>
-                <td className="p-2.5 border border-border-subtle text-right text-xs font-bold text-text-secondary min-w-[35px]">
+                <td className="p-2.5 border border-[#2a2a2a] text-right text-xs font-bold text-[#888888] min-w-[35px]">
                   {char || '-'}
-                  <span className="text-[8px] text-text-muted block mt-0.5">{rowIdx}</span>
+                  <span className="text-[8px] text-[#555555] block mt-0.5">{rowIdx}</span>
                 </td>
                 {colsList.map((_, colIdx) => {
                   const val = tableData[rowIdx]?.[colIdx];
@@ -216,7 +216,7 @@ export const DPTable: React.FC = () => {
 
         {/* Transition Formula Overlay */}
         {currentStep && (
-          <div className="mt-6 text-center text-xs text-text-secondary bg-surface-card/90 backdrop-blur-md border border-border-subtle rounded-lg p-2.5 max-w-lg mx-auto font-mono shadow-lg">
+          <div className="mt-6 text-center text-xs text-[#888888] bg-[#141414]-card/90 backdrop-blur-md border border-[#2a2a2a] rounded-lg p-2.5 max-w-lg mx-auto font-mono shadow-lg">
             <span className="text-white font-bold block mb-1">State Transition:</span>
             {currentStep.formula}
           </div>
@@ -230,7 +230,7 @@ export const DPTable: React.FC = () => {
     const colsList = Array(knapsackCapacity + 1).fill(0); // weights 0 to capacity
 
     return (
-      <div ref={containerRef} className="w-full h-full relative overflow-auto p-6 bg-surface min-w-0">
+      <div ref={containerRef} className="w-full h-full relative overflow-auto p-6 bg-[#141414] min-w-0">
         <svg
           className="absolute inset-0 pointer-events-none z-10"
           width="100%"
@@ -278,9 +278,9 @@ export const DPTable: React.FC = () => {
         <table ref={tableRef} className="border-collapse mx-auto select-none font-mono">
           <thead>
             <tr>
-              <th className="p-2 border border-border-subtle text-xs text-text-muted">Item</th>
+              <th className="p-2 border border-[#2a2a2a] text-xs text-[#555555]">Item</th>
               {colsList.map((_, colIdx) => (
-                <th key={`w-${colIdx}`} className="p-2.5 border border-border-subtle text-center text-xs font-bold text-text-secondary min-w-[45px]">
+                <th key={`w-${colIdx}`} className="p-2.5 border border-[#2a2a2a] text-center text-xs font-bold text-[#888888] min-w-[45px]">
                   w={colIdx}
                 </th>
               ))}
@@ -289,9 +289,9 @@ export const DPTable: React.FC = () => {
           <tbody>
             {/* Row 0: Empty item base case */}
             <tr key="row-0">
-              <td className="p-2.5 border border-border-subtle text-xs font-bold text-text-secondary">
+              <td className="p-2.5 border border-[#2a2a2a] text-xs font-bold text-[#888888]">
                 -
-                <span className="text-[8px] text-text-muted block mt-0.5">i=0</span>
+                <span className="text-[8px] text-[#555555] block mt-0.5">i=0</span>
               </td>
               {colsList.map((_, colIdx) => {
                 const val = tableData[0]?.[colIdx];
@@ -314,9 +314,9 @@ export const DPTable: React.FC = () => {
               const actualRow = rowIdx + 1;
               return (
                 <tr key={`row-${actualRow}`}>
-                  <td className="p-2.5 border border-border-subtle text-xs font-bold text-text-secondary whitespace-nowrap min-w-[90px]">
+                  <td className="p-2.5 border border-[#2a2a2a] text-xs font-bold text-[#888888] whitespace-nowrap min-w-[90px]">
                     v:{item.value}, w:{item.weight}
-                    <span className="text-[8px] text-text-muted block mt-0.5">i={actualRow}</span>
+                    <span className="text-[8px] text-[#555555] block mt-0.5">i={actualRow}</span>
                   </td>
                   {colsList.map((_, colIdx) => {
                     const val = tableData[actualRow]?.[colIdx];
@@ -340,7 +340,7 @@ export const DPTable: React.FC = () => {
         </table>
 
         {currentStep && (
-          <div className="mt-6 text-center text-xs text-text-secondary bg-surface-card/90 backdrop-blur-md border border-border-subtle rounded-lg p-2.5 max-w-lg mx-auto font-mono shadow-lg">
+          <div className="mt-6 text-center text-xs text-[#888888] bg-[#141414]-card/90 backdrop-blur-md border border-[#2a2a2a] rounded-lg p-2.5 max-w-lg mx-auto font-mono shadow-lg">
             <span className="text-white font-bold block mb-1">State Transition:</span>
             {currentStep.formula}
           </div>
@@ -354,7 +354,7 @@ export const DPTable: React.FC = () => {
     const colsList = Array(fibN + 1).fill(0);
 
     return (
-      <div ref={containerRef} className="w-full h-full relative overflow-auto p-6 bg-surface min-w-0">
+      <div ref={containerRef} className="w-full h-full relative overflow-auto p-6 bg-[#141414] min-w-0">
         <svg
           className="absolute inset-0 pointer-events-none z-10"
           width="100%"
@@ -397,7 +397,7 @@ export const DPTable: React.FC = () => {
           <thead>
             <tr>
               {colsList.map((_, colIdx) => (
-                <th key={`fib-${colIdx}`} className="p-2.5 border border-border-subtle text-center text-xs font-bold text-text-secondary min-w-[50px]">
+                <th key={`fib-${colIdx}`} className="p-2.5 border border-[#2a2a2a] text-center text-xs font-bold text-[#888888] min-w-[50px]">
                   F[{colIdx}]
                 </th>
               ))}
@@ -425,7 +425,7 @@ export const DPTable: React.FC = () => {
         </table>
 
         {currentStep && (
-          <div className="mt-6 text-center text-xs text-text-secondary bg-surface-card/90 backdrop-blur-md border border-border-subtle rounded-lg p-2.5 max-w-lg mx-auto font-mono shadow-lg">
+          <div className="mt-6 text-center text-xs text-[#888888] bg-[#141414]-card/90 backdrop-blur-md border border-[#2a2a2a] rounded-lg p-2.5 max-w-lg mx-auto font-mono shadow-lg">
             <span className="text-white font-bold block mb-1">State Transition:</span>
             {currentStep.formula}
           </div>

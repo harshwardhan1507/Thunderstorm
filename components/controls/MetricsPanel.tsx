@@ -126,13 +126,13 @@ export const MetricsPanel: React.FC<{ visualizerType?: VisualizerType }> = ({ vi
           return (
             <div 
               key={metric.label}
-              className="p-4 rounded-xl bg-surface-card border border-border-subtle hover:border-border-hover hover:-translate-y-0.5 transition-all duration-200 cursor-default select-none flex flex-col justify-between shadow-sm"
+              className="p-4 rounded-xl bg-[#141414] border border-[#2a2a2a] hover:border-[#333333] hover:-translate-y-0.5 transition-all duration-200 cursor-default select-none flex flex-col justify-between"
             >
               <div className="flex items-center justify-between mb-2">
-                <span className="text-text-secondary text-[11px] font-bold uppercase tracking-wider">
+                <span className="text-[#555555] text-[11px] font-bold uppercase tracking-wider">
                   {metric.label}
                 </span>
-                <Icon className="w-3.5 h-3.5 text-text-muted" />
+                <Icon className="w-3.5 h-3.5 text-[#555555]" />
               </div>
               <div className="text-2xl font-black text-white font-mono leading-none mt-1">
                 {metric.rawValue !== undefined ? (
@@ -152,11 +152,11 @@ export const MetricsPanel: React.FC<{ visualizerType?: VisualizerType }> = ({ vi
       {/* Complexity Badges Row - Only for sorting */}
       {visualizerType === 'sorting' && (
         <div className="flex gap-2.5 mt-2 flex-wrap">
-          <span className="px-3 py-1.5 rounded-lg bg-surface-elevated border border-border-subtle text-xs font-semibold text-text-secondary font-mono shadow-sm">
-            Time: <span className="text-accent-success">{SORTING_ALGORITHMS_METADATA[selectedAlgorithm]?.timeComplexity.best} best</span> · <span className="text-accent-error">{SORTING_ALGORITHMS_METADATA[selectedAlgorithm]?.timeComplexity.worst} worst</span>
+          <span className="px-3 py-1.5 rounded-lg bg-[#1c1c1c] border border-[#2a2a2a] text-xs font-semibold text-[#888888] font-mono">
+            Time: <span className="text-[#22C55E]">{SORTING_ALGORITHMS_METADATA[selectedAlgorithm]?.timeComplexity.best} best</span> · <span className="text-[#EF4444]">{SORTING_ALGORITHMS_METADATA[selectedAlgorithm]?.timeComplexity.worst} worst</span>
           </span>
-          <span className="px-3 py-1.5 rounded-lg bg-surface-elevated border border-border-subtle text-xs font-semibold text-text-secondary font-mono shadow-sm">
-            Space: <span className="text-accent-primary">{SORTING_ALGORITHMS_METADATA[selectedAlgorithm]?.spaceComplexity}</span>
+          <span className="px-3 py-1.5 rounded-lg bg-[#1c1c1c] border border-[#2a2a2a] text-xs font-semibold text-[#888888] font-mono">
+            Space: <span className="text-[#3B82F6]">{SORTING_ALGORITHMS_METADATA[selectedAlgorithm]?.spaceComplexity}</span>
           </span>
         </div>
       )}

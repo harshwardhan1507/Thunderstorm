@@ -1,6 +1,7 @@
 'use client';
-
+import React from 'react';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 import {
   Zap,
   BarChart2,
@@ -12,257 +13,225 @@ import {
   Play,
   Code2,
   Activity,
-  SlidersHorizontal,
+  Timer,
+  BookOpen,
 } from 'lucide-react';
-import { motion } from 'framer-motion';
 
-export default function Home() {
-  const categories = [
-    {
-      title: 'Sorting',
-      description: 'Visualize comparisons, swaps, and splits in array sorting algorithms.',
-      icon: BarChart2,
-      slug: 'sorting',
-      available: true,
-    },
-    {
-      title: 'Graphs',
-      description: 'Explore graph traversals like BFS and DFS step-by-step.',
-      icon: Share2,
-      slug: 'graphs',
-      available: true,
-    },
-    {
-      title: 'Pathfinding',
-      description: 'Watch Dijkstra and A* find the shortest path across interactive grids.',
-      icon: Navigation,
-      slug: 'pathfinding',
-      available: true,
-    },
-    {
-      title: 'Trees',
-      description: 'Animate operations on binary search trees, AVL rotations, and heaps.',
-      icon: GitBranch,
-      slug: 'trees',
-      available: true,
-    },
-    {
-      title: 'Dynamic Programming',
-      description: 'Visualize bottom-up and top-down DP transitions in tabular cells.',
-      icon: Table2,
-      slug: 'dp',
-      available: true,
-    },
-    {
-      title: 'Greedy',
-      description: 'Trace greedy choices in Huffman Coding and Activity Selection.',
-      icon: Zap,
-      slug: 'greedy',
-      available: true,
-    },
-  ];
+const categories = [
+  {
+    title: 'Sorting',
+    slug: 'sorting',
+    icon: BarChart2,
+    description: 'Bubble, Merge, Quick, Heap — step-by-step with GSAP bar animations.',
+    available: true,
+  },
+  {
+    title: 'Graphs',
+    slug: 'graphs',
+    icon: Share2,
+    description: 'BFS and DFS traversals on interactive SVG graphs with node-pulse animations.',
+    available: true,
+  },
+  {
+    title: 'Pathfinding',
+    slug: 'pathfinding',
+    icon: Navigation,
+    description: "Dijkstra's and A* on a clickable grid — draw walls, set start/end.",
+    available: true,
+  },
+  {
+    title: 'Trees',
+    slug: 'trees',
+    icon: GitBranch,
+    description: 'BST, AVL rotations, and Heap operations with live tree re-balancing.',
+    available: true,
+  },
+  {
+    title: 'Dynamic Programming',
+    slug: 'dp',
+    icon: Table2,
+    description: 'LCS, Knapsack, Fibonacci — animated DP table cell fills.',
+    available: true,
+  },
+  {
+    title: 'Greedy',
+    slug: 'greedy',
+    icon: Zap,
+    description: 'Activity Selection and Huffman Coding with greedy decision highlights.',
+    available: true,
+  },
+];
 
-  const features = [
-    {
-      title: 'Step-by-Step Execution',
-      description: 'Watch algorithms execute one step at a time. Pause, rewind, and replay any operation to understand exactly how it works.',
-      icon: Play,
-    },
-    {
-      title: 'Multi-Language Code',
-      description: 'Synchronized source code in JavaScript, Python, Java, and C++ — highlighting the active line as the algorithm runs.',
-      icon: Code2,
-    },
-    {
-      title: 'Live Metrics',
-      description: 'Real-time counters for comparisons, swaps, execution time, and heap memory usage — see the cost of each algorithm.',
-      icon: Activity,
-    },
-    {
-      title: 'Interactive Controls',
-      description: 'Scrub through the timeline, adjust playback speed from 0.25x to 25x, and resize arrays on the fly.',
-      icon: SlidersHorizontal,
-    },
-  ];
+const features = [
+  {
+    icon: Play,
+    title: 'Step-by-Step Playback',
+    description: 'Play, pause, step forward/back, and scrub the timeline to any point in the execution.',
+  },
+  {
+    icon: Code2,
+    title: 'Multi-Language Code Panel',
+    description: 'Synchronized Java, Python, C++, and JavaScript panels highlight the active line in real time.',
+  },
+  {
+    icon: Activity,
+    title: 'Live Performance Metrics',
+    description: 'Real comparisons, swaps, nodes visited, and execution time — measured honestly.',
+  },
+  {
+    icon: Timer,
+    title: 'Algorithm Comparison',
+    description: 'Run two algorithms side-by-side on identical data and see who wins in Battle Mode.',
+  },
+  {
+    icon: BookOpen,
+    title: 'Educational Panels',
+    description: 'Intuition, complexity analysis, pros/cons, and real-world use cases for every algorithm.',
+  },
+  {
+    icon: Share2,
+    title: 'Shareable URLs',
+    description: 'Deep-link any configuration — algorithm, size, speed, grid preset — for demos and classrooms.',
+  },
+];
 
+export default function LandingPage() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-base px-6 py-20 relative overflow-hidden font-sans min-h-[calc(100vh-64px)] w-full select-none">
-      {/* Aurora Glow Background */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 1.0, ease: 'easeOut' }}
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background: `
-            radial-gradient(ellipse 80% 50% at 50% -20%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
-            radial-gradient(ellipse 60% 40% at 80% 20%, rgba(6, 182, 212, 0.1) 0%, transparent 40%),
-            radial-gradient(ellipse 50% 30% at 20% 30%, rgba(59, 130, 246, 0.08) 0%, transparent 40%)
-          `,
-        }}
-      />
-      
-      {/* Atmospheric particles overlay */}
+    <div className="min-h-screen bg-[#0a0a0a] relative overflow-hidden">
+      {/* Radial purple glow from below */}
       <div
-        className="absolute inset-0 pointer-events-none opacity-30"
+        className="pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2 w-full"
         style={{
-          backgroundImage: 'radial-gradient(circle at 20% 30%, rgba(255,255,255,0.03) 1px, transparent 1px), radial-gradient(circle at 80% 70%, rgba(255,255,255,0.02) 1px, transparent 1px)',
-          backgroundSize: '60px 60px, 80px 80px',
+          height: '60vh',
+          background:
+            'radial-gradient(ellipse 70% 60% at 50% 100%, rgba(124,58,237,0.22) 0%, transparent 70%)',
         }}
       />
-      
-      <div className="z-10 max-w-4xl w-full text-center flex flex-col items-center gap-6">
-        {/* Large Bold Hero Headline */}
-        <motion.div
-          initial={{ y: 40, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.7, ease: 'easeOut', delay: 0.1 }}
-          className="flex flex-col gap-3"
-        >
-          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight text-white leading-[1.1]">
-            Visualize Algorithms.
-          </h1>
-          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight text-white leading-[1.1]">
-            Master the Storm.
-          </h1>
-        </motion.div>
 
-        {/* Subtitle */}
-        <motion.p
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.6, ease: 'easeOut', delay: 0.2 }}
-          className="max-w-2xl mx-auto text-base sm:text-lg text-text-secondary font-sans leading-relaxed mt-4"
-        >
-          Step-by-step DSA visualization for learners and builders.
-        </motion.p>
-
-        {/* Action Buttons - Staggered reveal */}
+      <div className="relative z-10 max-w-5xl mx-auto px-6 py-20 flex flex-col items-center text-center">
+        {/* Hero */}
         <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={{
-            visible: { transition: { staggerChildren: 0.1, delayChildren: 0.3 } },
-          }}
-          className="flex flex-row gap-4 mt-8 w-full justify-center"
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: 'easeOut' }}
+          className="flex flex-col items-center gap-6 mb-20"
         >
-          <motion.div
-            variants={{
-              hidden: { y: 20, opacity: 0 },
-              visible: { y: 0, opacity: 1, transition: { duration: 0.5, ease: 'easeOut' } },
-            }}
-            whileHover={{ y: -2, scale: 1.01 }}
-            className="flex animate-none"
-          >
+          {/* Pill badge */}
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-[#333] bg-[#1c1c1c] text-[#888] text-xs">
+            <Zap className="w-3 h-3 text-[#8b5cf6]" />
+            Algorithm Visualizer
+          </div>
+
+          {/* Headline */}
+          <h1 className="flex flex-col gap-1">
+            <span className="block text-5xl sm:text-6xl font-extrabold text-white tracking-tight leading-tight">
+              Visualize Algorithms.
+            </span>
+            <span className="block text-5xl sm:text-6xl font-extrabold tracking-tight leading-tight bg-gradient-to-r from-[#7c3aed] via-[#8b5cf6] to-[#a78bfa] bg-clip-text text-transparent">
+              Master the Storm.
+            </span>
+          </h1>
+
+          {/* Subtitle */}
+          <p className="text-[#888888] text-base sm:text-lg max-w-xl leading-relaxed">
+            Step-by-step DSA visualization with synchronized code panels, live metrics, and a
+            storm-themed UI designed for learners and builders.
+          </p>
+
+          {/* CTAs */}
+          <div className="flex items-center gap-3 flex-wrap justify-center">
             <Link
               href="/sorting"
-              className="px-6 py-3 rounded-lg border border-border-subtle text-white text-sm font-medium hover:border-border-hover hover:bg-surface-elevated transition-all duration-200 cursor-pointer select-none"
-            >
-              Explore Free
-            </Link>
-          </motion.div>
-          
-          <motion.div
-            variants={{
-              hidden: { y: 20, opacity: 0 },
-              visible: { y: 0, opacity: 1, transition: { duration: 0.5, ease: 'easeOut' } },
-            }}
-            whileHover={{ y: -2, scale: 1.01 }}
-            className="flex animate-none"
-          >
-            <Link
-              href="/sorting"
-              className="px-6 py-3 rounded-lg bg-accent-primary hover:bg-blue-600 text-white text-sm font-medium transition-all duration-200 cursor-pointer shadow-lg shadow-blue-500/20 select-none flex items-center gap-2"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-gradient-to-r from-[#7c3aed] to-[#6d28d9] hover:from-[#8b5cf6] hover:to-[#7c3aed] text-white text-sm font-semibold transition-all duration-200 shadow-lg shadow-[#7c3aed]/20"
             >
               Launch Visualizer
               <Zap className="w-4 h-4" />
             </Link>
-          </motion.div>
+            <Link
+              href="/compare"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-lg border border-[#333] text-white text-sm font-medium hover:bg-[#1c1c1c] transition-all duration-200"
+            >
+              Compare Algorithms
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
         </motion.div>
 
-        {/* Category Cards Grid */}
+        {/* Category Cards */}
         <motion.div
-          initial={{ scale: 0.96, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.9, ease: 'easeOut', delay: 0.5 }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 w-full mt-24 text-left"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: 'easeOut', delay: 0.25 }}
+          className="w-full"
         >
-          {categories.map((cat) => {
-            const Icon = cat.icon;
-
-            if (!cat.available) {
+          <h2 className="text-2xl font-bold text-white text-left mb-6 tracking-tight">
+            Algorithm Categories
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-left">
+            {categories.map((cat, i) => {
+              const Icon = cat.icon;
               return (
-                <div
+                <motion.div
                   key={cat.title}
-                  className="p-6 rounded-xl bg-surface-card border border-border-subtle opacity-40 select-none relative"
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: 0.3 + i * 0.06 }}
+                  whileHover={{ y: -2 }}
                 >
-                  <Icon className="w-5 h-5 text-text-muted mb-4" />
-                  <h3 className="text-text-muted font-semibold text-lg mb-2">{cat.title}</h3>
-                  <p className="text-text-muted text-sm font-sans leading-relaxed">{cat.description}</p>
-                  <span className="absolute top-4 right-4 text-[10px] bg-surface-elevated text-text-muted px-2 py-1 rounded border border-border-subtle font-mono">
-                    SOON
-                  </span>
-                </div>
+                  <Link
+                    href={`/${cat.slug}`}
+                    className="flex flex-col justify-between h-full p-5 rounded-xl bg-[#141414] border border-[#2a2a2a] hover:border-[#7c3aed]/40 hover:bg-[#1a1a1a] transition-all duration-200 cursor-pointer group"
+                  >
+                    <div>
+                      <div className="w-9 h-9 rounded-lg bg-[#7c3aed]/10 border border-[#7c3aed]/20 flex items-center justify-center mb-4 group-hover:bg-[#7c3aed]/15 transition-colors">
+                        <Icon className="w-4 h-4 text-[#8b5cf6]" />
+                      </div>
+                      <h3 className="text-white font-semibold text-base mb-1.5">{cat.title}</h3>
+                      <p className="text-[#666] text-sm leading-relaxed">{cat.description}</p>
+                    </div>
+                    <span className="inline-flex items-center gap-1.5 mt-5 text-xs text-[#7c3aed] font-semibold group-hover:text-[#8b5cf6] transition-colors">
+                      Visualize <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                    </span>
+                  </Link>
+                </motion.div>
               );
-            }
-
-            return (
-              <motion.div
-                key={cat.title}
-                whileHover={{ y: -2 }}
-                whileTap={{ scale: 0.98 }}
-                transition={{ duration: 0.15 }}
-                className="h-full"
-              >
-                <Link
-                  href={`/${cat.slug}`}
-                  className="p-6 rounded-xl bg-surface border border-border-subtle hover:border-border-hover hover:bg-surface-elevated transition-all duration-200 cursor-pointer group flex flex-col justify-between h-full shadow-sm"
-                >
-                  <div>
-                    <Icon className="w-5 h-5 text-accent-primary mb-4 group-hover:scale-105 transition-transform" />
-                    <h3 className="text-white font-semibold text-lg mb-2">{cat.title}</h3>
-                    <p className="text-text-secondary text-sm font-sans leading-relaxed">{cat.description}</p>
-                  </div>
-                  <span className="inline-flex items-center gap-1.5 mt-6 text-sm text-accent-primary font-medium group-hover:text-accent-secondary transition-colors">
-                    Visualize <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-                  </span>
-                </Link>
-              </motion.div>
-            );
-          })}
+            })}
+          </div>
         </motion.div>
 
-        {/* Why ThunderStorm — Features Section */}
+        {/* Why ThunderStorm */}
         <motion.div
-          initial={{ y: 40, opacity: 0 }}
-          whileInView={{ y: 0, opacity: 1 }}
-          viewport={{ once: true, margin: '-100px' }}
-          transition={{ duration: 0.8, ease: 'easeOut' }}
-          className="w-full mt-32 text-left"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-80px' }}
+          transition={{ duration: 0.6, ease: 'easeOut' }}
+          className="w-full mt-24 text-left"
         >
-          <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-3">
+          <h2 className="text-2xl font-bold text-white mb-2 tracking-tight">
             Why ThunderStorm?
           </h2>
-          <p className="text-text-secondary text-base leading-relaxed mb-10 max-w-2xl">
-            Everything you need to understand algorithms — from step-by-step execution to real-time performance metrics.
+          <p className="text-[#888888] text-sm leading-relaxed mb-8 max-w-2xl">
+            Everything you need to understand algorithms — from step-by-step execution to real-time
+            performance metrics and educational explanations.
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {features.map((feat) => {
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {features.map((feat, i) => {
               const Icon = feat.icon;
               return (
                 <motion.div
                   key={feat.title}
-                  whileHover={{ y: -2 }}
-                  whileTap={{ scale: 0.98 }}
-                  transition={{ duration: 0.15 }}
-                  className="p-6 rounded-xl bg-surface border border-border-subtle hover:border-border-default transition-all duration-200 group shadow-sm"
+                  initial={{ opacity: 0, y: 12 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: i * 0.06 }}
+                  className="p-5 rounded-xl bg-[#141414] border border-[#2a2a2a] hover:border-[#333] transition-all duration-200 group"
                 >
-                  <div className="w-10 h-10 rounded-lg bg-accent-primary/10 border border-accent-primary/20 flex items-center justify-center mb-4 group-hover:bg-accent-primary/15 transition-colors duration-200">
-                    <Icon className="w-5 h-5 text-accent-primary" />
+                  <div className="w-9 h-9 rounded-lg bg-[#3B82F6]/10 border border-[#3B82F6]/20 flex items-center justify-center mb-4 group-hover:bg-[#3B82F6]/15 transition-colors">
+                    <Icon className="w-4 h-4 text-[#3B82F6]" />
                   </div>
-                  <h3 className="text-white font-bold text-base mb-2">{feat.title}</h3>
-                  <p className="text-text-secondary text-sm leading-relaxed">{feat.description}</p>
+                  <h3 className="text-white font-bold text-sm mb-1.5">{feat.title}</h3>
+                  <p className="text-[#666] text-sm leading-relaxed">{feat.description}</p>
                 </motion.div>
               );
             })}

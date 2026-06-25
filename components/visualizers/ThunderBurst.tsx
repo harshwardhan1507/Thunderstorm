@@ -167,11 +167,11 @@ export const ThunderBurst: React.FC<ThunderBurstProps> = ({
 
       {/* Completion Stat Badge (fade in overlay) */}
       <div className="z-40 bg-[#0c0c0c]/85 backdrop-blur-md border border-accent-purple/40 px-5 py-3 rounded-2xl flex flex-col items-center text-center shadow-[0_0_25px_rgba(124,58,237,0.3)] animate-in fade-in zoom-in duration-300 pointer-events-auto">
-        <div className="flex items-center gap-1.5 text-accent-purple text-xs font-bold uppercase tracking-wider font-mono">
+        <div className="flex items-center gap-1.5 text-[#7c3aed] text-xs font-bold uppercase tracking-wider font-mono">
           <span>⚡</span> {title} <span>⚡</span>
         </div>
         {metricsText && (
-          <p className="text-text-secondary text-[11px] font-mono mt-1.5 whitespace-pre-line leading-relaxed">
+          <p className="text-[#888888] text-[11px] font-mono mt-1.5 whitespace-pre-line leading-relaxed">
             {metricsText}
           </p>
         )}

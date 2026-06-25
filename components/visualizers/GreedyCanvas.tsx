@@ -123,18 +123,18 @@ export const GreedyCanvas: React.FC = () => {
     };
 
     return (
-      <div ref={containerRef} className="w-full h-full relative p-6 bg-surface overflow-auto min-w-0">
+      <div ref={containerRef} className="w-full h-full relative p-6 bg-[#141414] overflow-auto min-w-0">
         <div className="flex flex-col gap-3.5 mx-auto max-w-lg select-none font-mono">
-          <span className="text-[10px] text-text-muted font-bold tracking-wider uppercase mb-1">Activity Timeline (Sorted by End Time)</span>
+          <span className="text-[10px] text-[#555555] font-bold tracking-wider uppercase mb-1">Activity Timeline (Sorted by End Time)</span>
           
           {sortedActivities.map((act, index) => {
             const isSelected = actState.selected.includes(act.id);
             const isDiscarded = actState.discarded.includes(act.id);
             const isActive = actState.active === act.id;
 
-            let barBg = 'bg-surface-card border-border-subtle text-text-secondary';
+            let barBg = 'bg-[#141414]-card border-[#2a2a2a] text-[#888888]';
             if (isActive) {
-              barBg = 'bg-accent-primary/20 border-accent-primary text-white shadow-[0_0_8px_rgba(59,130,246,0.4)]';
+              barBg = 'bg-[#3B82F6]/20 border-accent-primary text-white shadow-[0_0_8px_rgba(59,130,246,0.4)]';
             } else if (isSelected) {
               barBg = 'bg-accent-success/20 border-accent-success text-accent-success';
             } else if (isDiscarded) {
@@ -147,8 +147,8 @@ export const GreedyCanvas: React.FC = () => {
 
             return (
               <div key={act.id} className="flex items-center gap-3 w-full">
-                <span className="text-[10px] text-text-secondary font-bold w-12 truncate">{act.id}</span>
-                <div className="flex-1 h-8 bg-surface-elevated border border-border-subtle rounded-lg relative overflow-hidden">
+                <span className="text-[10px] text-[#888888] font-bold w-12 truncate">{act.id}</span>
+                <div className="flex-1 h-8 bg-[#141414]-elevated border border-[#2a2a2a] rounded-lg relative overflow-hidden">
                   {/* Timeline segment */}
                   <div
                     className={`absolute h-6 top-1 rounded-md border text-[9px] font-bold flex items-center justify-center transition-all duration-200 ${barBg}`}
@@ -171,7 +171,7 @@ export const GreedyCanvas: React.FC = () => {
     const activeIdsSet = new Set(currentStep?.huffmanTree?.activeIds || []);
 
     return (
-      <div ref={containerRef} className="w-full h-full flex flex-col relative bg-surface">
+      <div ref={containerRef} className="w-full h-full flex flex-col relative bg-[#141414]">
         {/* Tree Canvas */}
         <div className="flex-1 w-full relative overflow-hidden">
           <svg
@@ -276,8 +276,8 @@ export const GreedyCanvas: React.FC = () => {
         </div>
 
         {/* Priority Queue Sorted HUD */}
-        <div className="h-[60px] w-full border-t border-border-subtle bg-surface-card/90 backdrop-blur-md p-2 flex items-center gap-2 overflow-x-auto">
-          <span className="text-[9px] uppercase font-black text-text-muted font-mono whitespace-nowrap">Priority Queue:</span>
+        <div className="h-[60px] w-full border-t border-[#2a2a2a] bg-[#141414]-card/90 backdrop-blur-md p-2 flex items-center gap-2 overflow-x-auto">
+          <span className="text-[9px] uppercase font-black text-[#555555] font-mono whitespace-nowrap">Priority Queue:</span>
           {queue.map((item, index) => {
             const isActive = activeIdsSet.has(item.id);
             return (
@@ -285,8 +285,8 @@ export const GreedyCanvas: React.FC = () => {
                 key={`${item.id}-${index}`}
                 className={`px-2.5 py-1 rounded border text-xs font-mono flex items-center gap-1.5 transition-all duration-200 ${
                   isActive
-                    ? 'bg-accent-primary/20 border-accent-primary text-white shadow-[0_0_8px_rgba(59,130,246,0.3)]'
-                    : 'bg-surface-elevated border-border-subtle text-text-secondary'
+                    ? 'bg-[#3B82F6]/20 border-accent-primary text-white shadow-[0_0_8px_rgba(59,130,246,0.3)]'
+                    : 'bg-[#141414]-elevated border-[#2a2a2a] text-[#888888]'
                 }`}
               >
                 <span className="font-bold text-white">{item.label}</span>

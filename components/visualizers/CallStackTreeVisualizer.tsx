@@ -51,7 +51,7 @@ export const CallStackTreeVisualizer: React.FC = () => {
           <button
             onClick={() => setViewMode("stack")}
             className={`px-2.5 py-1 rounded text-[10px] font-bold uppercase transition duration-200 ${
-              viewMode === "stack" ? "bg-accent-purple text-white" : "text-text-secondary hover:text-white"
+              viewMode === "stack" ? "bg-[#7c3aed] text-white" : "text-[#888888] hover:text-white"
             }`}
           >
             Stack View
@@ -59,7 +59,7 @@ export const CallStackTreeVisualizer: React.FC = () => {
           <button
             onClick={() => setViewMode("tree")}
             className={`px-2.5 py-1 rounded text-[10px] font-bold uppercase transition duration-200 ${
-              viewMode === "tree" ? "bg-accent-purple text-white" : "text-text-secondary hover:text-white"
+              viewMode === "tree" ? "bg-[#7c3aed] text-white" : "text-[#888888] hover:text-white"
             }`}
           >
             Call Tree
@@ -71,7 +71,7 @@ export const CallStackTreeVisualizer: React.FC = () => {
       {viewMode === "stack" && (
         <div className="flex-1 flex flex-col justify-end gap-2 overflow-y-auto px-4 py-2 border border-[#222] rounded bg-[#0d0d0d]">
           {callStack.length === 0 ? (
-            <div className="h-full flex items-center justify-center text-text-muted font-mono text-xs">
+            <div className="h-full flex items-center justify-center text-[#555555] font-mono text-xs">
               Call Stack is empty
             </div>
           ) : (
@@ -86,15 +86,15 @@ export const CallStackTreeVisualizer: React.FC = () => {
                   key={idx}
                   className={`p-3 rounded-lg border font-mono text-xs flex justify-between items-center transition-all duration-300 ${
                     isTop
-                      ? "bg-accent-purple/20 border-accent-purple text-white shadow-[0_0_10px_rgba(124,58,237,0.2)]"
-                      : "bg-[#161616] border-[#2a2a2a] text-text-secondary"
+                      ? "bg-[#7c3aed]/20 border-accent-purple text-white shadow-[0_0_10px_rgba(124,58,237,0.2)]"
+                      : "bg-[#161616] border-[#2a2a2a] text-[#888888]"
                   }`}
                 >
                   <div>
                     <span className="font-bold text-white">{frame.functionName}</span>
                     <span className="text-[10px] opacity-75 ml-1">({argsText})</span>
                   </div>
-                  <div className="text-[10px] text-text-muted">Line {frame.activeLine}</div>
+                  <div className="text-[10px] text-[#555555]">Line {frame.activeLine}</div>
                 </div>
               );
             })
@@ -106,7 +106,7 @@ export const CallStackTreeVisualizer: React.FC = () => {
       {viewMode === "tree" && (
         <div className="flex-1 overflow-auto border border-[#222] rounded bg-[#0d0d0d] p-4 flex items-center justify-center min-h-0 relative">
           {recursiveCalls.length === 0 ? (
-            <div className="text-text-muted font-mono text-xs">No recursive tree logged</div>
+            <div className="text-[#555555] font-mono text-xs">No recursive tree logged</div>
           ) : (
             <div className="flex flex-col gap-4 items-center">
               {/* Hierarchical tree structure */}
@@ -122,10 +122,10 @@ export const CallStackTreeVisualizer: React.FC = () => {
                       onClick={() => setCurrentStepIndex(call.stepIdx)}
                       className={`px-3 py-1.5 rounded border font-mono text-[10px] transition duration-200 cursor-pointer shadow-md hover:scale-105 ${
                         isActive
-                          ? "bg-accent-purple border-white text-white font-black animate-pulse"
+                          ? "bg-[#7c3aed] border-white text-white font-black animate-pulse"
                           : call.stepIdx <= currentStepIndex
-                          ? "bg-accent-purple/10 border-accent-purple/40 text-accent-purple"
-                          : "bg-[#161616] border-[#2a2a2a] text-text-muted"
+                          ? "bg-[#7c3aed]/10 border-accent-purple/40 text-[#7c3aed]"
+                          : "bg-[#161616] border-[#2a2a2a] text-[#555555]"
                       }`}
                     >
                       {call.name}
@@ -133,7 +133,7 @@ export const CallStackTreeVisualizer: React.FC = () => {
                   );
                 })}
               </div>
-              <div className="text-[10px] text-text-muted font-mono absolute bottom-2 right-2">
+              <div className="text-[10px] text-[#555555] font-mono absolute bottom-2 right-2">
                 * Click nodes to jump to call step
               </div>
             </div>

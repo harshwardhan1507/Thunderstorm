@@ -1,5 +1,4 @@
 'use client';
-
 import React from 'react';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
@@ -14,77 +13,61 @@ import {
   Zap,
   Columns,
   Swords,
+  Code2,
 } from 'lucide-react';
 
-interface SidebarItem {
+interface NavItem {
   label: string;
   href: string;
-  icon: React.ComponentType<{ className?: string }>;
-  disabled?: boolean;
+  icon: React.ElementType;
+  available?: boolean;
 }
+
+const coreItems: NavItem[] = [
+  { label: 'Dashboard', href: '/', icon: LayoutDashboard, available: true },
+  { label: 'Sorting', href: '/sorting', icon: BarChart2, available: true },
+  { label: 'Graphs', href: '/graphs', icon: Share2, available: true },
+  { label: 'Pathfinding', href: '/pathfinding', icon: Navigation, available: true },
+  { label: 'Trees', href: '/trees', icon: GitBranch, available: true },
+  { label: 'Dynamic Programming', href: '/dp', icon: Table2, available: true },
+  { label: 'Greedy', href: '/greedy', icon: Zap, available: true },
+];
+
+const analysisItems: NavItem[] = [
+  { label: 'Compare Mode', href: '/compare', icon: Columns, available: true },
+  { label: 'Battle Mode', href: '/compare?mode=battle', icon: Swords, available: true },
+  { label: 'AI Code Visualizer', href: '/code-visualizer', icon: Code2, available: true },
+];
 
 export const Sidebar: React.FC = () => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const modeParam = searchParams ? searchParams.get('mode') : null;
+  const modeParam = searchParams.get('mode');
 
-  const menuItems: SidebarItem[] = [
-    { label: 'Dashboard', href: '/', icon: LayoutDashboard },
-    { label: 'Sorting', href: '/sorting', icon: BarChart2 },
-    { label: 'Graphs', href: '/graphs', icon: Share2 },
-    { label: 'Pathfinding', href: '/pathfinding', icon: Navigation },
-    { label: 'Trees', href: '/trees', icon: GitBranch },
-    { label: 'Dynamic Programming', href: '/dp', icon: Table2 },
-    { label: 'Greedy', href: '/greedy', icon: Zap },
-  ];
+  const isActive = (item: NavItem): boolean => {
+    if (item.href === '/') return pathname === '/';
+    if (item.href === '/compare?mode=battle') return pathname === '/compare' && modeParam === 'battle';
+    if (item.href === '/compare') return pathname === '/compare' && !modeParam;
+    return pathname === item.href;
+  };
 
-  const compareItems: SidebarItem[] = [
-    { label: 'Compare Mode', href: '/compare', icon: Columns },
-    { label: 'Battle Mode', href: '/compare?mode=battle', icon: Swords },
-  ];
-
-  const renderItem = (item: SidebarItem) => {
-    if (item.disabled) {
-      return (
-        <div
-          key={item.label}
-          className="flex items-center justify-between px-3 py-2.5 rounded-lg text-slate-600 cursor-not-allowed text-sm font-medium select-none"
-          title="Coming soon (Phase 2-4)"
-        >
-          <div className="flex items-center gap-3">
-            <item.icon className="w-4 h-4 flex-shrink-0" />
-            <span>{item.label}</span>
-          </div>
-          <span className="text-[10px] bg-slate-900 text-slate-600 px-1.5 py-0.5 rounded border border-border-subtle/50">
-            soon
-          </span>
-        </div>
-      );
-    }
-
-    const isCompare = item.href === '/compare';
-    const isBattle = item.href.includes('mode=battle');
-    const isActive = isCompare
-      ? pathname === '/compare' && !modeParam
-      : isBattle
-        ? pathname === '/compare' && modeParam === 'battle'
-        : pathname === item.href;
-
+  const renderItem = (item: NavItem) => {
+    const active = isActive(item);
     return (
       <Link
         key={item.label}
         href={item.href}
-        className={`relative flex items-center gap-3 py-2.5 rounded-lg transition-all duration-200 cursor-pointer text-sm font-medium ${
-          isActive
-            ? 'text-text-primary pl-[10px] pr-3'
-            : 'text-text-secondary hover:bg-elevated/40 hover:text-text-primary px-3'
+        className={`relative flex items-center gap-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 cursor-pointer ${
+          active
+            ? 'text-[#f0f0f0] pl-[10px] pr-3'
+            : 'text-[#888888] hover:text-[#f0f0f0] hover:bg-[#1c1c1c] px-3'
         }`}
       >
-        {isActive && (
+        {active && (
           <motion.div
-            layoutId="active-sidebar-indicator"
-            className="absolute inset-0 bg-highlight rounded-lg border-l-2 border-accent-purple"
-            transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+            layoutId="sidebar-active"
+            className="absolute inset-0 bg-[#232323] rounded-lg border-l-2 border-[#7c3aed]"
+            transition={{ type: 'spring', stiffness: 400, damping: 32 }}
           />
         )}
         <span className="relative z-10 flex items-center gap-3">
@@ -96,52 +79,53 @@ export const Sidebar: React.FC = () => {
   };
 
   return (
-    <aside className="hidden md:flex fixed left-4 top-24 z-40 w-60 h-[calc(100vh-112px)] bg-surface/90 backdrop-blur-sm border border-border-subtle rounded-2xl flex-col justify-between p-4 overflow-y-auto shadow-lg shadow-black/20">
+    <aside className="hidden md:flex fixed left-0 top-16 z-40 w-60 h-[calc(100vh-64px)] bg-[#141414] border-r border-[#2a2a2a] flex-col justify-between p-4 overflow-y-auto">
       {/* Navigation Groups */}
       <div className="flex flex-col gap-6">
         {/* Core Algorithms */}
         <div className="flex flex-col gap-1">
-          <span className="px-3 text-[10px] font-bold uppercase tracking-wider text-text-muted mb-2">
+          <span className="px-3 text-[10px] font-bold uppercase tracking-wider text-[#555555] mb-1">
             Algorithms
           </span>
-          {menuItems.map(renderItem)}
+          {coreItems.map(renderItem)}
         </div>
 
-        <div className="h-px bg-border-subtle"></div>
+        <div className="h-px bg-[#2a2a2a]" />
 
-        {/* Comparison Modes */}
+        {/* Analysis */}
         <div className="flex flex-col gap-1">
-          <span className="px-3 text-[10px] font-bold uppercase tracking-wider text-text-muted mb-2">
+          <span className="px-3 text-[10px] font-bold uppercase tracking-wider text-[#555555] mb-1">
             Analysis
           </span>
-          {compareItems.map(renderItem)}
+          {analysisItems.map(renderItem)}
         </div>
       </div>
 
-      {/* Sidebar Bottom Zone */}
-      <div className="flex flex-col gap-4">
-        <div className="h-px bg-border-subtle"></div>
+      {/* Bottom Zone */}
+      <div className="flex flex-col gap-3 mt-6">
+        <div className="h-px bg-[#2a2a2a]" />
 
-        {/* Mode info & shortcuts */}
-        <div className="flex items-center justify-between text-xs text-text-secondary font-medium px-3">
+        {/* Dark mode hint */}
+        <div className="flex items-center justify-between text-xs text-[#888888] font-medium px-3">
           <div className="flex items-center gap-2">
             <span>🌙</span>
             <span>Dark Mode</span>
           </div>
-          <span className="text-[10px] bg-slate-900 border border-border-subtle text-slate-500 px-1.5 py-0.5 rounded font-mono">
+          <span className="text-[10px] bg-[#1c1c1c] border border-[#2a2a2a] text-[#555555] px-1.5 py-0.5 rounded font-mono">
             Ctrl+/
           </span>
         </div>
 
-        {/* User Profile zone */}
-        <div className="flex items-center justify-between bg-elevated/40 border border-border-subtle/50 rounded-xl p-3">
+        {/* User zone */}
+        <div className="flex items-center justify-between bg-[#1c1c1c] border border-[#2a2a2a] rounded-xl p-3">
           <div className="flex flex-col min-w-0">
-            <span className="text-xs font-bold text-text-primary truncate flex items-center gap-1.5">
-              <span className="text-accent-violet">⚡</span> haruto@mail.com
+            <span className="text-xs font-bold text-[#f0f0f0] truncate flex items-center gap-1.5">
+              <span className="text-[#8b5cf6]">⚡</span>
+              haruto@mail.com
             </span>
-            <span className="text-[10px] text-text-secondary mt-0.5">Free Plan</span>
+            <span className="text-[10px] text-[#888888] mt-0.5">Free Plan</span>
           </div>
-          <button className="bg-accent-purple hover:bg-accent-violet text-white text-[10px] font-bold px-2.5 py-1.5 rounded-full transition-all duration-200 cursor-pointer shadow-md">
+          <button className="bg-[#7c3aed] hover:bg-[#8b5cf6] text-white text-[10px] font-bold px-2.5 py-1.5 rounded-full transition-all duration-150 cursor-pointer shadow-md whitespace-nowrap">
             Upgrade
           </button>
         </div>

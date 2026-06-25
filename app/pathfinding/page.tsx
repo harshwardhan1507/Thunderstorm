@@ -27,7 +27,7 @@ interface ChromePerformance extends Performance {
 
 export default function PathfindingPage() {
   return (
-    <Suspense fallback={<div className="flex-1 flex items-center justify-center text-text-muted font-mono text-xs">Loading Pathfinding Visualizer...</div>}>
+    <Suspense fallback={<div className="flex-1 flex items-center justify-center text-[#555555] font-mono text-xs">Loading Pathfinding Visualizer...</div>}>
       <PathfindingPageInner />
     </Suspense>
   );
@@ -146,30 +146,30 @@ function PathfindingPageInner() {
   const isFinished = steps.length > 0 && currentStepIndex === steps.length - 1 && !isPlaying;
 
   return (
-    <div className="flex-1 w-full max-w-6xl mx-auto px-6 py-6 flex flex-col font-sans select-none relative">
+    <div className="flex-1 w-full px-6 py-6 flex flex-col select-none">
       {/* Breadcrumbs */}
-      <div className="text-xs text-text-muted font-mono mb-4 flex items-center gap-1.5">
-        <Link href="/" className="hover:text-text-secondary transition-colors">
+      <div className="text-xs text-[#555555] font-mono mb-4 flex items-center gap-1.5">
+        <Link href="/" className="hover:text-[#888888] transition-colors">
           Home
         </Link>
         <span>›</span>
-        <span className="text-text-secondary">Pathfinding</span>
+        <span className="text-[#888888]">Pathfinding</span>
         <span>›</span>
-        <span className="text-text-primary font-semibold">{selectedAlgorithm.toUpperCase()}</span>
+        <span className="text-[#f0f0f0] font-semibold">{selectedAlgorithm.toUpperCase()}</span>
       </div>
 
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
           <h1 className="text-2xl font-bold text-white tracking-tight">Pathfinding</h1>
-          <p className="text-text-secondary text-sm mt-1">
+          <p className="text-[#888888] text-sm mt-1">
             Visualize shortest path algorithms on an interactive 2D grid
           </p>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setIsShareOpen(true)}
-            className="p-2 bg-surface hover:bg-elevated border border-[#333333] hover:border-text-secondary rounded-lg text-text-primary hover:text-white transition duration-200 cursor-pointer flex items-center gap-1.5 text-xs font-semibold"
+            className="p-2 bg-[#141414] hover:bg-[#1c1c1c] border border-[#333333] rounded-lg text-[#f0f0f0] hover:text-white transition duration-200 cursor-pointer flex items-center gap-1.5 text-xs font-semibold"
             title="Share Configuration"
           >
             <Share2 className="w-3.5 h-3.5" />
@@ -178,21 +178,21 @@ function PathfindingPageInner() {
           <button
             onClick={() => loadMaze('random')}
             disabled={isPlaying}
-            className="px-3 py-1.5 text-xs font-bold uppercase bg-surface border border-[#333333] hover:border-text-secondary rounded-lg text-text-primary hover:bg-elevated transition duration-200 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+            className="px-3 py-1.5 text-xs font-bold uppercase bg-[#141414] border border-[#333333] hover:border-text-secondary rounded-lg text-[#f0f0f0] hover:bg-[#1c1c1c] transition duration-200 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
           >
             Random Maze
           </button>
           <button
             onClick={() => loadMaze('border')}
             disabled={isPlaying}
-            className="px-3 py-1.5 text-xs font-bold uppercase bg-surface border border-[#333333] hover:border-text-secondary rounded-lg text-text-primary hover:bg-elevated transition duration-200 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+            className="px-3 py-1.5 text-xs font-bold uppercase bg-[#141414] border border-[#333333] hover:border-text-secondary rounded-lg text-[#f0f0f0] hover:bg-[#1c1c1c] transition duration-200 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
           >
             Border Partition
           </button>
           <button
             onClick={clearWalls}
             disabled={isPlaying}
-            className="px-3 py-1.5 text-xs font-bold uppercase bg-surface border border-[#333333] hover:border-text-secondary rounded-lg text-text-primary hover:bg-elevated transition duration-200 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+            className="px-3 py-1.5 text-xs font-bold uppercase bg-[#141414] border border-[#333333] hover:border-text-secondary rounded-lg text-[#f0f0f0] hover:bg-[#1c1c1c] transition duration-200 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
           >
             Clear Walls
           </button>
@@ -200,14 +200,14 @@ function PathfindingPageInner() {
       </div>
 
       {/* Algorithm Selector Tabs */}
-      <div className="flex gap-1 bg-[#141414]/40 border border-[#2a2a2a] rounded-lg p-0.5 self-start mb-6">
+      <div className="flex gap-1 bg-[#141414] border border-[#2a2a2a] rounded-lg p-1 self-start mb-6">
         <button
           onClick={() => setSelectedAlgorithm('dijkstra')}
           disabled={isPlaying}
           className={`px-4 py-1.5 rounded-md text-xs font-semibold tracking-wide transition-all duration-200 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed ${
             selectedAlgorithm === 'dijkstra'
-              ? 'bg-highlight text-white border-b border-accent-purple shadow-sm'
-              : 'text-text-secondary hover:text-white hover:bg-elevated'
+              ? 'bg-[#232323] text-white shadow-sm'
+              : 'text-[#888888] hover:text-white hover:bg-[#1c1c1c]'
           }`}
         >
           Dijkstra's Algorithm
@@ -217,8 +217,8 @@ function PathfindingPageInner() {
           disabled={isPlaying}
           className={`px-4 py-1.5 rounded-md text-xs font-semibold tracking-wide transition-all duration-200 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed ${
             selectedAlgorithm === 'astar'
-              ? 'bg-highlight text-white border-b border-accent-purple shadow-sm'
-              : 'text-text-secondary hover:text-white hover:bg-elevated'
+              ? 'bg-[#232323] text-white shadow-sm'
+              : 'text-[#888888] hover:text-white hover:bg-[#1c1c1c]'
           }`}
         >
           A* Search (Heuristic)
@@ -233,8 +233,8 @@ function PathfindingPageInner() {
             onClick={() => setActiveTab(tab)}
             className={`flex-1 py-2 text-center rounded-md text-xs font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer ${
               activeTab === tab
-                ? 'bg-accent-purple text-white shadow-sm'
-                : 'text-text-secondary hover:text-white'
+                ? 'bg-[#7c3aed] text-white shadow-sm'
+                : 'text-[#888888] hover:text-white'
             }`}
           >
             {tab}
@@ -266,13 +266,13 @@ function PathfindingPageInner() {
       </div>
 
       {/* Controls Bar */}
-      <div className={`flex flex-col md:flex-row items-center gap-6 p-4 rounded-xl bg-surface border border-[#2a2a2a] mb-6 shadow-lg ${activeTab === 'visualizer' || activeTab === 'metrics' ? 'flex' : 'hidden lg:flex'}`}>
+      <div className={`flex flex-col md:flex-row items-center gap-6 p-4 rounded-xl bg-[#141414] border border-[#2a2a2a] mb-6 shadow-lg ${activeTab === 'visualizer' || activeTab === 'metrics' ? 'flex' : 'hidden lg:flex'}`}>
         {/* Play Pause Controls */}
         <div className="flex items-center gap-2 select-none">
           <button
             onClick={resetPlayback}
             disabled={currentStepIndex === -1}
-            className="w-8 h-8 flex items-center justify-center rounded-lg bg-elevated border border-border-subtle text-text-secondary hover:text-white hover:border-border-default transition duration-200 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+            className="w-8 h-8 flex items-center justify-center rounded-lg bg-[#1c1c1c] border border-[#2a2a2a] text-[#888888] hover:text-white hover:border-[#333333] transition duration-200 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
             title="Reset"
           >
             <RotateCcw className="w-3.5 h-3.5" />
@@ -280,14 +280,14 @@ function PathfindingPageInner() {
           <button
             onClick={stepBackward}
             disabled={currentStepIndex === -1 || isPlaying}
-            className="w-8 h-8 flex items-center justify-center rounded-lg bg-elevated border border-border-subtle text-text-secondary hover:text-white hover:border-border-default transition duration-200 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+            className="w-8 h-8 flex items-center justify-center rounded-lg bg-[#1c1c1c] border border-[#2a2a2a] text-[#888888] hover:text-white hover:border-[#333333] transition duration-200 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
             title="Step Backward"
           >
             <SkipBack className="w-3.5 h-3.5" />
           </button>
           <button
             onClick={togglePlay}
-            className="w-10 h-10 flex items-center justify-center rounded-lg bg-accent-purple text-white hover:bg-accent-violet transition duration-250 cursor-pointer shadow-[0_0_12px_rgba(124,58,237,0.4)] active:scale-95"
+            className="w-10 h-10 flex items-center justify-center rounded-lg bg-[#7c3aed] text-white hover:bg-[#8b5cf6] transition duration-250 cursor-pointer shadow-[0_0_12px_rgba(124,58,237,0.4)] active:scale-95"
             title={isPlaying ? 'Pause' : 'Play'}
           >
             {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 fill-current ml-0.5" />}
@@ -295,7 +295,7 @@ function PathfindingPageInner() {
           <button
             onClick={stepForward}
             disabled={totalSteps === 0 || currentStepIndex === totalSteps - 1 || isPlaying}
-            className="w-8 h-8 flex items-center justify-center rounded-lg bg-elevated border border-border-subtle text-text-secondary hover:text-white hover:border-border-default transition duration-200 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+            className="w-8 h-8 flex items-center justify-center rounded-lg bg-[#1c1c1c] border border-[#2a2a2a] text-[#888888] hover:text-white hover:border-[#333333] transition duration-200 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
             title="Step Forward"
           >
             <SkipForward className="w-3.5 h-3.5" />
@@ -304,11 +304,11 @@ function PathfindingPageInner() {
 
         {/* Timeline Scrubber */}
         <div className="flex-1 w-full min-w-[200px] flex items-center gap-3 font-mono">
-          <span className="text-text-muted text-xs w-6 text-center">0</span>
+          <span className="text-[#555555] text-xs w-6 text-center">0</span>
           <div className="relative flex-1 flex items-center h-6 cursor-pointer">
-            <div className="absolute left-0 right-0 h-1.5 bg-highlight rounded-full pointer-events-none border border-border-subtle/50"></div>
+            <div className="absolute left-0 right-0 h-1.5 bg-[#232323] rounded-full pointer-events-none border border-[#2a2a2a]/50"></div>
             <div
-              className="absolute left-0 h-1.5 bg-accent-purple rounded-full pointer-events-none"
+              className="absolute left-0 h-1.5 bg-[#7c3aed] rounded-full pointer-events-none"
               style={{ width: `${percentage}%` }}
             ></div>
             <input
@@ -319,13 +319,13 @@ function PathfindingPageInner() {
               onChange={handleScrubberChange}
               disabled={totalSteps === 0 || isPlaying}
               className="absolute w-full h-6 appearance-none bg-transparent cursor-pointer disabled:cursor-not-allowed focus:outline-none z-10
-                [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-accent-purple [&::-webkit-slider-thumb]:shadow-[0_0_8px_rgba(124,58,237,0.8)] [&::-webkit-slider-thumb]:border-0 [&::-webkit-slider-thumb]:transition-all [&::-webkit-slider-thumb]:duration-150
+                [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#7c3aed] [&::-webkit-slider-thumb]:shadow-[0_0_8px_rgba(124,58,237,0.8)] [&::-webkit-slider-thumb]:border-0 [&::-webkit-slider-thumb]:transition-all [&::-webkit-slider-thumb]:duration-150
                 [&::-webkit-slider-thumb]:hover:scale-125 [&::-webkit-slider-thumb]:active:scale-125
-                [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-accent-purple [&::-moz-range-thumb]:shadow-[0_0_8px_rgba(124,58,237,0.8)] [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:transition-all [&::-moz-range-thumb]:duration-150
+                [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-[#7c3aed] [&::-moz-range-thumb]:shadow-[0_0_8px_rgba(124,58,237,0.8)] [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:transition-all [&::-moz-range-thumb]:duration-150
                 [&::-moz-range-thumb]:hover:scale-125 [&::-moz-range-thumb]:active:scale-125"
             />
           </div>
-          <span className="text-text-secondary text-xs whitespace-nowrap min-w-[70px] text-right">
+          <span className="text-[#888888] text-xs whitespace-nowrap min-w-[70px] text-right">
             {scrubberValue} / {totalSteps}
           </span>
         </div>
@@ -333,7 +333,7 @@ function PathfindingPageInner() {
         {/* Speed Slider */}
         <div className="flex items-center gap-4 flex-wrap w-full md:w-auto">
           <div className="flex items-center gap-2 font-mono">
-            <span className="text-text-secondary text-[11px] font-bold uppercase tracking-wider">Speed:</span>
+            <span className="text-[#555555] text-[11px] font-bold uppercase tracking-wider">Speed:</span>
             <input
               type="range"
               min={5}
@@ -343,7 +343,7 @@ function PathfindingPageInner() {
               onChange={(e) => setSpeed(205 - parseInt(e.target.value, 10))}
               className="w-24 h-1.5 bg-[#2a2a2a] rounded-lg appearance-none cursor-pointer accent-accent-purple focus:outline-none"
             />
-            <span className="text-text-primary text-xs w-12 text-right">
+            <span className="text-[#f0f0f0] text-xs w-12 text-right">
               {((205 - speed) / 10).toFixed(1)}x
             </span>
           </div>
@@ -354,19 +354,19 @@ function PathfindingPageInner() {
       <div className={`flex flex-col gap-4 w-full ${activeTab === 'metrics' ? 'block' : 'hidden lg:block'}`}>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full">
           {/* Nodes Visited */}
-          <div className="p-4 rounded-xl bg-surface border border-border-subtle shadow-md flex flex-col justify-between">
+          <div className="p-4 rounded-xl bg-[#141414] border border-[#2a2a2a] hover:border-[#333333] flex flex-col justify-between">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-text-secondary text-[11px] font-bold uppercase tracking-wider">Nodes Visited</span>
-              <Flag className="w-3.5 h-3.5 text-text-secondary" />
+              <span className="text-[#555555] text-[11px] font-bold uppercase tracking-wider">Nodes Visited</span>
+              <Flag className="w-3.5 h-3.5 text-[#555555]" />
             </div>
             <div className="text-2xl font-black text-white font-mono leading-none mt-1">{nodesVisited}</div>
           </div>
 
           {/* Path Length */}
-          <div className="p-4 rounded-xl bg-surface border border-border-subtle shadow-md flex flex-col justify-between">
+          <div className="p-4 rounded-xl bg-[#141414] border border-[#2a2a2a] hover:border-[#333333] flex flex-col justify-between">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-text-secondary text-[11px] font-bold uppercase tracking-wider">Path Length</span>
-              <Route className="w-3.5 h-3.5 text-text-secondary" />
+              <span className="text-[#555555] text-[11px] font-bold uppercase tracking-wider">Path Length</span>
+              <Route className="w-3.5 h-3.5 text-[#555555]" />
             </div>
             <div className="text-2xl font-black text-white font-mono leading-none mt-1">
               {pathLength > 0 ? `${pathLength} cells` : 'No path'}
@@ -374,10 +374,10 @@ function PathfindingPageInner() {
           </div>
 
           {/* Execution Time */}
-          <div className="p-4 rounded-xl bg-surface border border-border-subtle shadow-md flex flex-col justify-between">
+          <div className="p-4 rounded-xl bg-[#141414] border border-[#2a2a2a] hover:border-[#333333] flex flex-col justify-between">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-text-secondary text-[11px] font-bold uppercase tracking-wider">Time</span>
-              <Clock className="w-3.5 h-3.5 text-text-secondary" />
+              <span className="text-[#555555] text-[11px] font-bold uppercase tracking-wider">Time</span>
+              <Clock className="w-3.5 h-3.5 text-[#555555]" />
             </div>
             <div className="text-2xl font-black text-white font-mono leading-none mt-1">
               {executionTime.toFixed(2)}ms
@@ -385,15 +385,15 @@ function PathfindingPageInner() {
           </div>
 
           {/* Heap Memory */}
-          <div className="p-4 rounded-xl bg-surface border border-border-subtle shadow-md flex flex-col justify-between">
+          <div className="p-4 rounded-xl bg-[#141414] border border-[#2a2a2a] hover:border-[#333333] flex flex-col justify-between">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-text-secondary text-[11px] font-bold uppercase tracking-wider">Heap</span>
-              <Activity className="w-3.5 h-3.5 text-text-secondary" />
+              <span className="text-[#555555] text-[11px] font-bold uppercase tracking-wider">Heap</span>
+              <Activity className="w-3.5 h-3.5 text-[#555555]" />
             </div>
             <div>
               <div className="text-2xl font-black text-white font-mono leading-none mt-1">{heapMemory}</div>
               {heapMemory !== 'N/A' && (
-                <div className="text-[9px] text-text-muted mt-1 leading-none font-mono">Chrome only, approx</div>
+                <div className="text-[9px] text-[#555555] mt-1 leading-none font-mono">Chrome only, approx</div>
               )}
             </div>
           </div>
@@ -401,18 +401,18 @@ function PathfindingPageInner() {
 
         {/* Complexity Badges */}
         <div className="flex gap-2.5 mt-2 flex-wrap font-mono">
-          <span className="px-3 py-1.5 rounded-lg bg-elevated border border-border-default text-xs font-semibold text-text-secondary shadow-sm">
-            Dijkstra Complexity: <span className="text-success">O((V + E) log V)</span>
+          <span className="px-3 py-1.5 rounded-lg bg-[#1c1c1c] border border-[#2a2a2a] text-xs font-semibold text-[#888888]">
+            Dijkstra Complexity: <span className="text-[#22C55E]">O((V + E) log V)</span>
           </span>
-          <span className="px-3 py-1.5 rounded-lg bg-elevated border border-border-default text-xs font-semibold text-text-secondary shadow-sm">
-            A* Complexity: <span className="text-success">O(E log V) average</span>
+          <span className="px-3 py-1.5 rounded-lg bg-[#1c1c1c] border border-[#2a2a2a] text-xs font-semibold text-[#888888]">
+            A* Complexity: <span className="text-[#22C55E]">O(E log V) average</span>
           </span>
         </div>
       </div>
 
       {/* Instructions overlay */}
       {!isPlaying && activeTab === 'visualizer' && (
-        <div className="mt-6 bg-[#0f0f0f]/80 border border-[#2a2a2a] rounded-xl p-4 text-xs text-text-secondary font-mono">
+        <div className="mt-6 bg-[#0f0f0f]/80 border border-[#2a2a2a] rounded-xl p-4 text-xs text-[#888888] font-mono">
           <span className="text-white font-bold block mb-1">Grid Canvas Instructions:</span>
           <ul className="list-disc pl-5 space-y-1">
             <li>Click and drag empty cells to **draw wall obstacles**.</li>
