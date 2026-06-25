@@ -86,3 +86,52 @@ input[type="range"]::-moz-range-thumb {
   border: none;
 }
 input[type="range"] { accent-color: #7c3aed; }
+
+/* ── Orbit Animation ── */
+@keyframes orbit {
+  0%   { transform: rotate(calc(var(--angle) * 1deg)) translateX(calc(var(--radius) * 1px)) rotate(calc(var(--angle) * -1deg)); }
+  100% { transform: rotate(calc((var(--angle) + 360) * 1deg)) translateX(calc(var(--radius) * 1px)) rotate(calc((var(--angle) + 360) * -1deg)); }
+}
+.animate-orbit {
+  animation: orbit calc(var(--duration) * 1s) linear infinite;
+}
+
+/* ── Marquee Animation ── */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@keyframes marquee-reverse {
+  from { transform: translateX(-50%); }
+  to   { transform: translateX(0); }
+}
+.animate-marquee         { animation: marquee var(--duration, 30s) linear infinite; }
+.animate-marquee-reverse { animation: marquee-reverse var(--duration, 30s) linear infinite; }
+
+/* ── Float Animation ── */
+@keyframes float-up {
+  0%, 100% { transform: translateY(0px); }
+  50%      { transform: translateY(-10px); }
+}
+.animate-float { animation: float-up 4s ease-in-out infinite; }
+
+/* ── Fade-in-up ── */
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up { animation: fade-in-up 0.6s ease-out both; }
+
+/* ── Pulse Glow ── */
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.35; }
+  50%      { opacity: 0.75; }
+}
+.animate-pulse-glow { animation: pulse-glow 3s ease-in-out infinite; }
+
+/* ── Counter number animation ── */
+@keyframes count-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-count-up { animation: count-up 0.5s ease-out both; }
