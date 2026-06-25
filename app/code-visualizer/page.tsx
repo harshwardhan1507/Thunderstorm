@@ -224,17 +224,15 @@ function bubbleSort(arr) {
                   <div className="flex gap-1.5 mt-1">
                     <button
                       onClick={() => setDetectedMode("handcrafted")}
-                      className={`flex-1 py-1 rounded text-[9px] font-bold uppercase transition ${
-                        detectedMode === "handcrafted" ? "bg-yellow-600 text-black font-black" : "bg-[#181818] text-yellow-400 hover:bg-[#222]"
-                      }`}
+                      className={`flex-1 py-1 rounded text-[9px] font-bold uppercase transition ${detectedMode === "handcrafted" ? "bg-yellow-600 text-black font-black" : "bg-[#181818] text-yellow-400 hover:bg-[#222]"
+                        }`}
                     >
                       Handcrafted
                     </button>
                     <button
                       onClick={() => setDetectedMode("generic")}
-                      className={`flex-1 py-1 rounded text-[9px] font-bold uppercase transition ${
-                        detectedMode === "generic" ? "bg-yellow-600 text-black font-black" : "bg-[#181818] text-yellow-400 hover:bg-[#222]"
-                      }`}
+                      className={`flex-1 py-1 rounded text-[9px] font-bold uppercase transition ${detectedMode === "generic" ? "bg-yellow-600 text-black font-black" : "bg-[#181818] text-yellow-400 hover:bg-[#222]"
+                        }`}
                     >
                       Generic Explorer
                     </button>
@@ -285,7 +283,7 @@ function bubbleSort(arr) {
                       {step.explanation.title}
                     </h3>
                     <p className="leading-relaxed leading-normal">{step.explanation.summary}</p>
-                    
+
                     <div className="mt-4 p-2 bg-[#0c0c0c] border border-[#222] rounded text-[10px]">
                       <span className="text-text-muted block uppercase font-bold text-[9px] mb-1">State Variables:</span>
                       {step.variables.map((v) => (
