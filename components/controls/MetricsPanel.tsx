@@ -109,7 +109,8 @@ export const MetricsPanel: React.FC<{ visualizerType?: VisualizerType }> = ({ vi
     };
 
     updateMemory();
-    const interval = setInterval(updateMemory, 2000);
+    // Only check memory every 5 seconds to reduce overhead
+    const interval = setInterval(updateMemory, 5000);
     return () => clearInterval(interval);
   }, [selectedAlgorithm]);
 

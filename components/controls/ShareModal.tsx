@@ -41,7 +41,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, title, 
           light: '#0c0c0c',
         },
       }, (err) => {
-        if (err) console.error('QR Code render error:', err);
+        // QR Code render error handled silently
       });
     }
   }, [isOpen, shareUrl]);
@@ -54,7 +54,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, title, 
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      console.error('Copy link failed:', err);
+      // Copy link failed
     }
   };
 
@@ -67,7 +67,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, title, 
           url: shareUrl,
         });
       } catch (err) {
-        console.error('Native share failed:', err);
+        // Native share failed
       }
     }
   };

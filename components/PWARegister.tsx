@@ -11,11 +11,11 @@ export const PWARegister: React.FC = () => {
       // Register service worker
       navigator.serviceWorker
         .register('/sw.js')
-        .then((reg) => {
-          console.log('PWA ServiceWorker registered successfully with scope:', reg.scope);
+        .then(() => {
+          // PWA ServiceWorker registered successfully
         })
-        .catch((err) => {
-          console.error('PWA ServiceWorker registration failed:', err);
+        .catch(() => {
+          // PWA ServiceWorker registration failed
         });
     }
   }, []);
