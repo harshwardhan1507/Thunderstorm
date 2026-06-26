@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 
 export const useDeepLinking = (
@@ -26,7 +26,7 @@ export const useDeepLinking = (
   }, [searchParams, restoreFromUrl]);
 
   // Update the URL query parameters to reflect the current state
-  const updateUrl = () => {
+  const updateUrl = useCallback(() => {
     const data = syncToUrl();
     const urlParams = new URLSearchParams();
     
@@ -42,7 +42,7 @@ export const useDeepLinking = (
       : window.location.pathname;
 
     window.history.replaceState({ ...window.history.state, as: newUrl, url: newUrl }, '', newUrl);
-  };
+  }, [syncToUrl]);
 
   return { updateUrl };
 };

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState, Suspense } from 'react';
+import React, { useEffect, useRef, useState, Suspense, useCallback } from 'react';
 import Link from 'next/link';
 import { useGraphStore, GraphAlgorithmType } from '../../store/graphStore';
 import { GraphCanvas } from '../../components/visualizers/GraphCanvas';
@@ -64,17 +64,19 @@ function GraphsPageInner() {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Wire Deep Linking
+  const handleRestoreFromUrl = useCallback((params: Record<string, string>) => {
+    if (params.algo) setSelectedAlgorithm(params.algo as GraphAlgorithmType);
+    if (params.speed) setSpeed(Number(params.speed));
+    if (params.startNode) setStartNodeId(params.startNode);
+  }, [setSelectedAlgorithm, setSpeed, setStartNodeId]);
+
   const { updateUrl } = useDeepLinking(
     () => ({
       algo: selectedAlgorithm,
       speed: speed,
       startNode: startNodeId,
     }),
-    (params) => {
-      if (params.algo) setSelectedAlgorithm(params.algo as GraphAlgorithmType);
-      if (params.speed) setSpeed(Number(params.speed));
-      if (params.startNode) setStartNodeId(params.startNode);
-    }
+    handleRestoreFromUrl
   );
 
   // Initialize graph on mount if not deep linked
@@ -88,7 +90,7 @@ function GraphsPageInner() {
   // Sync state back to URL when these variables change
   useEffect(() => {
     updateUrl();
-  }, [selectedAlgorithm, speed, startNodeId]);
+  }, [selectedAlgorithm, speed, startNodeId, updateUrl]);
 
   // Read memory heap usage (approximate check)
   useEffect(() => {

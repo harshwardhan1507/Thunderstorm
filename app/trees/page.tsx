@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState, Suspense } from 'react';
+import React, { useEffect, useRef, useState, Suspense, useCallback } from 'react';
 import Link from 'next/link';
 import { useTreeStore, TreeType, TreeAlgorithmType } from '../../store/treeStore';
 import { TreeCanvas } from '../../components/visualizers/TreeCanvas';
@@ -72,15 +72,17 @@ function TreesPageInner() {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Wire Deep Linking
+  const handleRestoreFromUrl = useCallback((params: Record<string, string>) => {
+    if (params.treeType) setTreeType(params.treeType as TreeType);
+    if (params.speed) setSpeed(Number(params.speed));
+  }, [setTreeType, setSpeed]);
+
   const { updateUrl } = useDeepLinking(
     () => ({
       treeType: treeType,
       speed: speed,
     }),
-    (params) => {
-      if (params.treeType) setTreeType(params.treeType as TreeType);
-      if (params.speed) setSpeed(Number(params.speed));
-    }
+    handleRestoreFromUrl
   );
 
   // Initialize tree on mount if not deep linked
@@ -94,7 +96,7 @@ function TreesPageInner() {
   // Sync state back to URL when these variables change
   useEffect(() => {
     updateUrl();
-  }, [treeType, speed]);
+  }, [treeType, speed, updateUrl]);
 
   // Read memory heap usage (approximate check)
   useEffect(() => {

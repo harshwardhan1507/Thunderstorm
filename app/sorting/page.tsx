@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState, Suspense } from 'react';
+import React, { useEffect, useState, Suspense, useCallback } from 'react';
 import Link from 'next/link';
 import { useVisualizerStore, SortingAlgorithmType } from '../../store/visualizerStore';
 import { SortingCanvas } from '../../components/visualizers/SortingCanvas';
@@ -47,13 +47,15 @@ function SortingPageInner() {
 
   const [isShareOpen, setIsShareOpen] = useState(false);
 
+  const handleRestoreFromUrl = useCallback((params: Record<string, string>) => {
+    if (params.algo) setSelectedAlgorithm(params.algo as SortingAlgorithmType);
+    if (params.size) setArraySize(Number(params.size));
+    if (params.speed) setSpeed(Number(params.speed));
+  }, [setSelectedAlgorithm, setArraySize, setSpeed]);
+
   const { updateUrl } = useDeepLinking(
     () => ({ algo: selectedAlgorithm, size: arraySize, speed }),
-    (params) => {
-      if (params.algo) setSelectedAlgorithm(params.algo as SortingAlgorithmType);
-      if (params.size) setArraySize(Number(params.size));
-      if (params.speed) setSpeed(Number(params.speed));
-    }
+    handleRestoreFromUrl
   );
 
   useEffect(() => {
@@ -61,7 +63,7 @@ function SortingPageInner() {
     if (!hasParams) generateNewArray();
   }, [generateNewArray]);
 
-  useEffect(() => { updateUrl(); }, [selectedAlgorithm, arraySize, speed]);
+  useEffect(() => { updateUrl(); }, [selectedAlgorithm, arraySize, speed, updateUrl]);
 
   const algoLabel = SORTING_ALGORITHMS_METADATA[selectedAlgorithm]?.name || 'Sorting';
   const algos: { key: SortingAlgorithmType; label: string }[] = [

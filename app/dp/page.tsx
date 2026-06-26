@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState, Suspense } from 'react';
+import React, { useEffect, useRef, useState, Suspense, useCallback } from 'react';
 import Link from 'next/link';
 import { useDPStore, DPAlgorithmType } from '../../store/dpStore';
 import { DPTable } from '../../components/visualizers/DPTable';
@@ -76,15 +76,17 @@ function DPPageInner() {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Wire Deep Linking
+  const handleRestoreFromUrl = useCallback((params: Record<string, string>) => {
+    if (params.algo) setSelectedAlgorithm(params.algo as DPAlgorithmType);
+    if (params.speed) setSpeed(Number(params.speed));
+  }, [setSelectedAlgorithm, setSpeed]);
+
   const { updateUrl } = useDeepLinking(
     () => ({
       algo: selectedAlgorithm,
       speed: speed,
     }),
-    (params) => {
-      if (params.algo) setSelectedAlgorithm(params.algo as DPAlgorithmType);
-      if (params.speed) setSpeed(Number(params.speed));
-    }
+    handleRestoreFromUrl
   );
 
   // Initialize DP state on mount if not deep linked
@@ -98,7 +100,7 @@ function DPPageInner() {
   // Sync state back to URL when these variables change
   useEffect(() => {
     updateUrl();
-  }, [selectedAlgorithm, speed]);
+  }, [selectedAlgorithm, speed, updateUrl]);
 
   // Read memory heap usage (approximate check)
   useEffect(() => {

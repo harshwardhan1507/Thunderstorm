@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useRef, Suspense } from 'react';
+import React, { useEffect, useState, useRef, Suspense, useCallback } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Play, Pause, SkipForward, SkipBack, RotateCcw, ChevronUp, ChevronDown, Trophy, X, Share2 } from 'lucide-react';
@@ -70,6 +70,14 @@ function CompareDashboard() {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Wire Deep Linking
+  const handleRestoreFromUrl = useCallback((params: Record<string, string>) => {
+    if (params.mode) setMode(params.mode as 'compare' | 'battle');
+    if (params.leftAlgo) setSelectedAlgorithm('left', params.leftAlgo as SortingAlgorithmType);
+    if (params.rightAlgo) setSelectedAlgorithm('right', params.rightAlgo as SortingAlgorithmType);
+    if (params.speed) setSpeed(Number(params.speed));
+    if (params.size) setArraySize(Number(params.size));
+  }, [setMode, setSelectedAlgorithm, setSpeed, setArraySize]);
+
   const { updateUrl } = useDeepLinking(
     () => ({
       mode: mode,
@@ -78,13 +86,7 @@ function CompareDashboard() {
       speed: speed,
       size: arraySize,
     }),
-    (params) => {
-      if (params.mode) setMode(params.mode as 'compare' | 'battle');
-      if (params.leftAlgo) setSelectedAlgorithm('left', params.leftAlgo as SortingAlgorithmType);
-      if (params.rightAlgo) setSelectedAlgorithm('right', params.rightAlgo as SortingAlgorithmType);
-      if (params.speed) setSpeed(Number(params.speed));
-      if (params.size) setArraySize(Number(params.size));
-    }
+    handleRestoreFromUrl
   );
 
   // Sync mode from URL parameters
@@ -105,7 +107,7 @@ function CompareDashboard() {
   // Sync state back to URL when these variables change
   useEffect(() => {
     updateUrl();
-  }, [mode, left.selectedAlgorithm, right.selectedAlgorithm, speed, arraySize]);
+  }, [mode, left.selectedAlgorithm, right.selectedAlgorithm, speed, arraySize, updateUrl]);
 
   // Synchronized Playback Loop
   useEffect(() => {
