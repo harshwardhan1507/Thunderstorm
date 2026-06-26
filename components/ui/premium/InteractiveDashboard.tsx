@@ -5,9 +5,51 @@ import { Play, Pause, SkipForward, SkipBack, Code2, Layers } from "lucide-react"
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 
+const ALGORITHMS = [
+  { name: "Quick Sort", code: `function quickSort(arr) {
+  if (arr.length <= 1) return arr;
+  let pivot = arr[0];
+  let left = [], right = [];
+  for (let i = 1; i < arr.length; i++) {
+    if (arr[i] < pivot) left.push(arr[i]);
+    else right.push(arr[i]);
+  }
+  return [...quickSort(left), pivot, ...quickSort(right)];
+}`, complexity: "O(n log n)", space: "O(log n)" },
+  { name: "Merge Sort", code: `function mergeSort(arr) {
+  if (arr.length <= 1) return arr;
+  let mid = Math.floor(arr.length / 2);
+  let left = mergeSort(arr.slice(0, mid));
+  let right = mergeSort(arr.slice(mid));
+  return merge(left, right);
+}`, complexity: "O(n log n)", space: "O(n)" },
+  { name: "Heap Sort", code: `function heapSort(arr) {
+  let n = arr.length;
+  for (let i = Math.floor(n/2)-1; i >= 0; i--)
+    heapify(arr, n, i);
+  for (let i = n-1; i > 0; i--) {
+    [arr[0], arr[i]] = [arr[i], arr[0]];
+    heapify(arr, i, 0);
+  }
+  return arr;
+}`, complexity: "O(n log n)", space: "O(1)" },
+  { name: "Bubble Sort", code: `function bubbleSort(arr) {
+  let n = arr.length;
+  for (let i = 0; i < n; i++) {
+    for (let j = 0; j < n-i-1; j++) {
+      if (arr[j] > arr[j+1]) {
+        [arr[j], arr[j+1]] = [arr[j+1], arr[j]];
+      }
+    }
+  }
+  return arr;
+}`, complexity: "O(n²)", space: "O(1)" }
+];
+
 export function InteractiveDashboard() {
   const [isPlaying, setIsPlaying] = useState(true);
   const [activeTab, setActiveTab] = useState("visualization");
+  const [selectedAlgorithm, setSelectedAlgorithm] = useState(0);
   const [bars, setBars] = useState<number[]>([]);
 
   // Generate random bars
@@ -36,6 +78,8 @@ export function InteractiveDashboard() {
     
     return () => clearInterval(interval);
   }, [isPlaying]);
+
+  const currentAlgorithm = ALGORITHMS[selectedAlgorithm];
 
   return (
     <motion.div
@@ -97,28 +141,22 @@ export function InteractiveDashboard() {
                 ))
               ) : activeTab === "code" ? (
                 <div className="h-full w-full text-left text-sm font-mono text-white/70 overflow-auto">
-                  <p className="text-purple-400">function <span className="text-blue-400">quickSort</span>(arr) {'{'}</p>
-                  <p className="pl-4 text-gray-400">if (arr.length {'<='} 1) return arr;</p>
-                  <p className="pl-4 text-gray-400">let pivot = arr[0];</p>
-                  <p className="pl-4 text-gray-400">let left = [];</p>
-                  <p className="pl-4 text-gray-400">let right = [];</p>
-                  <p className="pl-4 text-purple-400">for <span className="text-gray-400">(let i = 1; i {'<'} arr.length; i++) {'{'}</span></p>
-                  <p className="pl-8 text-gray-400">if (arr[i] {'<'} pivot) left.push(arr[i]);</p>
-                  <p className="pl-8 text-gray-400">else right.push(arr[i]);</p>
-                  <p className="pl-4 text-gray-400">{'}'}</p>
-                  <p className="pl-4 text-purple-400">return <span className="text-gray-400">[...quickSort(left), pivot, ...quickSort(right)];</span></p>
-                  <p>{'}'}</p>
+                  {currentAlgorithm.code.split('\n').map((line, i) => (
+                    <p key={i} className={line.includes('function') ? 'text-purple-400' : line.includes('return') ? 'text-purple-400' : 'text-gray-400'}>
+                      {line}
+                    </p>
+                  ))}
                 </div>
               ) : (
                 <div className="flex h-full w-full items-center justify-center">
                   <div className="grid grid-cols-2 gap-4 w-full">
                     <div className="rounded-lg bg-white/5 p-4 text-center">
                       <p className="text-xs text-white/50">Time Complexity</p>
-                      <p className="text-xl font-bold text-green-400">O(n log n)</p>
+                      <p className="text-xl font-bold text-green-400">{currentAlgorithm.complexity}</p>
                     </div>
                     <div className="rounded-lg bg-white/5 p-4 text-center">
                       <p className="text-xs text-white/50">Space Complexity</p>
-                      <p className="text-xl font-bold text-yellow-400">O(log n)</p>
+                      <p className="text-xl font-bold text-yellow-400">{currentAlgorithm.space}</p>
                     </div>
                     <div className="rounded-lg bg-white/5 p-4 text-center">
                       <p className="text-xs text-white/50">Comparisons</p>
@@ -161,17 +199,18 @@ export function InteractiveDashboard() {
               <h4 className="mb-4 text-sm font-semibold text-white/80">Algorithm Selection</h4>
               
               <div className="space-y-2">
-                {["Quick Sort", "Merge Sort", "Heap Sort", "Bubble Sort"].map((algo, i) => (
-                  <div 
-                    key={algo} 
+                {ALGORITHMS.map((algo, i) => (
+                  <button
+                    key={algo.name}
+                    onClick={() => setSelectedAlgorithm(i)}
                     className={cn(
-                      "flex cursor-pointer items-center justify-between rounded-lg px-3 py-2 text-sm transition-colors",
-                      i === 0 ? "bg-primary/20 text-primary" : "text-white/60 hover:bg-white/5 hover:text-white"
+                      "w-full flex cursor-pointer items-center justify-between rounded-lg px-3 py-2 text-sm transition-all",
+                      i === selectedAlgorithm ? "bg-primary/20 text-primary shadow-[0_0_12px_rgba(124,58,237,0.4)]" : "text-white/60 hover:bg-white/5 hover:text-white"
                     )}
                   >
-                    <span>{algo}</span>
-                    {i === 0 && <div className="h-2 w-2 rounded-full bg-primary shadow-[0_0_8px_rgba(124,58,237,0.8)]" />}
-                  </div>
+                    <span>{algo.name}</span>
+                    {i === selectedAlgorithm && <div className="h-2 w-2 rounded-full bg-primary shadow-[0_0_8px_rgba(124,58,237,0.8)]" />}
+                  </button>
                 ))}
               </div>
               

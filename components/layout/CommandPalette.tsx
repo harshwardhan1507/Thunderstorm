@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { Search, Zap, BarChart2, Share2, Navigation, GitBranch, Table2, Settings, Sun, Moon, Play, Pause, FastForward } from 'lucide-react';
+import { Search, BarChart2, Share2, Navigation, GitBranch, Table2, Settings } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface CommandItem {
@@ -13,13 +13,22 @@ interface CommandItem {
   category: 'navigation' | 'settings' | 'algorithms';
 }
 
-export const CommandPalette: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(false);
+interface CommandPaletteProps {
+  isOpen?: boolean;
+  onClose?: () => void;
+}
+
+export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen: externalIsOpen, onClose: externalOnClose }) => {
+  const [internalIsOpen, setInternalIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const overlayRef = useRef<HTMLDivElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Use external state if provided, otherwise use internal state
+  const isOpen = externalIsOpen !== undefined ? externalIsOpen : internalIsOpen;
+  const setIsOpen = externalOnClose ? (value: boolean) => {
+    if (!value) externalOnClose();
+  } : setInternalIsOpen;
 
   const commands: CommandItem[] = useMemo(() => [
     {
@@ -35,7 +44,7 @@ export const CommandPalette: React.FC = () => {
       label: 'Graph Algorithms',
       description: 'Explore BFS, DFS and graph traversals',
       icon: Share2,
-      action: () => {},
+      action: () => window.location.href = '/graphs',
       category: 'algorithms',
     },
     {
@@ -43,7 +52,7 @@ export const CommandPalette: React.FC = () => {
       label: 'Pathfinding',
       description: 'Dijkstra and A* visualizations',
       icon: Navigation,
-      action: () => {},
+      action: () => window.location.href = '/pathfinding',
       category: 'algorithms',
     },
     {
@@ -59,7 +68,7 @@ export const CommandPalette: React.FC = () => {
       label: 'Dynamic Programming',
       description: 'Tabular DP visualizations',
       icon: Table2,
-      action: () => {},
+      action: () => window.location.href = '/dp',
       category: 'algorithms',
     },
     {
@@ -67,20 +76,6 @@ export const CommandPalette: React.FC = () => {
       label: 'Settings',
       description: 'Configure preferences',
       icon: Settings,
-      action: () => {},
-      category: 'settings',
-    },
-    {
-      id: 'theme-light',
-      label: 'Switch to Light Theme',
-      icon: Sun,
-      action: () => {},
-      category: 'settings',
-    },
-    {
-      id: 'theme-dark',
-      label: 'Switch to Dark Theme',
-      icon: Moon,
       action: () => {},
       category: 'settings',
     },
@@ -95,7 +90,9 @@ export const CommandPalette: React.FC = () => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
         e.preventDefault();
-        setIsOpen(prev => !prev);
+        if (!externalIsOpen) {
+          setInternalIsOpen(prev => !prev);
+        }
       }
       if (e.key === 'Escape') {
         setIsOpen(false);
@@ -119,13 +116,7 @@ export const CommandPalette: React.FC = () => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, selectedIndex]);
-
-  useEffect(() => {
-    const handleOpen = () => setIsOpen(true);
-    window.addEventListener('open-command-palette', handleOpen);
-    return () => window.removeEventListener('open-command-palette', handleOpen);
-  }, []);
+  }, [isOpen, selectedIndex, filteredCommands, externalIsOpen]);
 
   useEffect(() => {
     if (isOpen) {
@@ -155,7 +146,7 @@ export const CommandPalette: React.FC = () => {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.96, y: -10 }}
             transition={{ duration: 0.2, ease: 'easeOut' }}
-            className="w-full max-w-xl bg-[#141414]-card border border-[#2a2a2a] rounded-2xl shadow-2xl overflow-hidden"
+            className="w-full max-w-xl bg-[#141414] border border-[#2a2a2a] rounded-2xl shadow-2xl overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Search Input */}
@@ -170,10 +161,10 @@ export const CommandPalette: React.FC = () => {
                   setSearchQuery(e.target.value);
                   setSelectedIndex(0);
                 }}
-                className="flex-1 bg-transparent text-white placeholder-text-muted outline-none text-base"
+                className="flex-1 bg-transparent text-white placeholder-gray-500 outline-none text-base"
               />
               <div className="flex items-center gap-1.5">
-                <kbd className="px-2 py-1 text-xs font-mono bg-[#141414]-elevated text-[#555555] rounded border border-[#2a2a2a]">
+                <kbd className="px-2 py-1 text-xs font-mono bg-[#1a1a1a] text-[#555555] rounded border border-[#2a2a2a]">
                   ESC
                 </kbd>
               </div>
@@ -197,11 +188,11 @@ export const CommandPalette: React.FC = () => {
                         setIsOpen(false);
                       }}
                       className={`w-full flex items-center gap-3 px-5 py-3 transition-all duration-150 ${
-                        isSelected ? 'bg-[#3B82F6]/10 border-l-2 border-accent-primary' : 'hover:bg-[#141414]-elevated border-l-2 border-transparent'
+                        isSelected ? 'bg-primary/10 border-l-2 border-primary' : 'hover:bg-[#1a1a1a] border-l-2 border-transparent'
                       }`}
                     >
-                      <div className={`p-2 rounded-lg ${isSelected ? 'bg-[#3B82F6]/20' : 'bg-[#141414]-elevated'}`}>
-                        <Icon className={`w-4 h-4 ${isSelected ? 'text-[#3B82F6]' : 'text-[#555555]'}`} />
+                      <div className={`p-2 rounded-lg ${isSelected ? 'bg-primary/20' : 'bg-[#1a1a1a]'}`}>
+                        <Icon className={`w-4 h-4 ${isSelected ? 'text-primary' : 'text-[#555555]'}`} />
                       </div>
                       <div className="flex-1 text-left">
                         <div className={`text-sm font-medium ${isSelected ? 'text-white' : 'text-[#888888]'}`}>
@@ -228,16 +219,16 @@ export const CommandPalette: React.FC = () => {
             <div className="px-5 py-3 border-t border-[#2a2a2a] flex items-center justify-between text-xs text-[#555555]">
               <div className="flex items-center gap-4">
                 <span className="flex items-center gap-1.5">
-                  <kbd className="px-1.5 py-0.5 bg-[#141414]-elevated rounded border border-[#2a2a2a] font-mono">↑↓</kbd>
+                  <kbd className="px-1.5 py-0.5 bg-[#1a1a1a] rounded border border-[#2a2a2a] font-mono">↑↓</kbd>
                   Navigate
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <kbd className="px-1.5 py-0.5 bg-[#141414]-elevated rounded border border-[#2a2a2a] font-mono">↵</kbd>
+                  <kbd className="px-1.5 py-0.5 bg-[#1a1a1a] rounded border border-[#2a2a2a] font-mono">↵</kbd>
                   Select
                 </span>
               </div>
               <span className="flex items-center gap-1.5">
-                <kbd className="px-1.5 py-0.5 bg-[#141414]-elevated rounded border border-[#2a2a2a] font-mono">esc</kbd>
+                <kbd className="px-1.5 py-0.5 bg-[#1a1a1a] rounded border border-[#2a2a2a] font-mono">esc</kbd>
                 Close
               </span>
             </div>

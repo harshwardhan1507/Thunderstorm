@@ -1,6 +1,10 @@
 import { FloatingNavbar } from "@/components/ui/premium/FloatingNavbar";
 import { HeroSection } from "@/components/sections/premium/HeroSection";
 import { FeaturesSection } from "@/components/sections/premium/FeaturesSection";
+import { SimplerWaySection } from "@/components/sections/premium/SimplerWaySection";
+import { TheorySimplifiedSection } from "@/components/sections/premium/TheorySimplifiedSection";
+import { PracticePlaySection } from "@/components/sections/premium/PracticePlaySection";
+import { AcePreparationSection } from "@/components/sections/premium/AcePreparationSection";
 import { Footer } from "@/components/layout/Footer";
 
 export default function LandingPage() {
@@ -15,6 +19,26 @@ export default function LandingPage() {
         <div className="h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent" />
         
         <FeaturesSection />
+
+        {/* Separator */}
+        <div className="h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+
+        <SimplerWaySection />
+
+        {/* Separator */}
+        <div className="h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+
+        <TheorySimplifiedSection />
+
+        {/* Separator */}
+        <div className="h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+
+        <PracticePlaySection />
+
+        {/* Separator */}
+        <div className="h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+
+        <AcePreparationSection />
       </main>
 
       <Footer />

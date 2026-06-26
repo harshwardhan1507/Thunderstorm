@@ -4,15 +4,15 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Search, Menu, X, Sun, Moon, Zap } from "lucide-react";
+import { Search, Menu, X, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useTheme } from "@/lib/context/ThemeContext";
+import { CommandPalette } from "@/components/layout/CommandPalette";
 
 export function FloatingNavbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const pathname = usePathname();
-  const { theme, toggleTheme } = useTheme();
 
   // Handle scroll effect
   useEffect(() => {
@@ -21,6 +21,18 @@ export function FloatingNavbar() {
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Handle Ctrl+K keyboard shortcut
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+        e.preventDefault();
+        setIsCommandPaletteOpen(true);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
   const navLinks = [
@@ -61,15 +73,14 @@ export function FloatingNavbar() {
           </Link>
 
           {/* Search Bar */}
-          <div className="hidden items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-2 md:flex">
+          <button
+            onClick={() => setIsCommandPaletteOpen(true)}
+            className="hidden items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-2 transition-all hover:bg-white/10 md:flex"
+          >
             <Search size={16} className="text-white/50" />
-            <input
-              type="text"
-              placeholder="Search algorithms..."
-              className="w-40 bg-transparent text-sm text-white placeholder-white/50 outline-none"
-            />
+            <span className="w-40 text-left text-sm text-white/50">Search algorithms...</span>
             <span className="text-xs text-white/30">Ctrl+K</span>
-          </div>
+          </button>
 
           {/* Desktop Navigation */}
           <nav className="hidden items-center gap-1 md:flex">
@@ -101,16 +112,6 @@ export function FloatingNavbar() {
 
           {/* Actions */}
           <div className="flex items-center gap-3">
-
-
-            <button
-              onClick={toggleTheme}
-              className="flex h-8 w-8 items-center justify-center rounded-full bg-white/5 text-white/80 transition-colors hover:bg-white/10 hover:text-white"
-              aria-label="Toggle theme"
-            >
-              {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
-            </button>
-
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="flex h-8 w-8 items-center justify-center rounded-full bg-white/5 text-white/80 transition-colors hover:bg-white/10 hover:text-white md:hidden"
@@ -143,11 +144,13 @@ export function FloatingNavbar() {
                 </Link>
               ))}
               <div className="my-2 h-px w-full bg-white/10" />
-
             </nav>
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Command Palette */}
+      <CommandPalette isOpen={isCommandPaletteOpen} onClose={() => setIsCommandPaletteOpen(false)} />
     </>
   );
 }
