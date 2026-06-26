@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { Zap, BarChart3, Shuffle, Network, Route, TreePine, Layers, TrendingUp, Hash, Award, Activity, Timer } from 'lucide-react';
 
 interface StatCardProps {
@@ -45,13 +45,17 @@ interface TabbedDashboardProps {
 export const TabbedDashboard: React.FC<TabbedDashboardProps> = ({ className = '' }) => {
   const [activeTab, setActiveTab] = useState('sorting');
   const [stats, setStats] = useState({
-    problems: 0,
-    algorithms: 0,
-    streak: 0,
+    problems: 1341,
+    algorithms: 525,
+    streak: 12,
   });
+  const animationStarted = useRef(false);
 
-  // Animate counters on mount
+  // Animate counters only once on mount
   useEffect(() => {
+    if (animationStarted.current) return;
+    animationStarted.current = true;
+
     const t1 = setTimeout(() => {
       let p = 0, a = 0, s = 0;
       const interval = setInterval(() => {
@@ -65,44 +69,44 @@ export const TabbedDashboard: React.FC<TabbedDashboardProps> = ({ className = ''
     return () => clearTimeout(t1);
   }, []);
 
-  const getTabContent = () => {
-    const contentMap: Record<string, { title: string; description: string; color: string }> = {
-      sorting: {
-        title: 'Sorting Algorithms',
-        description: 'Visualize and compare sorting algorithms with step-by-step execution',
-        color: '#7c3aed',
-      },
-      graphs: {
-        title: 'Graph Algorithms',
-        description: 'Explore graph traversal and pathfinding algorithms in real-time',
-        color: '#3B82F6',
-      },
-      pathfinding: {
-        title: 'Pathfinding',
-        description: 'Find optimal paths using Dijkstra and A* algorithms',
-        color: '#10B981',
-      },
-      trees: {
-        title: 'Tree Structures',
-        description: 'Visualize BST, AVL trees, and heap operations',
-        color: '#F59E0B',
-      },
-      dp: {
-        title: 'Dynamic Programming',
-        description: 'Master DP concepts with interactive visualizations',
-        color: '#EC4899',
-      },
-      greedy: {
-        title: 'Greedy Algorithms',
-        description: 'Learn greedy strategies and optimization techniques',
-        color: '#06B6D4',
-      },
-    };
+  const contentMap = useMemo(() => ({
+    sorting: {
+      title: 'Sorting Algorithms',
+      description: 'Visualize and compare sorting algorithms with step-by-step execution',
+      color: '#7c3aed',
+    },
+    graphs: {
+      title: 'Graph Algorithms',
+      description: 'Explore graph traversal and pathfinding algorithms in real-time',
+      color: '#3B82F6',
+    },
+    pathfinding: {
+      title: 'Pathfinding',
+      description: 'Find optimal paths using Dijkstra and A* algorithms',
+      color: '#10B981',
+    },
+    trees: {
+      title: 'Tree Structures',
+      description: 'Visualize BST, AVL trees, and heap operations',
+      color: '#F59E0B',
+    },
+    dp: {
+      title: 'Dynamic Programming',
+      description: 'Master DP concepts with interactive visualizations',
+      color: '#EC4899',
+    },
+    greedy: {
+      title: 'Greedy Algorithms',
+      description: 'Learn greedy strategies and optimization techniques',
+      color: '#06B6D4',
+    },
+  }), []);
 
-    return contentMap[activeTab] || contentMap.sorting;
-  };
+  const content = contentMap[activeTab] || contentMap.sorting;
 
-  const content = getTabContent();
+  const handleTabClick = useCallback((tabId: string) => {
+    setActiveTab(tabId);
+  }, []);
 
   return (
     <div className={`relative w-full max-w-3xl mx-auto ${className}`}>
@@ -128,7 +132,7 @@ export const TabbedDashboard: React.FC<TabbedDashboardProps> = ({ className = ''
           {tabs.map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
+              onClick={() => handleTabClick(tab.id)}
               className={`flex items-center gap-1.5 px-4 py-3 text-xs font-medium whitespace-nowrap transition-colors border-b-2 ${
                 activeTab === tab.id
                   ? 'text-[#7c3aed] border-[#7c3aed] bg-[#0d0d0d]'
@@ -152,7 +156,7 @@ export const TabbedDashboard: React.FC<TabbedDashboardProps> = ({ className = ''
             {tabs.map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
+                onClick={() => handleTabClick(tab.id)}
                 className={`flex items-center gap-2 px-3 py-1.5 mx-1.5 rounded-md text-[10px] transition-colors ${
                   activeTab === tab.id
                     ? 'bg-[#7c3aed]/15 text-[#a78bfa] border-l-2 border-[#7c3aed]'

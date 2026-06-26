@@ -1,4 +1,4 @@
-import React, { Children, cloneElement, forwardRef, isValidElement, useEffect, useMemo, useRef } from 'react';
+import React, { Children, cloneElement, forwardRef, isValidElement, useEffect, useMemo, useRef, useCallback } from 'react';
 import gsap from 'gsap';
 import './CardSwap.css';
 
@@ -14,7 +14,8 @@ const makeSlot = (i, distX, distY, total) => ({
   zIndex: total - i
 });
 
-const placeNow = (el, slot, skew) =>
+const placeNow = (el, slot, skew) => {
+  if (!el) return;
   gsap.set(el, {
     x: slot.x,
     y: slot.y,
@@ -26,6 +27,7 @@ const placeNow = (el, slot, skew) =>
     zIndex: slot.zIndex,
     force3D: true
   });
+};
 
 interface CardSwapProps {
   width?: number | string;
@@ -52,7 +54,7 @@ const CardSwap = ({
   easing = 'elastic',
   children
 }: CardSwapProps) => {
-  const config =
+  const config = useMemo(() => 
     easing === 'elastic'
       ? {
           ease: 'elastic.out(0.6,0.9)',
@@ -69,30 +71,31 @@ const CardSwap = ({
           durReturn: 0.8,
           promoteOverlap: 0.45,
           returnDelay: 0.2
-        };
+        },
+    [easing]
+  );
 
   const childArr = useMemo(() => Children.toArray(children), [children]);
   const refs = useMemo(
     () => childArr.map(() => React.createRef()),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [childArr.length]
   );
 
   const order = useRef(Array.from({ length: childArr.length }, (_, i) => i));
-
   const tlRef = useRef(null);
-  const intervalRef = useRef();
+  const intervalRef = useRef(null);
   const container = useRef(null);
+  const isInitialized = useRef(false);
 
-  useEffect(() => {
-    const total = refs.length;
-    refs.forEach((r, i) => placeNow(r.current, makeSlot(i, cardDistance, verticalDistance, total), skewAmount));
-
-    const swap = () => {
+  // Memoize the swap function to prevent recreation
+  const createSwapFunction = useCallback(() => {
+    return () => {
       if (order.current.length < 2) return;
 
       const [front, ...rest] = order.current;
-      const elFront = refs[front].current;
+      const elFront = refs[front]?.current;
+      if (!elFront) return;
+
       const tl = gsap.timeline();
       tlRef.current = tl;
 
@@ -104,7 +107,8 @@ const CardSwap = ({
 
       tl.addLabel('promote', `-=${config.durDrop * config.promoteOverlap}`);
       rest.forEach((idx, i) => {
-        const el = refs[idx].current;
+        const el = refs[idx]?.current;
+        if (!el) return;
         const slot = makeSlot(i, cardDistance, verticalDistance, refs.length);
         tl.set(el, { zIndex: slot.zIndex }, 'promote');
         tl.to(
@@ -145,31 +149,49 @@ const CardSwap = ({
         order.current = [...rest, front];
       });
     };
+  }, [config, cardDistance, verticalDistance, refs]);
 
+  // Initialize positions and start animation
+  useEffect(() => {
+    if (!container.current || isInitialized.current) return;
+    isInitialized.current = true;
+
+    const total = refs.length;
+    refs.forEach((r, i) => {
+      if (r.current) {
+        placeNow(r.current, makeSlot(i, cardDistance, verticalDistance, total), skewAmount);
+      }
+    });
+
+    const swap = createSwapFunction();
     swap();
     intervalRef.current = window.setInterval(swap, delay);
 
-    if (pauseOnHover) {
+    if (pauseOnHover && container.current) {
       const node = container.current;
       const pause = () => {
         tlRef.current?.pause();
-        clearInterval(intervalRef.current);
+        if (intervalRef.current) clearInterval(intervalRef.current);
       };
       const resume = () => {
         tlRef.current?.play();
-        intervalRef.current = window.setInterval(swap, delay);
+        const swapFn = createSwapFunction();
+        intervalRef.current = window.setInterval(swapFn, delay);
       };
       node.addEventListener('mouseenter', pause);
       node.addEventListener('mouseleave', resume);
+
       return () => {
         node.removeEventListener('mouseenter', pause);
         node.removeEventListener('mouseleave', resume);
-        clearInterval(intervalRef.current);
+        if (intervalRef.current) clearInterval(intervalRef.current);
       };
     }
-    return () => clearInterval(intervalRef.current);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cardDistance, verticalDistance, delay, pauseOnHover, skewAmount, easing]);
+
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [delay, pauseOnHover, cardDistance, verticalDistance, skewAmount, createSwapFunction]);
 
   const rendered = childArr.map((child, i) =>
     isValidElement(child)
