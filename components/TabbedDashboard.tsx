@@ -75,17 +75,21 @@ export const TabbedDashboard: React.FC<TabbedDashboardProps> = ({ className = ''
     if (animationStarted.current) return;
     animationStarted.current = true;
 
+    let interval: NodeJS.Timeout | null = null;
     const t1 = setTimeout(() => {
       let p = 0, a = 0, s = 0;
-      const interval = setInterval(() => {
+      interval = setInterval(() => {
         p = Math.min(p + 47, 1341);
         a = Math.min(a + 26, 525);
         s = Math.min(s + 1, 12);
         setStats({ problems: p, algorithms: a, streak: s });
-        if (p >= 1341) clearInterval(interval);
+        if (p >= 1341 && interval) clearInterval(interval);
       }, 16);
     }, 600);
-    return () => clearTimeout(t1);
+    return () => {
+      clearTimeout(t1);
+      if (interval) clearInterval(interval);
+    };
   }, []);
 
   const contentMap = useMemo(() => ({

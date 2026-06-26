@@ -149,7 +149,7 @@ const CardSwap = ({
         order.current = [...rest, front];
       });
     };
-  }, [config, cardDistance, verticalDistance, refs]);
+  }, [config, cardDistance, verticalDistance]);
 
   // Initialize positions and start animation
   useEffect(() => {
@@ -191,7 +191,7 @@ const CardSwap = ({
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [delay, pauseOnHover, cardDistance, verticalDistance, skewAmount, createSwapFunction]);
+  }, []);
 
   const rendered = childArr.map((child, i) =>
     isValidElement(child)
