@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
-import { Play, ChevronRight, Award, BookOpen, TrendingUp, Users, Zap, Code2, Globe, ArrowRight, Star, CheckCircle, Github, Twitter, Linkedin } from 'lucide-react';
+import { Play, ChevronRight, Award, BookOpen, TrendingUp, Users, Zap, Code2, Globe, ArrowRight, Star, CheckCircle, GitBranch, MessageCircle, Share2 } from 'lucide-react';
 import { useTheme } from '../lib/context/ThemeContext';
 import { themeColors } from '../lib/theme/colors';
 
@@ -423,13 +423,13 @@ export default function LandingPage() {
               </h4>
               <div className="flex gap-4">
                 <a href="#" style={{ color: colors.text.secondary }} className="hover:scale-110 transition">
-                  <Github className="w-5 h-5" />
+                  <GitBranch className="w-5 h-5" />
                 </a>
                 <a href="#" style={{ color: colors.text.secondary }} className="hover:scale-110 transition">
-                  <Twitter className="w-5 h-5" />
+                  <MessageCircle className="w-5 h-5" />
                 </a>
                 <a href="#" style={{ color: colors.text.secondary }} className="hover:scale-110 transition">
-                  <Linkedin className="w-5 h-5" />
+                  <Share2 className="w-5 h-5" />
                 </a>
               </div>
             </div>
