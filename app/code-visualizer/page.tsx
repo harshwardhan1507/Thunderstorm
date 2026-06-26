@@ -23,13 +23,9 @@ export default function CodeVisualizerPage() {
   const {
     code,
     language,
-    ir,
     currentStepIndex,
     isPlaying,
     speed,
-    totalSteps,
-    detectedMode,
-    targetVisualizer,
     analyzeCode,
     setIsPlaying,
     setSpeed,
@@ -37,7 +33,6 @@ export default function CodeVisualizerPage() {
     stepForward,
     stepBackward,
     resetPlayback,
-    setDetectedMode,
   } = useCodeVisualizerStore();
 
   const [inputCode, setInputCode] = useState<string>(`// Paste your sorting algorithm here
