@@ -35,10 +35,10 @@ export default function CodeVisualizerPage() {
     resetPlayback,
   } = useCodeVisualizerStore();
   
-  // Hardcoded for now since they were removed from the store
-  const targetVisualizer: string = "sorting";
-  const detectedMode: string = "sorting";
-  const totalSteps = 100; // Mock value since it was removed
+  // Get actual state from store
+  const totalSteps = useCodeVisualizerStore((state) => state.totalSteps);
+  const targetVisualizer: string = "sorting"; // Can be expanded based on detected mode
+  const detectedMode: string = "sorting"; // Can be expanded based on code analysis
 
   const [inputCode, setInputCode] = useState<string>(`// Paste your sorting algorithm here
 function bubbleSort(arr) {
@@ -98,7 +98,7 @@ function bubbleSort(arr) {
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
     };
-  }, [isPlaying, speed, setIsPlaying]);
+  }, [isPlaying, speed, setIsPlaying, stepForward, totalSteps]);
 
   const handleAnalyze = () => {
     const vals = customInput
@@ -106,19 +106,36 @@ function bubbleSort(arr) {
       .map((v) => parseInt(v.trim(), 10))
       .filter((v) => !isNaN(v));
     
+    // Validate input
+    if (inputCode.trim().length === 0) {
+      alert("Please paste some code to analyze");
+      return;
+    }
+    
     // Set manual dataset and switch to manual mode
     if (vals.length > 0) {
       useCodeVisualizerStore.setState({ manualDataset: vals, dataSource: "manual" });
+    } else if (customInput.trim().length > 0) {
+      alert("Please enter valid comma-separated numbers");
+      return;
     }
+    
+    // Reset playback state before analyzing
+    setCurrentStepIndex(-1);
+    setIsPlaying(false);
     
     analyzeCode(inputCode);
   };
 
   const togglePlay = () => {
-    if (currentStepIndex >= totalSteps - 1) {
+    const { currentStepIndex: idx, totalSteps: total, isPlaying: playing } = useCodeVisualizerStore.getState();
+    // If we finished, reset first
+    if (idx >= total - 1 && !playing) {
       resetPlayback();
+      setIsPlaying(true);
+    } else {
+      setIsPlaying(!playing);
     }
-    setIsPlaying(!isPlaying);
   };
 
   // Render proper canvas depending on selection & mode
@@ -153,6 +170,10 @@ function bubbleSort(arr) {
   };
 
   const percentage = totalSteps > 0 ? ((currentStepIndex + 1) / totalSteps) * 100 : 0;
+  const isAtStart = currentStepIndex === -1;
+  const isAtEnd = totalSteps > 0 && currentStepIndex === totalSteps - 1;
+  const canStepForward = !isAtEnd && totalSteps > 0;
+  const canStepBackward = !isAtStart && totalSteps > 0;
 
   return (
     <div className="flex-1 w-full max-w-6xl mx-auto px-6 py-6 flex flex-col font-sans select-none relative pt-24 text-white">
@@ -256,15 +277,17 @@ function bubbleSort(arr) {
               <div className="flex items-center gap-2">
                 <button
                   onClick={resetPlayback}
-                  disabled={currentStepIndex === -1}
+                  disabled={isAtStart}
                   className="w-8 h-8 flex items-center justify-center rounded-lg bg-elevated border border-[#333333] hover:border-text-secondary hover:text-white transition duration-200 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                  title="Reset"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
                 </button>
                 <button
                   onClick={stepBackward}
-                  disabled={currentStepIndex === -1 || isPlaying}
+                  disabled={!canStepBackward || isPlaying}
                   className="w-8 h-8 flex items-center justify-center rounded-lg bg-elevated border border-[#333333] hover:border-text-secondary hover:text-white transition duration-200 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                  title="Step Backward"
                 >
                   <SkipBack className="w-3.5 h-3.5" />
                 </button>
@@ -276,8 +299,9 @@ function bubbleSort(arr) {
                 </button>
                 <button
                   onClick={stepForward}
-                  disabled={currentStepIndex === totalSteps - 1 || isPlaying}
+                  disabled={!canStepForward || isPlaying}
                   className="w-8 h-8 flex items-center justify-center rounded-lg bg-elevated border border-[#333333] hover:border-text-secondary hover:text-white transition duration-200 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                  title="Step Forward"
                 >
                   <SkipForward className="w-3.5 h-3.5" />
                 </button>
@@ -295,9 +319,14 @@ function bubbleSort(arr) {
                     type="range"
                     min={0}
                     max={totalSteps}
-                    value={currentStepIndex + 1}
-                    onChange={(e) => setCurrentStepIndex(parseInt(e.target.value, 10) - 1)}
-                    disabled={isPlaying}
+                    value={Math.max(0, Math.min(currentStepIndex + 1, totalSteps))}
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value, 10);
+                      if (val >= 0 && val <= totalSteps) {
+                        setCurrentStepIndex(val - 1);
+                      }
+                    }}
+                    disabled={totalSteps === 0}
                     className="absolute w-full h-6 appearance-none bg-transparent cursor-pointer disabled:cursor-not-allowed focus:outline-none z-10
                       [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-accent-purple [&::-webkit-slider-thumb]:border-0"
                   />

@@ -12,7 +12,21 @@ export const GenericArrayVisualizer: React.FC = () => {
   const arrVariable = step?.variables.find((v) => v.variableId === "arr");
   const array: number[] = Array.isArray(arrVariable?.value)
     ? arrVariable.value
-    : [25, 40, 15, 90, 8, 60, 44, 30]; // fallback dataset
+    : []; // No fallback - show empty state if no array found
+  
+  // Show error state if no array data available
+  if (!step || array.length === 0) {
+    return (
+      <div className="w-full h-full flex flex-col items-center justify-center p-6 bg-[#111111]/80 rounded-xl relative select-none">
+        <div className="text-white/50 text-xs uppercase tracking-wider font-bold mb-4 opacity-75 font-mono">
+          Generic Array Explorer
+        </div>
+        <div className="text-white/40 text-xs text-center max-w-xs">
+          {!step ? "Awaiting simulation data..." : "No array variable found in execution trace"}
+        </div>
+      </div>
+    );
+  }
 
   // Find pointer indices
   const pointers: Record<string, number> = {};
@@ -53,8 +67,8 @@ export const GenericArrayVisualizer: React.FC = () => {
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-center p-6 bg-[#111111]/80 rounded-xl relative select-none">
-      <div className="text-white text-xs uppercase tracking-wider font-bold mb-4 opacity-75 font-mono">
-        Generic Array Explorer
+      <div className="text-white/80 text-xs uppercase tracking-wider font-bold mb-4 opacity-75 font-mono">
+        Array State: Step {currentStepIndex + 1} / {totalSteps}
       </div>
 
       {/* Main Array Display */}

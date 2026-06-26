@@ -46,6 +46,17 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, title, 
     }
   }, [isOpen, shareUrl]);
 
+  // Handle Escape key to close modal
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   const handleCopyLink = async () => {
@@ -161,8 +172,14 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, title, 
     link.click();
   };
 
+  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-xs p-4 select-none">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-xs p-4 select-none" onClick={handleBackdropClick}>
       <div 
         className="relative max-w-md w-full bg-[#0c0c0c] border border-[#2a2a2a] p-6 rounded-2xl shadow-2xl flex flex-col font-sans text-[#f0f0f0]"
         onClick={(e) => e.stopPropagation()}
@@ -170,7 +187,8 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, title, 
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-[#888888] hover:text-white cursor-pointer transition duration-150"
+          className="absolute top-4 right-4 text-[#888888] hover:text-white cursor-pointer transition duration-150 p-1 hover:bg-[#1c1c1c] rounded"
+          title="Close (Esc)"
         >
           <X className="w-5 h-5" />
         </button>

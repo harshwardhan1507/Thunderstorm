@@ -33,19 +33,23 @@ export const PlayPauseButton: React.FC = () => {
         clearTimeout(timerRef.current);
       }
     };
-  }, [isPlaying, speed, setIsPlaying]);
+  }, [isPlaying, speed, setIsPlaying, stepForward]);
 
   const togglePlay = () => {
-    const { currentStepIndex, steps } = useVisualizerStore.getState();
+    const { currentStepIndex, steps, isPlaying: isCurrentlyPlaying } = useVisualizerStore.getState();
     // If we finished, reset first
-    if (currentStepIndex >= steps.length - 1) {
+    if (currentStepIndex >= steps.length - 1 && !isCurrentlyPlaying) {
       resetPlayback();
+      setIsPlaying(true);
+    } else {
+      setIsPlaying(!isCurrentlyPlaying);
     }
-    setIsPlaying(!isPlaying);
   };
 
   const isAtStart = currentStepIndex === -1;
   const isAtEnd = steps.length > 0 && currentStepIndex === steps.length - 1;
+  const canStepForward = !isAtEnd && steps.length > 0;
+  const canStepBackward = !isAtStart && steps.length > 0;
 
   return (
     <div className="flex items-center gap-2 select-none">
@@ -62,7 +66,7 @@ export const PlayPauseButton: React.FC = () => {
       {/* Step Backward */}
       <button
         onClick={stepBackward}
-        disabled={isAtStart || isPlaying}
+        disabled={!canStepBackward || isPlaying}
         className="w-8 h-8 flex items-center justify-center rounded-lg bg-[#1c1c1c] border border-[#2a2a2a] text-[#888888] hover:text-white hover:border-[#333333] transition duration-200 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
         title="Step Backward"
       >
@@ -81,7 +85,7 @@ export const PlayPauseButton: React.FC = () => {
       {/* Step Forward */}
       <button
         onClick={stepForward}
-        disabled={isAtEnd || isPlaying}
+        disabled={!canStepForward || isPlaying}
         className="w-8 h-8 flex items-center justify-center rounded-lg bg-[#1c1c1c] border border-[#2a2a2a] text-[#888888] hover:text-white hover:border-[#333333] transition duration-200 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
         title="Step Forward"
       >

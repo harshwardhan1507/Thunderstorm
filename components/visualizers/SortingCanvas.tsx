@@ -58,20 +58,34 @@ export const SortingCanvas: React.FC = () => {
       return;
     }
 
-    // Map step indices to existing local bar objects
+    // Map step indices to existing local bar objects using index-based tracking
     const currentArray = steps[currentStepIndex]?.array || array;
     const matched = new Set<string>();
     const nextBars = localBars.map((bar) => ({ ...bar }));
 
-    // For each position in currentArray, match to the closest value in localBars
+    // Track which bars have been matched to avoid duplicates
+    const indexToBarId = new Map<number, string>();
+    
+    // For each position in currentArray, find the bar with that value
     for (let newIdx = 0; newIdx < currentArray.length; newIdx++) {
       const val = currentArray[newIdx];
-      const bestMatch = nextBars.find(
-        (b) => b.value === val && !matched.has(b.id)
-      );
-      if (bestMatch) {
-        bestMatch.currentIndex = newIdx;
-        matched.add(bestMatch.id);
+      // Find first unmatched bar with this value
+      for (let i = 0; i < nextBars.length; i++) {
+        const bar = nextBars[i];
+        if (bar.value === val && !matched.has(bar.id)) {
+          bar.currentIndex = newIdx;
+          matched.add(bar.id);
+          indexToBarId.set(newIdx, bar.id);
+          break;
+        }
+      }
+    }
+    
+    // Ensure all bars are accounted for (handle edge cases)
+    for (let i = 0; i < nextBars.length; i++) {
+      if (!matched.has(nextBars[i].id)) {
+        nextBars[i].currentIndex = i;
+        matched.add(nextBars[i].id);
       }
     }
 
@@ -125,7 +139,7 @@ export const SortingCanvas: React.FC = () => {
     });
 
     setLocalBars(nextBars);
-  }, [array, currentStepIndex]);
+  }, [array, currentStepIndex, steps, barWidth, padding, localBars.length]);
 
   // Green sweep completion ripple
   useEffect(() => {

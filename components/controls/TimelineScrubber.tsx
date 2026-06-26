@@ -12,7 +12,10 @@ export const TimelineScrubber: React.FC = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = parseInt(e.target.value, 10);
-    setCurrentStepIndex(val - 1);
+    // Bounds checking: ensure value is within valid range
+    if (val >= 0 && val <= totalSteps) {
+      setCurrentStepIndex(val - 1);
+    }
   };
 
   const percentage = totalSteps > 0 ? (value / totalSteps) * 100 : 0;
@@ -33,9 +36,9 @@ export const TimelineScrubber: React.FC = () => {
           type="range"
           min={0}
           max={totalSteps}
-          value={value}
+          value={Math.max(0, Math.min(value, totalSteps))}
           onChange={handleChange}
-          disabled={totalSteps === 0 || isPlaying}
+          disabled={totalSteps === 0}
           className="absolute w-full h-6 appearance-none bg-transparent cursor-pointer disabled:cursor-not-allowed focus:outline-none z-10
             [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#7c3aed] [&::-webkit-slider-thumb]:shadow-[0_0_8px_rgba(124,58,237,0.8)] [&::-webkit-slider-thumb]:border-0 [&::-webkit-slider-thumb]:transition-all [&::-webkit-slider-thumb]:duration-150
             [&::-webkit-slider-thumb]:hover:scale-125 [&::-webkit-slider-thumb]:active:scale-125
