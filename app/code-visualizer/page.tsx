@@ -24,7 +24,6 @@ export default function CodeVisualizerPage() {
     code,
     language,
     ir,
-    classification,
     currentStepIndex,
     isPlaying,
     speed,
