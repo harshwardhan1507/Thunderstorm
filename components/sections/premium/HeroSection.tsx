@@ -25,7 +25,7 @@ export function HeroSection() {
           <TextReveal text="Master Algorithms" />
         </h1>
         <h2 className="mx-auto max-w-6xl text-5xl font-extrabold tracking-tight sm:text-6xl md:text-7xl lg:text-8xl leading-tight mt-2 md:mt-4">
-          <span className="inline-block bg-gradient-to-r from-primary via-purple-400 to-primary bg-clip-text text-transparent">
+          <span className="inline-block bg-gradient-to-r from-primary via-purple-400 to-primary bg-clip-text text-white">
             Through Visualization
           </span>
         </h2>
