@@ -31,7 +31,8 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Fetch event - cache first with network update
+// Fetch event - cache first strategy WITHOUT background updates
+// Background fetches were causing continuous GET / requests
 self.addEventListener('fetch', (event) => {
   // Only handle local origin requests
   if (!event.request.url.startsWith(self.location.origin)) {
@@ -40,19 +41,12 @@ self.addEventListener('fetch', (event) => {
 
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
+      // Return cached response if available (no background fetch)
       if (cachedResponse) {
-        // Fetch fresh copy in background to update cache
-        fetch(event.request)
-          .then((networkResponse) => {
-            if (networkResponse.status === 200) {
-              caches.open(CACHE_NAME).then((cache) => cache.put(event.request, networkResponse));
-            }
-          })
-          .catch(() => {/* ignore network errors */ });
-
         return cachedResponse;
       }
 
+      // Otherwise, fetch from network
       return fetch(event.request)
         .then((response) => {
           if (!response || response.status !== 200 || response.type !== 'basic') {
