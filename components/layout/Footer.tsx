@@ -2,9 +2,13 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Zap } from 'lucide-react';
+import { Zap, Github, Twitter, Linkedin, Mail, Heart } from 'lucide-react';
+import { useTheme } from '../../lib/context/ThemeContext';
+import { themeColors } from '../../lib/theme/colors';
 
 export const Footer: React.FC = () => {
+  const { theme } = useTheme();
+  const colors = themeColors[theme];
   const algorithmLinks = [
     { label: 'Sorting', href: '/sorting' },
     { label: 'Graphs', href: '/graphs' },
@@ -33,24 +37,36 @@ export const Footer: React.FC = () => {
   ];
 
   return (
-    <footer className="w-full border-t border-[#2a2a2a] bg-[#141414] mt-20 select-none">
+    <footer
+      className="w-full border-t mt-20 select-none transition-colors duration-300"
+      style={{
+        backgroundColor: colors.bg.secondary,
+        borderColor: colors.border.primary,
+      }}
+    >
       <div className="max-w-6xl mx-auto px-6 py-12">
         {/* Top: Logo + Columns */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-10">
           {/* Brand Column */}
           <div className="col-span-2 md:col-span-1 flex flex-col gap-3">
             <Link href="/" className="flex items-center gap-2 group">
-              <div className="w-7 h-7 rounded-lg bg-[#7c3aed]/10 border border-accent-purple/30 flex items-center justify-center">
-                <Zap className="w-3.5 h-3.5 text-[#8b5cf6] fill-accent-violet" />
-              </div>
-              <span className="text-white font-bold text-sm tracking-tight uppercase">
+            <div
+              className="w-7 h-7 rounded-lg border flex items-center justify-center"
+              style={{
+                backgroundColor: theme === 'dark' ? 'rgba(124, 58, 237, 0.1)' : 'rgba(124, 58, 237, 0.15)',
+                borderColor: colors.border.primary,
+              }}
+            >
+              <Zap className="w-3.5 h-3.5" style={{ color: colors.accent }} />
+            </div>
+              <span className="font-bold text-sm tracking-tight uppercase" style={{ color: colors.text.primary }}>
                 ThunderStorm
               </span>
             </Link>
-            <p className="text-[#555555] text-xs leading-relaxed mt-1">
+            <p className="text-xs leading-relaxed mt-1" style={{ color: colors.text.secondary }}>
               Learn algorithms through interactive, step-by-step visualization.
             </p>
-            <p className="text-[#555555] text-[10px] mt-4">
+            <p className="text-[10px] mt-4" style={{ color: colors.text.secondary }}>
               © {new Date().getFullYear()} ThunderStorm.
               <br />All Rights Reserved.
             </p>
