@@ -24,10 +24,11 @@ export function FloatingNavbar() {
   }, []);
 
   const navLinks = [
-    { name: "Algorithms", href: "/sorting" },
-    { name: "Explore", href: "/graphs" },
-    { name: "Practice", href: "/compare" },
-    { name: "AI Visualizer", href: "/code-visualizer" },
+    { name: "Sorting", href: "/sorting" },
+    { name: "Graphs", href: "/graphs" },
+    { name: "Trees", href: "/trees" },
+    { name: "Pathfinding", href: "/pathfinding" },
+    { name: "DP", href: "/dp" },
   ];
 
   return (
@@ -89,11 +90,7 @@ export function FloatingNavbar() {
 
           {/* Actions */}
           <div className="flex items-center gap-3">
-            <button className="hidden items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-medium text-white/60 transition-colors hover:bg-white/10 hover:text-white md:flex">
-              <Search size={14} />
-              <span>Search</span>
-              <kbd className="ml-2 rounded bg-white/10 px-1.5 py-0.5 font-sans text-[10px]">Ctrl+K</kbd>
-            </button>
+
 
             <button
               onClick={toggleTheme}
@@ -135,10 +132,7 @@ export function FloatingNavbar() {
                 </Link>
               ))}
               <div className="my-2 h-px w-full bg-white/10" />
-              <button className="flex w-full items-center gap-2 rounded-lg px-4 py-3 text-sm font-medium text-white/80 transition-colors hover:bg-white/10 hover:text-white">
-                <Search size={16} />
-                Search Algorithms
-              </button>
+
             </nav>
           </motion.div>
         )}
