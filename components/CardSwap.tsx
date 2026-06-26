@@ -2,19 +2,19 @@ import React, { Children, cloneElement, forwardRef, isValidElement, useEffect, u
 import gsap from 'gsap';
 import './CardSwap.css';
 
-export const Card = forwardRef(({ customClass, ...rest }, ref) => (
+export const Card = forwardRef<HTMLDivElement, any>(({ customClass, ...rest }, ref) => (
   <div ref={ref} {...rest} className={`card ${customClass ?? ''} ${rest.className ?? ''}`.trim()} />
 ));
 Card.displayName = 'Card';
 
-const makeSlot = (i, distX, distY, total) => ({
+const makeSlot = (i: number, distX: number, distY: number, total: number) => ({
   x: i * distX,
   y: -i * distY,
   z: -i * distX * 1.5,
   zIndex: total - i
 });
 
-const placeNow = (el, slot, skew) => {
+const placeNow = (el: HTMLElement, slot: any, skew: number) => {
   if (!el) return;
   gsap.set(el, {
     x: slot.x,
@@ -77,14 +77,14 @@ const CardSwap = ({
 
   const childArr = useMemo(() => Children.toArray(children), [children]);
   const refs = useMemo(
-    () => childArr.map(() => React.createRef()),
+    () => childArr.map(() => React.createRef<HTMLDivElement>()),
     [childArr.length]
   );
 
   const order = useRef(Array.from({ length: childArr.length }, (_, i) => i));
-  const tlRef = useRef(null);
-  const intervalRef = useRef(null);
-  const container = useRef(null);
+  const tlRef = useRef<gsap.core.Timeline | null>(null);
+  const intervalRef = useRef<number | null>(null);
+  const container = useRef<HTMLDivElement | null>(null);
   const isInitialized = useRef(false);
 
   // Memoize the swap function to prevent recreation
@@ -194,17 +194,17 @@ const CardSwap = ({
     };
   }, []);
 
-  const rendered = childArr.map((child, i) =>
+  const rendered = childArr.map((child: any, i) =>
     isValidElement(child)
       ? cloneElement(child, {
           key: i,
           ref: refs[i],
-          style: { width, height, ...(child.props.style ?? {}) },
-          onClick: e => {
-            child.props.onClick?.(e);
+          style: { width, height, ...((child as any).props.style ?? {}) },
+          onClick: (e: any) => {
+            (child as any).props.onClick?.(e);
             onCardClick?.(i);
           }
-        })
+        } as any)
       : child
   );
 

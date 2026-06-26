@@ -125,7 +125,7 @@ export const TabbedDashboard: React.FC<TabbedDashboardProps> = ({ className = ''
     },
   }), []);
 
-  const content = contentMap[activeTab] || contentMap.sorting;
+  const content = (contentMap as any)[activeTab] || contentMap.sorting;
 
   const handleTabClick = useCallback((tabId: string) => {
     setActiveTab(tabId);

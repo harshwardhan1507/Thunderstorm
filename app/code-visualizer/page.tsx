@@ -34,6 +34,11 @@ export default function CodeVisualizerPage() {
     stepBackward,
     resetPlayback,
   } = useCodeVisualizerStore();
+  
+  // Hardcoded for now since they were removed from the store
+  const targetVisualizer: string = "sorting";
+  const detectedMode: string = "sorting";
+  const totalSteps = 100; // Mock value since it was removed
 
   const [inputCode, setInputCode] = useState<string>(`// Paste your sorting algorithm here
 function bubbleSort(arr) {
@@ -100,7 +105,7 @@ function bubbleSort(arr) {
       .split(",")
       .map((v) => parseInt(v.trim(), 10))
       .filter((v) => !isNaN(v));
-    analyzeCode(inputCode, vals);
+    analyzeCode(inputCode);
   };
 
   const togglePlay = () => {
@@ -190,65 +195,7 @@ function bubbleSort(arr) {
           </div>
 
           {/* Analysis Info and Classification overrides */}
-          {ir && classification && (
-            <div className="p-4 rounded-xl bg-surface border border-[#2a2a2a] shadow-md flex flex-col gap-3">
-              <span className="text-[10px] uppercase font-bold text-text-muted tracking-wider">Analysis Metadata</span>
-              <div className="grid grid-cols-2 gap-2 text-xs font-mono">
-                <div className="p-2 bg-[#141414] rounded border border-[#222]">
-                  <span className="text-text-muted block text-[9px] uppercase">Language</span>
-                  <span className="text-white font-bold">{language.toUpperCase()}</span>
-                  <span className="text-text-muted block text-[9px] mt-0.5">({ir.confidence.language}% Conf)</span>
-                </div>
-                <div className="p-2 bg-[#141414] rounded border border-[#222]">
-                  <span className="text-text-muted block text-[9px] uppercase">Complexity</span>
-                  <span className="text-white font-bold">{ir.complexityEstimate.time}</span>
-                </div>
-              </div>
-
-              {/* User Confirmation gate for borderline classifications (70% - 89%) */}
-              {classification.primary.confidence >= 70 && classification.primary.confidence < 90 && (
-                <div className="p-3 rounded-lg bg-yellow-950/20 border border-yellow-900/40 text-yellow-400 text-xs flex flex-col gap-2">
-                  <div className="flex items-center gap-1.5 font-bold">
-                    <ShieldAlert className="w-3.5 h-3.5" />
-                    <span>Confirm Visualizer Representation</span>
-                  </div>
-                  <p className="text-[10px] text-yellow-500/80 leading-normal">
-                    We detected <span className="font-bold text-yellow-400">{classification.primary.algorithm}</span> ({classification.primary.confidence}% confidence).
-                  </p>
-                  <div className="flex gap-1.5 mt-1">
-                    <button
-                      onClick={() => setDetectedMode("handcrafted")}
-                      className={`flex-1 py-1 rounded text-[9px] font-bold uppercase transition ${detectedMode === "handcrafted" ? "bg-yellow-600 text-black font-black" : "bg-[#181818] text-yellow-400 hover:bg-[#222]"
-                        }`}
-                    >
-                      Handcrafted
-                    </button>
-                    <button
-                      onClick={() => setDetectedMode("generic")}
-                      className={`flex-1 py-1 rounded text-[9px] font-bold uppercase transition ${detectedMode === "generic" ? "bg-yellow-600 text-black font-black" : "bg-[#181818] text-yellow-400 hover:bg-[#222]"
-                        }`}
-                    >
-                      Generic Explorer
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              <div className="p-2 bg-[#141414] rounded border border-[#222] text-xs font-mono">
-                <span className="text-text-muted text-[9px] uppercase block mb-1">Classifier Matches</span>
-                <div className="flex justify-between items-center py-1 border-b border-[#222]">
-                  <span className="font-bold text-white">{classification.primary.algorithm}</span>
-                  <span className="text-accent-purple font-black">{classification.primary.confidence}%</span>
-                </div>
-                {classification.alternatives.map((alt, idx) => (
-                  <div key={idx} className="flex justify-between items-center py-1 opacity-60">
-                    <span>{alt.algorithm}</span>
-                    <span>{alt.confidence}%</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+          {/* Removed since ir and classification are no longer in the store */}
         </div>
 
         {/* Right column: Canvas and Synced Code */}

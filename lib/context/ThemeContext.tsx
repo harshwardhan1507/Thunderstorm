@@ -36,6 +36,15 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
 
 
+  // Prevent hydration mismatch by rendering a placeholder until mounted
+  if (!mounted) {
+    return (
+      <ThemeContext.Provider value={{ theme: 'dark', toggleTheme: () => {}, isDark: true }}>
+        <div style={{ visibility: 'hidden' }}>{children}</div>
+      </ThemeContext.Provider>
+    );
+  }
+
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme, isDark: theme === 'dark' }}>
       {children}

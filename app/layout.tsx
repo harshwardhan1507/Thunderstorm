@@ -37,7 +37,6 @@ export default function RootLayout({
         <ThemeProvider>
           <PWARegister />
           <AmbientStorm />
-          <Navbar />
           <LayoutWrapper>{children}</LayoutWrapper>
         </ThemeProvider>
       </body>
