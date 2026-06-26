@@ -2,7 +2,7 @@
 import React from 'react';
 import { usePathname } from 'next/navigation';
 import { Sidebar } from './Sidebar';
-import { Navbar } from './Navbar';
+import { FloatingNavbar } from '../ui/premium/FloatingNavbar';
 import { useTheme } from '../../lib/context/ThemeContext';
 
 export const LayoutWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -12,7 +12,7 @@ export const LayoutWrapper: React.FC<{ children: React.ReactNode }> = ({ childre
 
   return (
     <div className={`min-h-screen transition-colors duration-300 ${isDark ? 'bg-[#0a0a0a]' : 'bg-[#f8f9fa]'}`}>
-      {!isLanding && <Navbar />}
+      {!isLanding && <FloatingNavbar />}
       
       {/* Sidebar (hidden on landing page) */}
       {!isLanding && (

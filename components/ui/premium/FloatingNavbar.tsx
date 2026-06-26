@@ -60,6 +60,17 @@ export function FloatingNavbar() {
             </span>
           </Link>
 
+          {/* Search Bar */}
+          <div className="hidden items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-2 md:flex">
+            <Search size={16} className="text-white/50" />
+            <input
+              type="text"
+              placeholder="Search algorithms..."
+              className="w-40 bg-transparent text-sm text-white placeholder-white/50 outline-none"
+            />
+            <span className="text-xs text-white/30">Ctrl+K</span>
+          </div>
+
           {/* Desktop Navigation */}
           <nav className="hidden items-center gap-1 md:flex">
             {navLinks.map((link) => {

@@ -101,34 +101,9 @@ export const Sidebar: React.FC = () => {
         </div>
       </div>
 
-      {/* Bottom Zone */}
+      {/* Bottom Zone - Empty */}
       <div className="flex flex-col gap-3 mt-6">
         <div className="h-px bg-[#2a2a2a]" />
-
-        {/* Dark mode hint */}
-        <div className="flex items-center justify-between text-xs text-[#888888] font-medium px-3">
-          <div className="flex items-center gap-2">
-            <span>🌙</span>
-            <span>Dark Mode</span>
-          </div>
-          <span className="text-[10px] bg-[#1c1c1c] border border-[#2a2a2a] text-[#555555] px-1.5 py-0.5 rounded font-mono">
-            Ctrl+/
-          </span>
-        </div>
-
-        {/* User zone */}
-        <div className="flex items-center justify-between bg-[#1c1c1c] border border-[#2a2a2a] rounded-xl p-3">
-          <div className="flex flex-col min-w-0">
-            <span className="text-xs font-bold text-[#f0f0f0] truncate flex items-center gap-1.5">
-              <span className="text-[#8b5cf6]">⚡</span>
-              haruto@mail.com
-            </span>
-            <span className="text-[10px] text-[#888888] mt-0.5">Free Plan</span>
-          </div>
-          <button className="bg-[#7c3aed] hover:bg-[#8b5cf6] text-white text-[10px] font-bold px-2.5 py-1.5 rounded-full transition-all duration-150 cursor-pointer shadow-md whitespace-nowrap">
-            Upgrade
-          </button>
-        </div>
       </div>
     </aside>
   );
