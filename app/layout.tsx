@@ -5,6 +5,7 @@ import { Navbar } from "../components/layout/Navbar";
 import { LayoutWrapper } from "../components/layout/LayoutWrapper";
 import { AmbientStorm } from "../components/layout/AmbientStorm";
 import { PWARegister } from "../components/PWARegister";
+import { ThemeProvider } from "../lib/context/ThemeContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,12 +31,15 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
-      <body className="min-h-screen bg-[#0a0a0a] text-[#f0f0f0] font-sans">
-        <PWARegister />
-        <AmbientStorm />
-        <Navbar />
-        <LayoutWrapper>{children}</LayoutWrapper>
+      <body className="min-h-screen transition-colors duration-300 font-sans" suppressHydrationWarning>
+        <ThemeProvider>
+          <PWARegister />
+          <AmbientStorm />
+          <Navbar />
+          <LayoutWrapper>{children}</LayoutWrapper>
+        </ThemeProvider>
       </body>
     </html>
   );

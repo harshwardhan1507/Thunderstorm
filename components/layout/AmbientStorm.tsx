@@ -1,9 +1,11 @@
 'use client';
 import React, { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
+import { useTheme } from '../../lib/context/ThemeContext';
 
 export const AmbientStorm: React.FC = () => {
   const pathname = usePathname();
+  const { isDark } = useTheme();
   const isLanding = pathname === '/';
   const [disableEffects, setDisableEffects] = useState(false);
   const [flashOpacity, setFlashOpacity] = useState(0);
@@ -64,10 +66,13 @@ export const AmbientStorm: React.FC = () => {
     return () => { if (flashTimerRef.current) clearTimeout(flashTimerRef.current); };
   }, [disableEffects, isLanding]);
 
-  // On inner pages: plain dark bg, no animations
+  // On inner pages: plain bg (theme-aware), no animations
   if (!isLanding || disableEffects) {
     return (
-      <div className="fixed inset-0 z-[-1] bg-[#0a0a0a] pointer-events-none" />
+      <div 
+        className="fixed inset-0 z-[-1] pointer-events-none transition-colors duration-300"
+        style={{ backgroundColor: isDark ? '#0a0a0a' : '#ffffff' }}
+      />
     );
   }
 
