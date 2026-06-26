@@ -2,14 +2,17 @@
 import React from 'react';
 import { usePathname } from 'next/navigation';
 import { Sidebar } from './Sidebar';
-import { Footer } from './Footer';
+import { useTheme } from '../../lib/context/ThemeContext';
+import { themeColors } from '../../lib/theme/colors';
 
 export const LayoutWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const pathname = usePathname();
   const isLanding = pathname === '/';
+  const { theme } = useTheme();
+  const colors = themeColors[theme];
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a]">
+    <div style={{ backgroundColor: colors.background.primary }} className="min-h-screen transition-colors duration-300">
       {/* Sidebar (hidden on landing page) */}
       {!isLanding && (
         <React.Suspense fallback={null}>
@@ -24,7 +27,6 @@ export const LayoutWrapper: React.FC<{ children: React.ReactNode }> = ({ childre
         }`}
       >
         {children}
-        {isLanding && <Footer />}
       </main>
     </div>
   );

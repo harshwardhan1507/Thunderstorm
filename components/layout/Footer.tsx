@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Zap, Github, Twitter, Linkedin, Mail, Heart } from 'lucide-react';
+import { Zap, GitBranch, MessageCircle, Share2, Mail, Heart } from 'lucide-react';
 import { useTheme } from '../../lib/context/ThemeContext';
 import { themeColors } from '../../lib/theme/colors';
 
