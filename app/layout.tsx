@@ -18,7 +18,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ThunderStorm — Portfolio-Grade Algorithm Visualizer",
+  title: "Thunderstorm - algovisualizer",
   description: "An interactive, premium DSA visualizer with live performance metrics, synchronized multi-language code panels, and elastic GSAP animations.",
 };
 
