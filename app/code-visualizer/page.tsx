@@ -105,6 +105,12 @@ function bubbleSort(arr) {
       .split(",")
       .map((v) => parseInt(v.trim(), 10))
       .filter((v) => !isNaN(v));
+    
+    // Set manual dataset and switch to manual mode
+    if (vals.length > 0) {
+      useCodeVisualizerStore.setState({ manualDataset: vals, dataSource: "manual" });
+    }
+    
     analyzeCode(inputCode);
   };
 
