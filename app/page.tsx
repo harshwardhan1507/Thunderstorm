@@ -1,6 +1,8 @@
 'use client';
 import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import CardSwap, { Card } from '../components/CardSwap';
+import TabbedDashboard from '../components/TabbedDashboard';
 import {
   Zap, Code2, GitBranch, Network, TreePine, BarChart3, Cpu,
   Globe, MessageCircle, Monitor, GraduationCap, Clipboard,
@@ -308,8 +310,33 @@ export default function LandingPage() {
           </Link>
         </div>
 
-        <div className="w-full max-w-3xl px-4 animate-fade-in-up" style={{ animationDelay: '400ms' }}>
-          <DashboardWidget />
+        <div className="w-full max-w-5xl px-4 animate-fade-in-up relative" style={{ animationDelay: '400ms', height: '600px' }}>
+          <CardSwap
+            width={600}
+            height={420}
+            cardDistance={50}
+            verticalDistance={60}
+            delay={6000}
+            pauseOnHover={true}
+            skewAmount={4}
+            easing="elastic"
+          >
+            <Card className="bg-[#0d0d0d] border border-[#2a2a2a] shadow-2xl overflow-hidden">
+              <div className="p-6 h-full flex items-center justify-center">
+                <TabbedDashboard />
+              </div>
+            </Card>
+            <Card className="bg-[#0d0d0d] border border-[#2a2a2a] shadow-2xl overflow-hidden">
+              <div className="p-6 h-full flex items-center justify-center">
+                <TabbedDashboard />
+              </div>
+            </Card>
+            <Card className="bg-[#0d0d0d] border border-[#2a2a2a] shadow-2xl overflow-hidden">
+              <div className="p-6 h-full flex items-center justify-center">
+                <TabbedDashboard />
+              </div>
+            </Card>
+          </CardSwap>
         </div>
       </section>
 
