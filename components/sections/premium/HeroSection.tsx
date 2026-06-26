@@ -22,12 +22,11 @@ export function HeroSection() {
 
         {/* Headline */}
         <h1 className="mx-auto max-w-6xl text-5xl font-extrabold tracking-tight text-white sm:text-6xl md:text-7xl lg:text-8xl leading-tight">
-          <div>
-            <TextReveal text="Master Algorithms" />
-          </div>
-          <div className="mt-2 md:mt-4 bg-gradient-to-r from-primary via-purple-400 to-primary bg-clip-text text-transparent">
+          <TextReveal text="Master Algorithms" />
+          <br />
+          <span className="inline-block bg-gradient-to-r from-primary via-purple-400 to-primary bg-clip-text text-transparent">
             <TextReveal text="Through Visualization" delay={0.2} />
-          </div>
+          </span>
         </h1>
 
         {/* Subtitle */}
