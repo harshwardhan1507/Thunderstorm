@@ -13,7 +13,7 @@ export function HeroSection() {
       {/* Background Effects */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/20 via-[#0a0a0a] to-[#0a0a0a]" />
       <div className="absolute top-0 left-1/2 h-[500px] w-[1000px] -translate-x-1/2 opacity-20 blur-[120px] bg-gradient-to-b from-primary to-purple-600" />
-      
+
       {/* Subtle grid pattern */}
       <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
 
@@ -26,7 +26,7 @@ export function HeroSection() {
           className="mx-auto mb-8 flex max-w-fit items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-sm font-medium text-white/80 backdrop-blur-md"
         >
           <Sparkles size={14} className="text-primary" />
-          <span>ThunderStorm 2.0 is now live</span>
+
         </motion.div>
 
         {/* Headline */}
@@ -44,7 +44,7 @@ export function HeroSection() {
           transition={{ duration: 0.5, delay: 0.4 }}
           className="mx-auto mt-8 max-w-2xl text-lg leading-relaxed text-white/60 md:text-xl"
         >
-          The most advanced interactive learning platform for Data Structures and Algorithms. 
+          The most advanced interactive learning platform for Data Structures and Algorithms.
           Visualize, code, and master complex concepts with real-time feedback.
         </motion.p>
 
