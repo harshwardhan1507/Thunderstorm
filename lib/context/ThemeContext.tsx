@@ -34,7 +34,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     document.documentElement.setAttribute('data-theme', newTheme);
   };
 
-  if (!mounted) return <>{children}</>;
+
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme, isDark: theme === 'dark' }}>
