@@ -23,15 +23,12 @@ export function HeroSection() {
         {/* Headline */}
         <h1 className="mx-auto max-w-6xl text-5xl font-extrabold tracking-tight text-white sm:text-6xl md:text-7xl lg:text-8xl leading-tight">
           <TextReveal text="Master Algorithms" />
-          <br />
-          <span className="block h-auto">
-            <TextReveal 
-              text="Through Visualization" 
-              delay={0.2}
-              className="bg-gradient-to-r from-primary via-purple-400 to-primary bg-clip-text text-transparent"
-            />
-          </span>
         </h1>
+        <h2 className="mx-auto max-w-6xl text-5xl font-extrabold tracking-tight sm:text-6xl md:text-7xl lg:text-8xl leading-tight mt-2 md:mt-4">
+          <span className="inline-block bg-gradient-to-r from-primary via-purple-400 to-primary bg-clip-text text-transparent">
+            Through Visualization
+          </span>
+        </h2>
 
         {/* Subtitle */}
         <motion.p
