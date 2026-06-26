@@ -21,7 +21,7 @@ export function TextReveal({ text, className, delay = 0, duration = 0.5 }: TextR
         visible: { transition: { staggerChildren: 0.05, delayChildren: delay } },
         hidden: {},
       }}
-      className={cn("flex flex-wrap justify-center", className)}
+      className={cn("flex flex-wrap justify-center w-full", className)}
     >
       {words.map((word, i) => (
         <motion.span
@@ -30,7 +30,7 @@ export function TextReveal({ text, className, delay = 0, duration = 0.5 }: TextR
             hidden: { opacity: 0, y: 20, filter: "blur(10px)" },
             visible: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration, ease: [0.2, 0.65, 0.3, 0.9] } },
           }}
-          className="mr-3 inline-block whitespace-nowrap"
+          className="mr-3 inline-block whitespace-nowrap leading-none"
         >
           {word}
         </motion.span>

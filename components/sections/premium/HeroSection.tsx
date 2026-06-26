@@ -24,8 +24,12 @@ export function HeroSection() {
         <h1 className="mx-auto max-w-6xl text-5xl font-extrabold tracking-tight text-white sm:text-6xl md:text-7xl lg:text-8xl leading-tight">
           <TextReveal text="Master Algorithms" />
           <br />
-          <span className="inline-block bg-gradient-to-r from-primary via-purple-400 to-primary bg-clip-text text-transparent">
-            <TextReveal text="Through Visualization" delay={0.2} />
+          <span className="block h-auto">
+            <TextReveal 
+              text="Through Visualization" 
+              delay={0.2}
+              className="bg-gradient-to-r from-primary via-purple-400 to-primary bg-clip-text text-transparent"
+            />
           </span>
         </h1>
 
