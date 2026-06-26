@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Search, Zap, BarChart2, Share2, Navigation, GitBranch, Table2, Settings, Sun, Moon, Play, Pause, FastForward } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -21,7 +21,7 @@ export const CommandPalette: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const commands: CommandItem[] = [
+  const commands: CommandItem[] = useMemo(() => [
     {
       id: 'sorting',
       label: 'Sorting Visualizer',
@@ -84,12 +84,12 @@ export const CommandPalette: React.FC = () => {
       action: () => {},
       category: 'settings',
     },
-  ];
+  ], []);
 
-  const filteredCommands = commands.filter(cmd =>
+  const filteredCommands = useMemo(() => commands.filter(cmd =>
     cmd.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
     cmd.description?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  ), [commands, searchQuery]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -119,7 +119,7 @@ export const CommandPalette: React.FC = () => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, selectedIndex, filteredCommands]);
+  }, [isOpen, selectedIndex]);
 
   useEffect(() => {
     const handleOpen = () => setIsOpen(true);

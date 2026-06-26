@@ -175,6 +175,7 @@ const CardSwap = ({
       };
       const resume = () => {
         tlRef.current?.play();
+        if (intervalRef.current) clearInterval(intervalRef.current);
         const swapFn = createSwapFunction();
         intervalRef.current = window.setInterval(swapFn, delay);
       };
